@@ -1,4 +1,5 @@
-import { sql } from '@vercel/postgres';
+
+/* import { sql } from '@vercel/postgres';
 import {
   CustomerField,
   CustomersTableType,
@@ -215,3 +216,4 @@ export async function fetchFilteredCustomers(query: string) {
     throw new Error('Failed to fetch customer table.');
   }
 }
+*/
