@@ -5,6 +5,8 @@ import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import { FilterState } from "@/lib/types";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 interface CarFiltersProps {
   onFilterChange: (filters: FilterState) => void;
@@ -17,6 +19,7 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
     fuelType: [],
     minPrice: 0,
     maxPrice: 200,
+    availability: 'all'
   });
 
   const handleFilterChange = (newFilters: Partial<FilterState>) => {
@@ -27,6 +30,33 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
 
   return (
     <Card className="p-6 space-y-6">
+      <div>
+        <h3 className="font-semibold mb-4">Disponibilidad</h3>
+        <RadioGroup
+          defaultValue={filters.availability}
+          onValueChange={(value) => 
+            handleFilterChange({ 
+              availability: value as 'all' | 'available' | 'reserved' 
+            })
+          }
+        >
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="all" id="all" />
+              <Label htmlFor="all">Todos</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="available" id="available" />
+              <Label htmlFor="available">Disponibles</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="reserved" id="reserved" />
+              <Label htmlFor="reserved">Reservados</Label>
+            </div>
+          </div>
+        </RadioGroup>
+      </div>
+
       <div>
         <h3 className="font-semibold mb-4">Tipo de Vehículo</h3>
         <div className="space-y-2">

@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Car } from "lucide-react";
+import { Car, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Navbar() {
   return (
@@ -13,6 +16,7 @@ export function Navbar() {
             <span className="font-bold text-xl">AutoRent</span>
           </Link>
           
+          {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">
             <Link 
               href="/" 
@@ -33,6 +37,37 @@ export function Navbar() {
               Contacto
             </Link>
           </div>
+
+          {/* Mobile Navigation */}
+          <Sheet>
+            <SheetTrigger asChild className="md:hidden">
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <nav className="flex flex-col space-y-4">
+                <Link 
+                  href="/" 
+                  className="text-lg font-medium hover:text-primary transition-colors"
+                >
+                  Inicio
+                </Link>
+                <Link 
+                  href="/about" 
+                  className="text-lg font-medium hover:text-primary transition-colors"
+                >
+                  Sobre Nosotros
+                </Link>
+                <Link 
+                  href="/contact" 
+                  className="text-lg font-medium hover:text-primary transition-colors"
+                >
+                  Contacto
+                </Link>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>

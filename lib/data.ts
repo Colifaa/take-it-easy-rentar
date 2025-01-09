@@ -11,7 +11,8 @@ export const cars: Car[] = [
     seats: 5,
     pricePerDay: 75,
     fuelType: 'Híbrido',
-    image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    status: 'available'
   },
   {
     id: '2',
@@ -23,7 +24,9 @@ export const cars: Car[] = [
     seats: 5,
     pricePerDay: 55,
     fuelType: 'Gasolina',
-    image: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    image: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    status: 'reserved',
+    nextAvailableDate: '2024-04-15'
   },
   {
     id: '3',
@@ -35,7 +38,8 @@ export const cars: Car[] = [
     seats: 4,
     pricePerDay: 120,
     fuelType: 'Gasolina',
-    image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    image: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    status: 'available'
   },
   {
     id: '4',
@@ -47,6 +51,8 @@ export const cars: Car[] = [
     seats: 5,
     pricePerDay: 100,
     fuelType: 'Eléctrico',
-    image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    status: 'reserved',
+    nextAvailableDate: '2024-04-20'
   }
 ];

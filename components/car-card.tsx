@@ -3,20 +3,36 @@
 import { Car } from "@/lib/types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Fuel, Cog } from "lucide-react";
+import { Users, Fuel, Cog, Calendar } from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { isCarAvailable } from "@/lib/reservations";
 
 interface CarCardProps {
   car: Car;
 }
 
 export function CarCard({ car }: CarCardProps) {
+  const today = new Date();
+  const nextMonth = new Date();
+  nextMonth.setMonth(today.getMonth() + 1);
+  
+  const isAvailableNow = isCarAvailable(car, today, nextMonth);
+  const statusColor = isAvailableNow ? 'bg-green-500' : 'bg-red-500';
+  const statusText = isAvailableNow ? 'Disponible' : 'Reservado';
+
   return (
     <Card className="overflow-hidden">
-      <img
-        src={car.image}
-        alt={`${car.brand} ${car.model}`}
-        className="w-full h-48 object-cover"
-      />
+      <div className="relative">
+        <img
+          src={car.image}
+          alt={`${car.brand} ${car.model}`}
+          className="w-full h-48 object-cover"
+        />
+        <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-white ${statusColor}`}>
+          {statusText}
+        </div>
+      </div>
       <div className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div>
@@ -44,7 +60,19 @@ export function CarCard({ car }: CarCardProps) {
           </div>
         </div>
 
-        <Button className="w-full">Reservar Ahora</Button>
+        {!isAvailableNow && car.nextAvailableDate && (
+          <div className="mb-4 flex items-center text-sm text-gray-600">
+            <Calendar className="w-4 h-4 mr-2" />
+            Disponible desde: {format(new Date(car.nextAvailableDate), 'PPP', { locale: es })}
+          </div>
+        )}
+
+        <Button 
+          className="w-full"
+          disabled={!isAvailableNow}
+        >
+          {isAvailableNow ? 'Reservar Ahora' : 'No Disponible'}
+        </Button>
       </div>
     </Card>
   );
