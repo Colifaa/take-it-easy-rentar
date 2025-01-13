@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Car, Calendar, Users, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { CarFilters } from "@/components/car-filters";
 import { CarCard } from "@/components/car-card";
 import { cars } from "@/lib/data";
 import { FilterState } from "@/lib/types";
+
 
 export default function Home() {
   const [fechaRecogida, setFechaRecogida] = useState<Date>();
@@ -31,7 +32,9 @@ export default function Home() {
   });
 
   return (
+    
     <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
+      
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center justify-center">
         <div 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Car, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import  LoginForm  from "../components/login"
 
 export function Navbar() {
   return (
@@ -36,6 +37,19 @@ export function Navbar() {
             >
               Contacto
             </Link>
+            
+            {/* Botón Iniciar sesión */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" className="text-gray-700 hover:text-primary">
+                  Iniciar sesión
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                {/* Contenido del Drawer con el LoginForm */}
+                <LoginForm />
+              </SheetContent>
+            </Sheet>
           </div>
 
           {/* Mobile Navigation */}
@@ -65,6 +79,18 @@ export function Navbar() {
                 >
                   Contacto
                 </Link>
+                
+                {/* Botón Iniciar sesión para la vista móvil */}
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" className="text-gray-700 hover:text-primary">
+                      Iniciar sesión
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                    <LoginForm />
+                  </SheetContent>
+                </Sheet>
               </nav>
             </SheetContent>
           </Sheet>
