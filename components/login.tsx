@@ -16,45 +16,32 @@ async function loginUser(email: string, password: string, router: any) {
     alert("Error al iniciar sesión: " + error.message);
     return;
   }
-
-  const userId = authData.user?.id;
-  const { data: roleData, error: roleError } = await supabase
-    .from("user_roles")
-    .select("role_id")
-    .eq("user_id", userId)
-    .single();
-
-  if (roleError) {
-    console.error("Error al obtener el rol:", roleError.message);
-    alert("Error al obtener el rol del usuario.");
-    return;
-  }
-
-  const roleId = roleData?.role_id;
-  if (roleId === 1) {
-    router.push("/dashboard");
-  } else {
-    router.push("/");
-  }
 }
 
 const loginWithGoogle = async (router: any) => {
-  let { data, error } = await supabase.auth.signInWithOAuth({
+  const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
   });
-  console.log(data, "data3");
-
-  const { data: sessionData } = await supabase.auth.getSession();
-
-  console.log("Datos de la sesión:", sessionData);
-  console.log("Datos del usuario:", sessionData.session?.user);
 
   if (error) {
     console.error("Error al iniciar sesión con Google:", error.message);
     alert("Error al iniciar sesión con Google: " + error.message);
     return;
   }
+};
 
+const loginWithFacebook = async (router: any) => {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "facebook",
+  });
+
+  
+
+  if (error) {
+    console.error("Error al iniciar sesión con Facebook:", error.message);
+    alert("Error al iniciar sesión con Facebook: " + error.message);
+    return;
+  }
 };
 
 const logoutUser = async (router: any) => {
@@ -70,18 +57,44 @@ const logoutUser = async (router: any) => {
   router.push("/");
 };
 
+const signUpUser = async (email: string, password: string, router: any) => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  if (error) {
+    console.error("Error al registrar el usuario:", error.message);
+    alert("Error al registrar el usuario: " + error.message);
+    return;
+  }
+
+  alert("Cuenta creada exitosamente. Por favor, verifica tu correo electrónico.");
+  router.push("/");
+};
+
 const LoginForm: React.FC = () => {
   const router = useRouter();
   const [tab, setTab] = useState<"signup" | "login">("login");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault(); // Evita el reload
     if (!email || !password) {
       alert("Por favor, completa ambos campos.");
       return;
     }
     await loginUser(email, password, router);
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault(); // Evita el reload
+    if (!email || !password) {
+      alert("Por favor, completa ambos campos.");
+      return;
+    }
+    await signUpUser(email, password, router);
   };
 
   return (
@@ -100,50 +113,64 @@ const LoginForm: React.FC = () => {
           <div className="flex justify-center mb-6">
             <button
               onClick={() => setTab("signup")}
-              className={`px-4 py-2 rounded-l-md focus:outline-none transition-colors duration-300 ${
-                tab === "signup"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
+              className={`px-4 py-2 rounded-l-md ${
+                tab === "signup" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
               }`}
             >
               Sign Up
             </button>
             <button
               onClick={() => setTab("login")}
-              className={`px-4 py-2 rounded-r-md focus:outline-none transition-colors duration-300 ${
-                tab === "login"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
+              className={`px-4 py-2 rounded-r-md ${
+                tab === "login" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
               }`}
             >
               Login
             </button>
           </div>
 
-          {tab === "login" && (
+          {tab === "signup" ? (
             <form className="space-y-4">
-              <div className="relative">
-                <input
-                  type="email"
-                  placeholder="Correo electrónico"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
-                />
-              </div>
-              <div className="relative">
-                <input
-                  type="password"
-                  placeholder="Contraseña"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
-                />
-              </div>
+              <input
+                type="email"
+                placeholder="Correo electrónico"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none"
+              />
+              <input
+                type="password"
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none"
+              />
               <button
-                type="button"
+                onClick={handleSignUp}
+                className="w-full bg-gradient-to-r from-green-500 to-purple-600 text-white py-2 rounded-md"
+              >
+                Crear Cuenta
+              </button>
+            </form>
+          ) : (
+            <form className="space-y-4">
+              <input
+                type="email"
+                placeholder="Correo electrónico"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none"
+              />
+              <input
+                type="password"
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none"
+              />
+              <button
                 onClick={handleLogin}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-md hover:opacity-90 transition-opacity duration-300 transform hover:scale-105"
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-md"
               >
                 Iniciar Sesión
               </button>
@@ -154,21 +181,24 @@ const LoginForm: React.FC = () => {
             <p className="text-center text-gray-600 mb-4">Or continue with</p>
             <div className="flex justify-center space-x-4">
               <button
-                type="button"
                 onClick={() => loginWithGoogle(router)}
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-300"
+                className="bg-red-600 text-white px-4 py-2 rounded-md"
               >
                 Google
+              </button>
+              <button
+                onClick={() => loginWithFacebook(router)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md"
+              >
+                Facebook
               </button>
             </div>
           </div>
 
-          {/* Botón para cerrar sesión */}
           <div className="mt-6">
             <button
-              type="button"
               onClick={() => logoutUser(router)}
-              className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition-opacity duration-300"
+              className="w-full bg-red-600 text-white py-2 rounded-md"
             >
               Cerrar Sesión
             </button>
