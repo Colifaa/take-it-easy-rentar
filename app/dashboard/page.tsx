@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import supabase from "../../authTest";
 import CardWrapper from "../ui/dashboard/cards";
 import "../ui/global.css";
+import CarsAdminPage from "@/components/carsAdminPage";
+import  {CarList } from "../../components/CarList";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -56,8 +58,12 @@ export default function DashboardPage() {
   return (
     <div>
       <CardWrapper />
-      <h1>Dashboard</h1>
-      {/* Otros componentes del dashboard */}
+      
+      <CarsAdminPage/>
+
+      <CarList/>
+     
+  
     </div>
   );
 }
