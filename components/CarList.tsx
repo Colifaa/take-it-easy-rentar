@@ -1,59 +1,53 @@
-"use client";
+import { useEffect, useState } from "react";
+import supabase from "../supabase/authTest";  // Asegúrate de que tu cliente de Supabase esté correctamente configurado
+import { EditCarDialog } from "./EditCarDialog";
+
+// Definir el tipo para los autos
+interface Car {
+  id: string;
+  brand: string;
+  model: string;
+  year: number;
+  price: number;
+  transmission: string;
+  fuelType: string;
+  imageUrl: string;
+  description: string;
+  available: boolean;
+}
 
 export function CarList() {
-  const cars = [
-    {
-      id: "1",
-      brand: "Toyota",
-      model: "Corolla",
-      year: 2020,
-      price: 45,
-      transmission: "automatic",
-      fuelType: "gasoline",
-      seats: 5,
-      description: "Un sedán confiable y eficiente, ideal para la ciudad.",
-      imageUrl: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-      available: true,
-      features: ["Aire acondicionado", "Bluetooth", "GPS"],
-    },
-    {
-      id: "2",
-      brand: "Tesla",
-      model: "Model 3",
-      year: 2022,
-      price: 120,
-      transmission: "automatic",
-      fuelType: "electric",
-      seats: 5,
-      description: "Auto eléctrico de alta gama con tecnología avanzada.",
-      imageUrl: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-      available: true,
-      features: ["Piloto automático", "Carga rápida", "Pantalla táctil"],
-    },
-    {
-      id: "3",
-      brand: "Ford",
-      model: "Mustang",
-      year: 2019,
-      price: 95,
-      transmission: "manual",
-      fuelType: "gasoline",
-      seats: 4,
-      description: "Deportivo clásico con gran potencia y estilo.",
-      imageUrl: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-      available: false,
-      features: ["Motor V8", "Asientos de cuero", "Cámara trasera"],
-    },
-  ];
+  // Estado para almacenar los autos
+  const [cars, setCars] = useState<Car[]>([]);
+  const [editingCar, setEditingCar] = useState<Car | null>(null);
 
-  const handleEdit = (id: string) => {
-    console.log(`Editar coche con ID: ${id}`);
-    // Lógica para editar el coche
+  // Función para obtener los autos desde Supabase
+  const fetchCars = async () => {
+    const { data, error } = await supabase
+      .from("cars")
+      .select("id, brand, model, year, price, transmission, fuelType, imageUrl, description, available");
+
+    if (error) {
+      console.error("Error al obtener los autos:", error.message);
+    } else {
+      setCars(data || []); // Establecer los autos obtenidos en el estado
+    }
   };
 
-  const handleDelete = (id: string) => {
-    console.log(`Borrar coche con ID: ${id}`);
-    // Lógica para borrar el coche
+  // Llamar a la función para obtener los autos cuando el componente se monte
+  useEffect(() => {
+    fetchCars();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase.from("cars").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error al eliminar el auto:", error.message);
+    } else {
+      // Después de eliminar el coche, actualizamos la lista
+      setCars((prevCars) => prevCars.filter((car) => car.id !== id));
+    }
   };
 
   return (
@@ -72,7 +66,9 @@ export function CarList() {
             <p className="text-gray-600 text-sm">{car.description}</p>
             <div className="flex items-center justify-between mt-4">
               <span
-                className={`px-3 py-1 text-sm rounded-full ${car.available ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}
+                className={`px-3 py-1 text-sm rounded-full ${
+                  car.available ? "bg-green-500 text-white" : "bg-red-500 text-white"
+                }`}
               >
                 {car.available ? "Disponible" : "No disponible"}
               </span>
@@ -91,36 +87,34 @@ export function CarList() {
                   ? "Eléctrico"
                   : "Desconocido"}
               </p>
-              <p>
-                <strong>Asientos: </strong>
-                {car.seats}
-              </p>
             </div>
-            <div className="mt-3">
-              {car.features.map((feature, index) => (
-                <span
-                  key={index}
-                  className="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full mr-2 mb-2"
-                >
-                  {feature}
-                </span>
-              ))}
-            </div>
-            {/* Botones de editar y borrar */}
+
+            {/* Botón de borrar */}
             <div className="mt-4 flex justify-between">
-              <button
-                onClick={() => handleEdit(car.id)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-              >
-                Editar
-              </button>
               <button
                 onClick={() => handleDelete(car.id)}
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
               >
                 Borrar
               </button>
+                     {/* Reemplazar el botón de editar con el componente EditCarDialog */}
+            <EditCarDialog
+              carId={car.id}
+              initialData={{
+                brand: car.brand,
+                model: car.model,
+                year: car.year,
+                price: car.price,
+                transmission: car.transmission,
+                fuelType: car.fuelType,
+                imageUrl: car.imageUrl,
+                description: car.description,
+                available: car.available,
+              }}
+            />
             </div>
+
+     
           </div>
         </div>
       ))}

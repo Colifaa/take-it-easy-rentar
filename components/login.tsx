@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "../authTest";
+import supabase from "../supabase/authTest";
 
 async function loginUser(email: string, password: string, router: any) {
   const { data: authData, error } = await supabase.auth.signInWithPassword({

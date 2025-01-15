@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "../../authTest";
+import supabase from "../../supabase/authTest";
 import CardWrapper from "../ui/dashboard/cards";
 import "../ui/global.css";
 import CarsAdminPage from "@/components/carsAdminPage";
