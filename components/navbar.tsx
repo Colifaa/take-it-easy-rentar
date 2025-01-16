@@ -1,101 +1,144 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import Link from "next/link";
-import { Car, Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import  LoginForm  from "../components/login"
+import {
+  Box,
+  Flex,
+  Avatar,
+  HStack,
+  Text,
+  IconButton,
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  useDisclosure,
+  useColorModeValue,
+  Stack,
+} from '@chakra-ui/react'
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import supabase from '@/supabase/authTest'
 
-export function Navbar() {
+interface User {
+  email: string
+  user_metadata: {
+    name: string
+    avatar_url: string
+  }
+}
+
+export default function Navbar() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      setUser(user as User | null)
+    }
+
+    fetchUser()
+  }, [])
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setUser(null)
+  }
+
   return (
-    <nav className="bg-white shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center space-x-2">
-            <Car className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl">AutoRent</span>
-          </Link>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
-            <Link 
-              href="/" 
-              className="text-gray-700 hover:text-primary transition-colors"
-            >
-              Inicio
-            </Link>
-            <Link 
-              href="/about" 
-              className="text-gray-700 hover:text-primary transition-colors"
-            >
-              Sobre Nosotros
-            </Link>
-            <Link 
-              href="/contact" 
-              className="text-gray-700 hover:text-primary transition-colors"
-            >
-              Contacto
-            </Link>
-            
-            {/* Botón Iniciar sesión */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" className="text-gray-700 hover:text-primary">
-                  Iniciar sesión
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                {/* Contenido del Drawer con el LoginForm */}
-                <LoginForm />
-              </SheetContent>
-            </Sheet>
-          </div>
+    <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+      <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+        {/* Botón hamburguesa para móviles */}
+        <IconButton
+          size={'md'}
+          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+          aria-label={'Open Menu'}
+          display={{ md: 'none' }}
+          onClick={isOpen ? onClose : onOpen}
+        />
 
-          {/* Mobile Navigation */}
-          <Sheet>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
+        {/* Logo y enlaces de navegación en desktop */}
+        <Flex justifyContent="center" alignItems="center" display={{ base: "flex", md: 'flex', xl: 'flex'  }}> 
+          <Link href="/" passHref>
+            <Text fontSize="xl" fontWeight="bold">
+              Take-It-easy-rentar
+            </Text>
+          </Link>
+          </Flex>
+
+           <Flex justifyContent="center">
+    <HStack as={'nav'} spacing={8}  display={{ base: 'none', md: 'flex' }}>
+      <Link href="/" passHref>
+        <Text _hover={{ color: 'blue.500' }}>Inicio</Text>
+      </Link>
+      <Link href="/about" passHref>
+        <Text _hover={{ color: 'blue.500' }}>Sobre Nosotros</Text>
+      </Link>
+      <Link href="/contact" passHref>
+        <Text _hover={{ color: 'blue.500' }}>Contacto</Text>
+      </Link>
+    </HStack>
+    
+  </Flex>
+       
+
+        {/* Avatar y menú desplegable */}
+        <Flex alignItems={'center'}>
+          {user ? (
+            <Menu>
+              <MenuButton
+                as={Button}
+                rounded={'full'}
+                variant={'link'}
+                cursor={'pointer'}
+                minW={0}
+              >
+                <Avatar
+                  size={'sm'}
+                  src={user.user_metadata.avatar_url}
+             
+                />
+              </MenuButton>
+              <MenuList>
+                <MenuItem>
+                  <Text>Hola, {user.user_metadata.name}!</Text>
+                </MenuItem>
+                <MenuDivider />
+                <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            <Link href="/login" passHref>
+              <Button colorScheme="teal" variant="outline">
+                Iniciar sesión
               </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <nav className="flex flex-col space-y-4">
-                <Link 
-                  href="/" 
-                  className="text-lg font-medium hover:text-primary transition-colors"
-                >
-                  Inicio
-                </Link>
-                <Link 
-                  href="/about" 
-                  className="text-lg font-medium hover:text-primary transition-colors"
-                >
-                  Sobre Nosotros
-                </Link>
-                <Link 
-                  href="/contact" 
-                  className="text-lg font-medium hover:text-primary transition-colors"
-                >
-                  Contacto
-                </Link>
-                
-                {/* Botón Iniciar sesión para la vista móvil */}
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button variant="ghost" className="text-gray-700 hover:text-primary">
-                      Iniciar sesión
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                    <LoginForm />
-                  </SheetContent>
-                </Sheet>
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
-    </nav>
-  );
+            </Link>
+          )}
+        </Flex>
+      </Flex>
+
+      {/* Menú para móviles */}
+      {isOpen ? (
+        <Box pb={4}  display={{ md: 'none' }}>
+          <Stack as={'nav'} spacing={4}>
+            <Link href="/" passHref>
+              <Text _hover={{ color: 'blue.500' }}>Inicio</Text>
+            </Link>
+            <Link href="/about" passHref>
+              <Text _hover={{ color: 'blue.500' }}>Sobre Nosotros</Text>
+            </Link>
+            <Link href="/contact" passHref>
+              <Text _hover={{ color: 'blue.500' }}>Contacto</Text>
+            </Link>
+          </Stack>
+        </Box>
+      ) : null}
+    </Box>
+  )
 }
