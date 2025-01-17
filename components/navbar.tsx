@@ -77,7 +77,7 @@ export default function Navbar() {
         <Flex alignItems="center">
           <Link href="/" passHref>
             <Text fontSize="xl" fontWeight="bold">
-              Take-It-Easy-Rentar
+              Take-It-Easy
             </Text>
           </Link>
         </Flex>
