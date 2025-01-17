@@ -8,11 +8,9 @@ import { FilterState } from "@/lib/types";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
-interface CarFiltersProps {
-  onFilterChange: (filters: FilterState) => void;
-}
 
-export function CarFilters({ onFilterChange }: CarFiltersProps) {
+
+export function CarFilters() {
   const [filters, setFilters] = useState<FilterState>({
     type: [],
     transmission: [],
@@ -25,7 +23,7 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
   const handleFilterChange = (newFilters: Partial<FilterState>) => {
     const updatedFilters = { ...filters, ...newFilters };
     setFilters(updatedFilters);
-    onFilterChange(updatedFilters);
+   
   };
 
   return (

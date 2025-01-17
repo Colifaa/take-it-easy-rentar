@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Box,
@@ -14,96 +14,97 @@ import {
   MenuItem,
   MenuDivider,
   useDisclosure,
-  useColorModeValue,
   Stack,
-} from '@chakra-ui/react'
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import supabase from '@/supabase/authTest'
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+} from "@chakra-ui/react";
+import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import supabase from "@/supabase/authTest";
+import LoginForm from "../components/login";
 
 interface User {
-  email: string
+  email: string;
   user_metadata: {
-    name: string
-    avatar_url: string
-  }
+    name: string;
+    avatar_url: string;
+  };
 }
 
 export default function Navbar() {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [user, setUser] = useState<User | null>(null)
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isModalOpen,
+    onOpen: openModal,
+    onClose: closeModal,
+  } = useDisclosure();
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       const {
         data: { user },
-      } = await supabase.auth.getUser()
+      } = await supabase.auth.getUser();
 
-      setUser(user as User | null)
-    }
+      setUser(user as User | null);
+    };
 
-    fetchUser()
-  }, [])
+    fetchUser();
+  }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-  }
+    await supabase.auth.signOut();
+    setUser(null);
+  };
 
   return (
-    <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
-      <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-        {/* Botón hamburguesa para móviles */}
+    <Box bg="gray.100" px={4}>
+      <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
         <IconButton
-          size={'md'}
+          size={"md"}
           icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-          aria-label={'Open Menu'}
-          display={{ md: 'none' }}
+          aria-label={"Open Menu"}
+          display={{ md: "none" }}
           onClick={isOpen ? onClose : onOpen}
         />
 
-        {/* Logo y enlaces de navegación en desktop */}
-        <Flex justifyContent="center" alignItems="center" display={{ base: "flex", md: 'flex', xl: 'flex'  }}> 
+        <Flex alignItems="center">
           <Link href="/" passHref>
             <Text fontSize="xl" fontWeight="bold">
-              Take-It-easy-rentar
+              Take-It-Easy-Rentar
             </Text>
           </Link>
-          </Flex>
+        </Flex>
 
-           <Flex justifyContent="center">
-    <HStack as={'nav'} spacing={8}  display={{ base: 'none', md: 'flex' }}>
-      <Link href="/" passHref>
-        <Text _hover={{ color: 'blue.500' }}>Inicio</Text>
-      </Link>
-      <Link href="/about" passHref>
-        <Text _hover={{ color: 'blue.500' }}>Sobre Nosotros</Text>
-      </Link>
-      <Link href="/contact" passHref>
-        <Text _hover={{ color: 'blue.500' }}>Contacto</Text>
-      </Link>
-    </HStack>
-    
-  </Flex>
-       
+        <HStack as={"nav"} spacing={8} display={{ base: "none", md: "flex" }}>
+          <Link href="/" passHref>
+            <Text _hover={{ color: "blue.500" }}>Inicio</Text>
+          </Link>
+          <Link href="/about" passHref>
+            <Text _hover={{ color: "blue.500" }}>Sobre Nosotros</Text>
+          </Link>
+          <Link href="/contact" passHref>
+            <Text _hover={{ color: "blue.500" }}>Contacto</Text>
+          </Link>
+        </HStack>
 
-        {/* Avatar y menú desplegable */}
-        <Flex alignItems={'center'}>
+        <Flex alignItems={"center"}>
           {user ? (
             <Menu>
               <MenuButton
                 as={Button}
-                rounded={'full'}
-                variant={'link'}
-                cursor={'pointer'}
+                rounded={"full"}
+                variant={"link"}
+                cursor={"pointer"}
                 minW={0}
               >
-                <Avatar
-                  size={'sm'}
-                  src={user.user_metadata.avatar_url}
-             
-                />
+                <Avatar size={"sm"} src={user.user_metadata.avatar_url} />
               </MenuButton>
               <MenuList>
                 <MenuItem>
@@ -114,31 +115,45 @@ export default function Navbar() {
               </MenuList>
             </Menu>
           ) : (
-            <Link href="/login" passHref>
-              <Button colorScheme="teal" variant="outline">
-                Iniciar sesión
-              </Button>
-            </Link>
+            <Button colorScheme="teal" variant="outline" onClick={openModal}>
+              Iniciar sesión
+            </Button>
           )}
         </Flex>
       </Flex>
 
-      {/* Menú para móviles */}
-      {isOpen ? (
-        <Box pb={4}  display={{ md: 'none' }}>
-          <Stack as={'nav'} spacing={4}>
+      {isOpen && (
+        <Box pb={4} display={{ md: "none" }}>
+          <Stack as={"nav"} spacing={4}>
             <Link href="/" passHref>
-              <Text _hover={{ color: 'blue.500' }}>Inicio</Text>
+              <Text _hover={{ color: "blue.500" }}>Inicio</Text>
             </Link>
             <Link href="/about" passHref>
-              <Text _hover={{ color: 'blue.500' }}>Sobre Nosotros</Text>
+              <Text _hover={{ color: "blue.500" }}>Sobre Nosotros</Text>
             </Link>
             <Link href="/contact" passHref>
-              <Text _hover={{ color: 'blue.500' }}>Contacto</Text>
+              <Text _hover={{ color: "blue.500" }}>Contacto</Text>
             </Link>
           </Stack>
         </Box>
-      ) : null}
+      )}
+
+      {/* Modal para Iniciar Sesión */}
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Iniciar Sesión</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <LoginForm />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={closeModal}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
-  )
+  );
 }

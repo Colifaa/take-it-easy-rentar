@@ -19,11 +19,7 @@ export interface FilterState {
   fuelType: string[];
   minPrice: number;
   maxPrice: number;
-  availability?: 'all' | 'available' | 'reserved';
-  dateRange?: {
-    start: Date;
-    end: Date;
-  };
+  availability: "all" | "available" | "reserved" | "unavailable"; // Aseguramos que la propiedad tenga estos valores
 }
 
 export interface SearchParams {
