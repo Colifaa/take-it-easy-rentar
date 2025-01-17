@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -7,21 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/date-picker";
 import { CarFilters } from "@/components/car-filters";
-import  {CarCard}  from "../components/car-card";
+import { CarCard } from "../components/car-card";
 
-import { FilterState } from "@/lib/types";
-
-
+// Aquí agregamos el estado para los filtros
 export default function Home() {
   const [fechaRecogida, setFechaRecogida] = useState<Date>();
   const [fechaDevolucion, setFechaDevolucion] = useState<Date>();
-
-
+  
+  // Estado para los filtros, ahora con todos los filtros añadidos
+  const [filters, setFilters] = useState({
+    brand: "",
+    model: "",
+    year: "",
+    price: "",
+    transmission: "",
+    fuelType: "",
+    available: true,
+  });
 
   return (
-    
     <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
-      
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center justify-center">
         <div 
@@ -89,14 +93,12 @@ export default function Home() {
       <section className="py-20 container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <CarFilters  />
+            {/* Pasamos el estado de los filtros a CarFilters */}
+            <CarFilters filters={filters} setFilters={setFilters} />
           </div>
           <div className="md:col-span-3">
-       
-             
-                <CarCard  />
-           
-
+            {/* Pasamos los filtros a CarCard */}
+            <CarCard filters={filters} />
           </div>
         </div>
       </section>

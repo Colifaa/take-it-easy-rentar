@@ -1,12 +1,9 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import supabase from "../supabase/authTest"; // Asegúrate de que este archivo esté configurado
+import supabase from "../supabase/authTest"; 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Fuel, Cog, Calendar } from "lucide-react";
 
-// Define la interfaz para el tipo de coche
 interface Car {
   id: string;
   brand: string;
@@ -20,12 +17,14 @@ interface Car {
   available: boolean;
 }
 
-export function CarCard() {
-  // Especifica el tipo del estado
+interface CarCardProps {
+  filters: { transmission: string; fuelType: string; available: boolean };
+}
+
+export function CarCard({ filters }: CarCardProps) {
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch de los datos desde Supabase
   useEffect(() => {
     const fetchCars = async () => {
       setLoading(true);
@@ -38,7 +37,7 @@ export function CarCard() {
       if (error) {
         console.error("Error al obtener los autos:", error);
       } else {
-        setCars(data || []); // Asignar datos al estado
+        setCars(data || []); 
       }
       setLoading(false);
     };
@@ -46,17 +45,26 @@ export function CarCard() {
     fetchCars();
   }, []);
 
+  // Filtramos los autos según los filtros
+  const filteredCars = cars.filter((car) => {
+    const matchesTransmission = !filters.transmission || car.transmission === filters.transmission;
+    const matchesFuelType = !filters.fuelType || car.fuelType === filters.fuelType;
+    const matchesAvailability = filters.available ? car.available : true;
+
+    return matchesTransmission && matchesFuelType && matchesAvailability;
+  });
+
   if (loading) {
     return <p>Cargando autos...</p>;
   }
 
-  if (!cars.length) {
-    return <p>No hay autos disponibles en este momento.</p>;
+  if (!filteredCars.length) {
+    return <p>No hay autos disponibles con esos filtros.</p>;
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {cars.map((car) => {
+      {filteredCars.map((car) => {
         const statusColor = car.available ? "bg-green-500" : "bg-red-500";
         const statusText = car.available ? "Disponible" : "Reservado";
 
@@ -93,7 +101,7 @@ export function CarCard() {
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="flex items-center text-sm text-gray-600">
                   <Users className="w-4 h-4 mr-2" />
-                  5 asientos {/* Modifica esto si tienes más info */}
+                  5 asientos
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <Cog className="w-4 h-4 mr-2" />

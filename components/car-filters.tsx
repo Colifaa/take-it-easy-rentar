@@ -1,142 +1,134 @@
-"use client";
-
 import { useState } from "react";
-import { Slider } from "@/components/ui/slider";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card } from "@/components/ui/card";
-import { FilterState } from "@/lib/types";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 
+// Define la interfaz de filtros
+interface Filters {
+  brand: string;
+  model: string;
+  year: string;
+  price: string;
+  transmission: string;
+  fuelType: string;
+  available: boolean;
+}
 
+interface CarFiltersProps {
+  filters: Filters;
+  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+}
 
-export function CarFilters() {
-  const [filters, setFilters] = useState<FilterState>({
-    type: [],
-    transmission: [],
-    fuelType: [],
-    minPrice: 0,
-    maxPrice: 200,
-    availability: 'all'
-  });
+export function CarFilters({ filters, setFilters }: CarFiltersProps) {
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: checked,
+    }));
+  };
 
-  const handleFilterChange = (newFilters: Partial<FilterState>) => {
-    const updatedFilters = { ...filters, ...newFilters };
-    setFilters(updatedFilters);
-   
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
   };
 
   return (
-    <Card className="p-6 space-y-6">
-      <div>
-        <h3 className="font-semibold mb-4">Disponibilidad</h3>
-        <RadioGroup
-          defaultValue={filters.availability}
-          onValueChange={(value) => 
-            handleFilterChange({ 
-              availability: value as 'all' | 'available' | 'reserved' 
-            })
-          }
+    <div className="p-6 bg-white shadow-lg rounded-lg">
+      <h3 className="font-semibold text-lg mb-4">Filtros de Autos</h3>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium">Marca</label>
+        <input
+          type="text"
+          name="brand"
+          value={filters.brand}
+          onChange={handleInputChange}
+          className="w-full mt-2 p-2 border border-gray-300 rounded"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium">Modelo</label>
+        <input
+          type="text"
+          name="model"
+          value={filters.model}
+          onChange={handleInputChange}
+          className="w-full mt-2 p-2 border border-gray-300 rounded"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium">Año</label>
+        <input
+          type="text"
+          name="year"
+          value={filters.year}
+          onChange={handleInputChange}
+          className="w-full mt-2 p-2 border border-gray-300 rounded"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium">Precio</label>
+        <input
+          type="text"
+          name="price"
+          value={filters.price}
+          onChange={handleInputChange}
+          className="w-full mt-2 p-2 border border-gray-300 rounded"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium">Transmisión</label>
+        <select
+          name="transmission"
+          value={filters.transmission}
+          onChange={handleSelectChange}
+          className="w-full mt-2 p-2 border border-gray-300 rounded"
         >
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="all" />
-              <Label htmlFor="all">Todos</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="available" id="available" />
-              <Label htmlFor="available">Disponibles</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="reserved" id="reserved" />
-              <Label htmlFor="reserved">Reservados</Label>
-            </div>
-          </div>
-        </RadioGroup>
+          <option value="">Todas</option>
+          <option value="Manual">Manual</option>
+          <option value="Automática">Automática</option>
+        </select>
       </div>
 
-      <div>
-        <h3 className="font-semibold mb-4">Tipo de Vehículo</h3>
-        <div className="space-y-2">
-          {['SUV', 'Sedan', 'Hatchback', 'Pickup', 'Sports'].map((type) => (
-            <div key={type} className="flex items-center space-x-2">
-              <Checkbox
-                id={`type-${type}`}
-                checked={filters.type.includes(type)}
-                onCheckedChange={(checked) => {
-                  handleFilterChange({
-                    type: checked
-                      ? [...filters.type, type]
-                      : filters.type.filter((t) => t !== type),
-                  });
-                }}
-              />
-              <label htmlFor={`type-${type}`} className="text-sm">{type}</label>
-            </div>
-          ))}
-        </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium">Tipo de Combustible</label>
+        <select
+          name="fuelType"
+          value={filters.fuelType}
+          onChange={handleSelectChange}
+          className="w-full mt-2 p-2 border border-gray-300 rounded"
+        >
+          <option value="">Todos</option>
+          <option value="Gasolina">Gasolina</option>
+          <option value="Diésel">Diésel</option>
+          <option value="Eléctrico">Eléctrico</option>
+        </select>
       </div>
 
-      <div>
-        <h3 className="font-semibold mb-4">Transmisión</h3>
-        <div className="space-y-2">
-          {['Manual', 'Automático'].map((transmission) => (
-            <div key={transmission} className="flex items-center space-x-2">
-              <Checkbox
-                id={`transmission-${transmission}`}
-                checked={filters.transmission.includes(transmission)}
-                onCheckedChange={(checked) => {
-                  handleFilterChange({
-                    transmission: checked
-                      ? [...filters.transmission, transmission]
-                      : filters.transmission.filter((t) => t !== transmission),
-                  });
-                }}
-              />
-              <label htmlFor={`transmission-${transmission}`} className="text-sm">{transmission}</label>
-            </div>
-          ))}
-        </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium">Disponible</label>
+        <input
+          type="checkbox"
+          name="available"
+          checked={filters.available}
+          onChange={handleCheckboxChange}
+          className="mr-2"
+        />
+        Solo Autos Disponibles
       </div>
-
-      <div>
-        <h3 className="font-semibold mb-4">Tipo de Combustible</h3>
-        <div className="space-y-2">
-          {['Gasolina', 'Diesel', 'Híbrido', 'Eléctrico'].map((fuel) => (
-            <div key={fuel} className="flex items-center space-x-2">
-              <Checkbox
-                id={`fuel-${fuel}`}
-                checked={filters.fuelType.includes(fuel)}
-                onCheckedChange={(checked) => {
-                  handleFilterChange({
-                    fuelType: checked
-                      ? [...filters.fuelType, fuel]
-                      : filters.fuelType.filter((f) => f !== fuel),
-                  });
-                }}
-              />
-              <label htmlFor={`fuel-${fuel}`} className="text-sm">{fuel}</label>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="font-semibold mb-4">Precio por Día ($)</h3>
-        <div className="px-2">
-          <Slider
-            defaultValue={[filters.maxPrice]}
-            max={200}
-            step={10}
-            onValueChange={([value]) => {
-              handleFilterChange({ maxPrice: value });
-            }}
-          />
-          <div className="mt-2 text-sm text-gray-600">
-            Hasta ${filters.maxPrice}
-          </div>
-        </div>
-      </div>
-    </Card>
+    </div>
   );
 }
