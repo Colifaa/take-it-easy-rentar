@@ -1,11 +1,15 @@
-import { useState } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@chakra-ui/react";
+import  supabase  from "../supabase/authTest"; // Importa el cliente de Supabase
 
 // Define la interfaz de filtros
 interface Filters {
   brand: string;
   model: string;
-  year: string;
-  price: string;
+  maxPrice: number;
   transmission: string;
   fuelType: string;
   available: boolean;
@@ -14,9 +18,57 @@ interface Filters {
 interface CarFiltersProps {
   filters: Filters;
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  onApplyFilters: () => void;
 }
 
-export function CarFilters({ filters, setFilters }: CarFiltersProps) {
+export const CarFilters = ({ filters, setFilters, onApplyFilters }: CarFiltersProps) => {
+  const [brands, setBrands] = useState<string[]>([]);
+  const [models, setModels] = useState<string[]>([]);
+  const [transmissions, setTransmissions] = useState<string[]>([]);
+  const [fuelTypes, setFuelTypes] = useState<string[]>([]);
+
+  // Fetch datos de Supabase al montar el componente
+  useEffect(() => {
+    // Obtener marcas, modelos, transmisiones y tipos de combustible de Supabase
+    const fetchOptions = async () => {
+      try {
+        // Traer las marcas
+        const { data: brandData } = await supabase
+          .from('cars') // Nombre de la tabla donde están las marcas
+          .select('brand')
+  
+
+        // Traer modelos
+        const { data: modelData } = await supabase
+          .from('cars')
+          .select('model')
+       
+
+        // Traer transmisiones
+        const { data: transmissionData } = await supabase
+          .from('cars')
+          .select('transmission')
+     
+
+        // Traer tipos de combustible
+        const { data: fuelData } = await supabase
+          .from('cars')
+          .select('fuelType')
+    
+
+        // Actualizar estados con los datos obtenidos
+        setBrands(brandData?.map((item) => item.brand) || []);
+        setModels(modelData?.map((item) => item.model) || []);
+        setTransmissions(transmissionData?.map((item) => item.transmission) || []);
+        setFuelTypes(fuelData?.map((item) => item.fuelType) || []);
+      } catch (error) {
+        console.error("Error fetching data from Supabase:", error);
+      }
+    };
+
+    fetchOptions();
+  }, []); // Se ejecuta solo una vez al montar el componente
+
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setFilters((prevFilters) => ({
@@ -41,54 +93,67 @@ export function CarFilters({ filters, setFilters }: CarFiltersProps) {
     }));
   };
 
+  const handleSliderChange = (value: number[]) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      maxPrice: value[0],
+    }));
+  };
+
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
       <h3 className="font-semibold text-lg mb-4">Filtros de Autos</h3>
 
+      {/* Marca */}
       <div className="mb-4">
         <label className="block text-sm font-medium">Marca</label>
-        <input
-          type="text"
+        <select
           name="brand"
           value={filters.brand}
-          onChange={handleInputChange}
+          onChange={handleSelectChange}
           className="w-full mt-2 p-2 border border-gray-300 rounded"
-        />
+        >
+          <option value="">Seleccionar Marca</option>
+          {brands.map((brand, index) => (
+            <option key={index} value={brand}>
+              {brand}
+            </option>
+          ))}
+        </select>
       </div>
 
+      {/* Modelo */}
       <div className="mb-4">
         <label className="block text-sm font-medium">Modelo</label>
-        <input
-          type="text"
+        <select
           name="model"
           value={filters.model}
-          onChange={handleInputChange}
+          onChange={handleSelectChange}
           className="w-full mt-2 p-2 border border-gray-300 rounded"
-        />
+        >
+          <option value="">Seleccionar Modelo</option>
+          {models.map((model, index) => (
+            <option key={index} value={model}>
+              {model}
+            </option>
+          ))}
+        </select>
       </div>
 
+      {/* Precio */}
       <div className="mb-4">
-        <label className="block text-sm font-medium">Año</label>
-        <input
-          type="text"
-          name="year"
-          value={filters.year}
-          onChange={handleInputChange}
-          className="w-full mt-2 p-2 border border-gray-300 rounded"
+        <label className="block text-sm font-medium">Precio por Día ($)</label>
+        <Slider
+          value={[filters.maxPrice]}
+          max={500}
+          step={10}
+          onValueChange={handleSliderChange}
+          className="relative flex items-center select-none w-full h-2 bg-gray-300 rounded-lg"
         />
+        <div className="mt-2 text-sm text-gray-600">Hasta ${filters.maxPrice}</div>
       </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium">Precio</label>
-        <input
-          type="text"
-          name="price"
-          value={filters.price}
-          onChange={handleInputChange}
-          className="w-full mt-2 p-2 border border-gray-300 rounded"
-        />
-      </div>
-
+      {/* Transmisión */}
       <div className="mb-4">
         <label className="block text-sm font-medium">Transmisión</label>
         <select
@@ -98,11 +163,15 @@ export function CarFilters({ filters, setFilters }: CarFiltersProps) {
           className="w-full mt-2 p-2 border border-gray-300 rounded"
         >
           <option value="">Todas</option>
-          <option value="Manual">Manual</option>
-          <option value="Automática">Automática</option>
+          {transmissions.map((transmission, index) => (
+            <option key={index} value={transmission}>
+              {transmission}
+            </option>
+          ))}
         </select>
       </div>
 
+      {/* Combustible */}
       <div className="mb-4">
         <label className="block text-sm font-medium">Tipo de Combustible</label>
         <select
@@ -112,23 +181,36 @@ export function CarFilters({ filters, setFilters }: CarFiltersProps) {
           className="w-full mt-2 p-2 border border-gray-300 rounded"
         >
           <option value="">Todos</option>
-          <option value="Gasolina">Gasolina</option>
-          <option value="Diésel">Diésel</option>
-          <option value="Eléctrico">Eléctrico</option>
+          {fuelTypes.map((fuelType, index) => (
+            <option key={index} value={fuelType}>
+              {fuelType}
+            </option>
+          ))}
         </select>
       </div>
 
+      {/* Disponibilidad */}
       <div className="mb-4">
         <label className="block text-sm font-medium">Disponible</label>
-        <input
-          type="checkbox"
-          name="available"
-          checked={filters.available}
-          onChange={handleCheckboxChange}
-          className="mr-2"
-        />
-        Solo Autos Disponibles
+        <div>
+          <input
+            type="checkbox"
+            name="available"
+            checked={filters.available}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          Solo Autos Disponibles
+        </div>
       </div>
+
+      {/* Botón de aplicar filtros */}
+      <Button
+        className="mt-4 w-full bg-blue-600 text-white"
+        onClick={onApplyFilters}
+      >
+        Aplicar Filtros
+      </Button>
     </div>
   );
-}
+};
