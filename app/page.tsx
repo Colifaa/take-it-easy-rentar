@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +8,8 @@ import { DatePicker } from "@/components/date-picker";
 import { CarFilters } from "@/components/car-filters";
 import supabase from "@/supabase/authTest";
 import { Users, Fuel, Cog } from "lucide-react";
-import {ReservationForm} from "../components/ReservationForm"
+import { ReservationForm } from "../components/ReservationForm";
+import AlertComponent from "../components/AlertReserve"; // Importamos el componente de alerta
 
 interface Car {
   id: string;
@@ -41,8 +41,25 @@ export default function Home() {
   const [fechaDevolucion, setFechaDevolucion] = useState<Date>();
 
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  const [showAlert, setShowAlert] = useState(false);   // Estado para manejar el mensaje de alerta
+  const [user, setUser] = useState<any>(null); // Estado para almacenar información del usuario
+console.log(user?.user.id);
+
 
   useEffect(() => {
+    const checkSession = async () => {
+      // Esperar la resolución de la promesa para obtener la sesión de Supabase
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Error al obtener la sesión:", error);
+      } else {
+        setUser(data?.session); // Si la sesión es válida, guardamos la información
+      }
+    };
+
+    // Verificar sesión y obtener los autos
+    checkSession();
+
     const fetchCars = async () => {
       setLoading(true);
       const { data, error } = await supabase
@@ -61,7 +78,7 @@ export default function Home() {
     };
 
     fetchCars();
-  }, []);
+  }, []); // Esta parte se ejecuta solo al montar el componente
 
   const handleApplyFilters = () => {
     const filtered = cars.filter((car) => {
@@ -101,6 +118,10 @@ export default function Home() {
     return <p>Cargando autos...</p>;
   }
 
+
+
+  
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
       {/* Hero Section */}
@@ -133,7 +154,6 @@ export default function Home() {
                 </label>
                 <div className="relative">
                   <Input placeholder="Ciudad o Aeropuerto" />
-                  <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
                 </div>
               </div>
 
@@ -160,6 +180,8 @@ export default function Home() {
           </Card>
         </div>
       </section>
+
+     
 
       {/* Car Listings Section */}
       <div className="container mx-auto p-6">
@@ -217,13 +239,32 @@ export default function Home() {
                         {car.fuelType}
                       </div>
                     </div>
+
                     <Button
-                      className="w-full"
-                      disabled={!car.available}
-                      onClick={() => handleOpenForm(car)}
-                    >
-                      {car.available ? "Reservar Ahora" : "No Disponible"}
-                    </Button>
+  className="w-full"
+  disabled={!car.available}
+  onClick={() => {
+    if (!user?.user.id) {
+      // Si no hay usuario autenticado, mostrar el componente de alerta
+      setShowAlert(true);
+    } else {
+      // Si hay un usuario autenticado, abrir el formulario
+      handleOpenForm(car);
+    }
+  }}
+>
+  {car.available ? "Reservar Ahora" : "No Disponible"}
+</Button>
+
+{/* Renderizar el componente de alerta solo si showAlert es verdadero */}
+{showAlert && (
+  <AlertComponent
+    message="Por favor, inicia sesión para continuar."
+
+  />
+)}
+
+
                   </Card>
                 ))}
               </div>
