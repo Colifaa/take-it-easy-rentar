@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +33,10 @@ interface EditCarDialogProps {
 
 export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
   const [editedCar, setEditedCar] = useState(initialData);
+  console.log(editedCar.fuelType,"editedCar");
+  
+
+  
   const [isOpen, setIsOpen] = useState(false); // Formulario cerrado por defecto
   const [imagePreview, setImagePreview] = useState<string>(initialData.imageUrl);
   const [imageFile, setImageFile] = useState<File | null>(null); // Para mantener el archivo de imagen seleccionado
@@ -51,6 +56,10 @@ export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
       })
       .eq("id", carId);
 
+      console.log(carData);
+      
+      
+
     if (error) {
       console.error("Error al actualizar los datos:", error);
       return { success: false, message: error.message };
@@ -58,6 +67,8 @@ export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
 
     return { success: true, data };
   };
+
+
 
   const handleChange = (field: string, value: any) => {
     setEditedCar((prev) => ({ ...prev, [field]: value }));
@@ -174,8 +185,8 @@ export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="gasoline">Gasolina</SelectItem>
-                    <SelectItem value="diesel">Diésel</SelectItem>
                     <SelectItem value="electric">Eléctrico</SelectItem>
+                    <SelectItem value="diesel">Diésel</SelectItem>
                     <SelectItem value="hybrid">Híbrido</SelectItem>
                   </SelectContent>
                 </Select>

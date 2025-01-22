@@ -80,12 +80,16 @@ export function CarList() {
                 {car.transmission === "automatic" ? "Automática" : "Manual"}
               </p>
               <p>
-                <strong>Tipo de combustible: </strong>
-                {car.fuelType === "gasoline"
-                  ? "Gasolina"
-                  : car.fuelType === "electric"
-                  ? "Eléctrico"
-                  : "Desconocido"}
+              <strong>Tipo de combustible: </strong>
+{car.fuelType === "gasoline"
+  ? "Gasolina"
+  : car.fuelType === "diesel"
+  ? "Diésel"
+  : car.fuelType === "electric"
+  ? "Eléctrico"
+  : car.fuelType === "hybrid"
+  ? "Híbrido"
+  : "Desconocido"}
               </p>
             </div>
 
