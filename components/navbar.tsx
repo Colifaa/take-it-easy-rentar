@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Box,
@@ -22,14 +22,15 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import supabase from "@/supabase/authTest";
 import LoginForm from "../components/login";
 
 interface User {
+  id: string;
   email: string;
   user_metadata: {
     name: string;
@@ -45,6 +46,7 @@ export default function Navbar() {
     onClose: closeModal,
   } = useDisclosure();
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false); // Nuevo estado para verificar si es admin
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -53,6 +55,19 @@ export default function Navbar() {
       } = await supabase.auth.getUser();
 
       setUser(user as User | null);
+
+      if (user) {
+        // Verificar si el usuario es admin
+        const { data, error } = await supabase
+          .from("user_roles")
+          .select("role_id")
+          .eq("user_id", user.id)
+          .single(); // Asumimos que un usuario tiene solo un rol
+
+        if (data && data.role_id === 1) {
+          setIsAdmin(true); // Cambiar el estado si es admin
+        }
+      }
     };
 
     fetchUser();
@@ -61,6 +76,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    setIsAdmin(false);
   };
 
   return (
@@ -75,23 +91,23 @@ export default function Navbar() {
         />
 
         <Flex alignItems="center">
-          <Link href="/" passHref>
+          <ChakraLink href="/" textDecoration="none">
             <Text fontSize="xl" fontWeight="bold">
               Take-It-Easy
             </Text>
-          </Link>
+          </ChakraLink>
         </Flex>
 
         <HStack as={"nav"} spacing={8} display={{ base: "none", md: "flex" }}>
-          <Link href="/" passHref>
-            <Text _hover={{ color: "blue.500" }}>Inicio</Text>
-          </Link>
-          <Link href="/about" passHref>
-            <Text _hover={{ color: "blue.500" }}>Sobre Nosotros</Text>
-          </Link>
-          <Link href="/contact" passHref>
-            <Text _hover={{ color: "blue.500" }}>Contacto</Text>
-          </Link>
+          <ChakraLink href="/" textDecoration="none" _hover={{ color: "blue.500" }}>
+            Inicio
+          </ChakraLink>
+          <ChakraLink href="/about" textDecoration="none" _hover={{ color: "blue.500" }}>
+            Sobre Nosotros
+          </ChakraLink>
+          <ChakraLink href="/contact" textDecoration="none" _hover={{ color: "blue.500" }}>
+            Contacto
+          </ChakraLink>
         </HStack>
 
         <Flex alignItems={"center"}>
@@ -107,9 +123,18 @@ export default function Navbar() {
                 <Avatar size={"sm"} src={user.user_metadata.avatar_url} />
               </MenuButton>
               <MenuList>
+                <MenuDivider />
                 <MenuItem>
                   <Text>Hola, {user.user_metadata.name}!</Text>
                 </MenuItem>
+                <MenuDivider />
+                {isAdmin && ( // Verificar si es admin
+                  <MenuItem>
+                    <ChakraLink href="/dashboard" textDecoration="none">
+                      Dashboard
+                    </ChakraLink>
+                  </MenuItem>
+                )}
                 <MenuDivider />
                 <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
               </MenuList>
@@ -125,15 +150,15 @@ export default function Navbar() {
       {isOpen && (
         <Box pb={4} display={{ md: "none" }}>
           <Stack as={"nav"} spacing={4}>
-            <Link href="/" passHref>
-              <Text _hover={{ color: "blue.500" }}>Inicio</Text>
-            </Link>
-            <Link href="/about" passHref>
-              <Text _hover={{ color: "blue.500" }}>Sobre Nosotros</Text>
-            </Link>
-            <Link href="/contact" passHref>
-              <Text _hover={{ color: "blue.500" }}>Contacto</Text>
-            </Link>
+            <ChakraLink href="/" textDecoration="none" _hover={{ color: "blue.500" }}>
+              Inicio
+            </ChakraLink>
+            <ChakraLink href="/about" textDecoration="none" _hover={{ color: "blue.500" }}>
+              Sobre Nosotros
+            </ChakraLink>
+            <ChakraLink href="/contact" textDecoration="none" _hover={{ color: "blue.500" }}>
+              Contacto
+            </ChakraLink>
           </Stack>
         </Box>
       )}
