@@ -103,6 +103,7 @@ export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
 
       console.log("Vehículo actualizado correctamente.");
       setIsOpen(false);
+      window.location.reload()
     } catch (error) {
       console.error("Error al actualizar los datos:", error);
     }

@@ -10,6 +10,7 @@ import supabase from "@/supabase/authTest";
 import { Users, Fuel, Cog } from "lucide-react";
 import { ReservationForm } from "../components/ReservationForm";
 import AlertComponent from "../components/AlertReserve"; // Importamos el componente de alerta
+import CarruselComentariosClientes from "@/components/CarruselComentariosClientes";
 
 interface Car {
   id: string;
@@ -270,12 +271,14 @@ console.log(user?.user.id);
               </div>
             )}
           </div>
+     
         </div>
       </div>
 
       {selectedCar && (
         <ReservationForm car={selectedCar} onClose={handleCloseForm} />
       )}
+      
     </main>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@chakra-ui/react";
-import  supabase  from "../supabase/authTest"; // Importa el cliente de Supabase
+import supabase from "../supabase/authTest"; // Importa el cliente de Supabase
 
 // Define la interfaz de filtros
 interface Filters {
@@ -29,45 +29,45 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters }: CarFiltersPr
 
   // Fetch datos de Supabase al montar el componente
   useEffect(() => {
-    // Obtener marcas, modelos, transmisiones y tipos de combustible de Supabase
     const fetchOptions = async () => {
       try {
         // Traer las marcas
-        const { data: brandData } = await supabase
-          .from('cars') // Nombre de la tabla donde están las marcas
-          .select('brand')
-  
+        const { data: brandData, error: brandError } = await supabase
+          .from("cars")
+          .select("brand");
+        if (brandError) throw brandError;
 
         // Traer modelos
-        const { data: modelData } = await supabase
-          .from('cars')
-          .select('model')
-       
+        const { data: modelData, error: modelError } = await supabase
+          .from("cars")
+          .select("model");
+        if (modelError) throw modelError;
 
         // Traer transmisiones
-        const { data: transmissionData } = await supabase
-          .from('cars')
-          .select('transmission')
-     
+        const { data: transmissionData, error: transmissionError } = await supabase
+          .from("cars")
+          .select("transmission");
+        if (transmissionError) throw transmissionError;
 
         // Traer tipos de combustible
-        const { data: fuelData } = await supabase
-          .from('cars')
-          .select('fuelType')
-    
+        const { data: fuelData, error: fuelError } = await supabase
+          .from("cars")
+          .select("fuelType");
+        if (fuelError) throw fuelError;
 
         // Actualizar estados con los datos obtenidos
-        setBrands(brandData?.map((item) => item.brand) || []);
-        setModels(modelData?.map((item) => item.model) || []);
-        setTransmissions(transmissionData?.map((item) => item.transmission) || []);
-        setFuelTypes(fuelData?.map((item) => item.fuelType) || []);
+        setBrands(Array.from(new Set(brandData?.map((item) => item.brand) || [])));
+        setModels(Array.from(new Set(modelData?.map((item) => item.model) || [])));
+        setTransmissions(Array.from(new Set(transmissionData?.map((item) => item.transmission) || [])));
+        setFuelTypes(Array.from(new Set(fuelData?.map((item) => item.fuelType) || [])));
+        
       } catch (error) {
         console.error("Error fetching data from Supabase:", error);
       }
     };
 
     fetchOptions();
-  }, []); // Se ejecuta solo una vez al montar el componente
+  }, []);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;

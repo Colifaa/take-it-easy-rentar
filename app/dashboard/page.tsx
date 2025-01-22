@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import supabase from "../../supabase/authTest";
 import CardWrapper from "../ui/dashboard/cards";
 import "../ui/global.css";
-
+import CarsAdminPage from "../../components/CarsAdminPage";
 import  {CarList } from "../../components/CarList";
 
 export default function DashboardPage() {
@@ -59,7 +59,7 @@ export default function DashboardPage() {
     <div>
       <CardWrapper />
       
-     
+      <CarsAdminPage/>
 
       <CarList/>
      

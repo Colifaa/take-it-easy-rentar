@@ -47,6 +47,7 @@ export function CarList() {
     } else {
       // Después de eliminar el coche, actualizamos la lista
       setCars((prevCars) => prevCars.filter((car) => car.id !== id));
+      
     }
   };
 
@@ -77,7 +78,7 @@ export function CarList() {
             <div className="mt-2 text-gray-700 text-sm">
               <p>
                 <strong>Transmisión: </strong>
-                {car.transmission === "automatic" ? "Automática" : "Manual"}
+                {car.transmission }
               </p>
               <p>
               <strong>Tipo de combustible: </strong>
