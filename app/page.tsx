@@ -10,7 +10,9 @@ import supabase from "@/supabase/authTest";
 import { Users, Fuel, Cog } from "lucide-react";
 import { ReservationForm } from "../components/ReservationForm";
 import AlertComponent from "../components/AlertReserve"; // Importamos el componente de alerta
-import CarruselComentariosClientes from "@/components/CarruselComentariosClientes";
+import { AnimatedTestimonialsDemo } from "@/components/AnimatedTestimonialsDemo";
+import { CommentForm } from "@/components/CommentForm";
+import { CarComent } from "@/components/CarComent";
 
 interface Car {
   id: string;
@@ -44,7 +46,7 @@ export default function Home() {
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [showAlert, setShowAlert] = useState(false);   // Estado para manejar el mensaje de alerta
   const [user, setUser] = useState<any>(null); // Estado para almacenar información del usuario
-console.log(user?.user.id);
+  console.log(user?.user.id);
 
 
   useEffect(() => {
@@ -121,7 +123,7 @@ console.log(user?.user.id);
 
 
 
-  
+
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
@@ -182,7 +184,7 @@ console.log(user?.user.id);
         </div>
       </section>
 
-     
+
 
       {/* Car Listings Section */}
       <div className="container mx-auto p-6">
@@ -193,6 +195,7 @@ console.log(user?.user.id);
               setFilters={setFilters}
               onApplyFilters={handleApplyFilters}
             />
+              
           </div>
 
           <div className="md:col-span-3">
@@ -209,9 +212,8 @@ console.log(user?.user.id);
                         className="w-full h-48 object-cover"
                       />
                       <div
-                        className={`absolute top-4 right-4 px-3 py-1 rounded-full text-white ${
-                          car.available ? "bg-green-500" : "bg-red-500"
-                        }`}
+                        className={`absolute top-4 right-4 px-3 py-1 rounded-full text-white ${car.available ? "bg-green-500" : "bg-red-500"
+                          }`}
                       >
                         {car.available ? "Disponible" : "Reservado"}
                       </div>
@@ -242,43 +244,52 @@ console.log(user?.user.id);
                     </div>
 
                     <Button
-  className="w-full"
-  disabled={!car.available}
-  onClick={() => {
-    if (!user?.user.id) {
-      // Si no hay usuario autenticado, mostrar el componente de alerta
-      setShowAlert(true);
-    } else {
-      // Si hay un usuario autenticado, abrir el formulario
-      handleOpenForm(car);
-    }
-  }}
->
-  {car.available ? "Reservar Ahora" : "No Disponible"}
-</Button>
+                      className="w-full"
+                      disabled={!car.available}
+                      onClick={() => {
+                        if (!user?.user.id) {
+                          // Si no hay usuario autenticado, mostrar el componente de alerta
+                          setShowAlert(true);
+                        } else {
+                          // Si hay un usuario autenticado, abrir el formulario
+                          handleOpenForm(car);
+                        }
+                      }}
+                    >
+                      {car.available ? "Reservar Ahora" : "No Disponible"}
+                    </Button>
 
-{/* Renderizar el componente de alerta solo si showAlert es verdadero */}
-{showAlert && (
-  <AlertComponent
-    message="Por favor, inicia sesión para continuar."
+                    {/* Renderizar el componente de alerta solo si showAlert es verdadero */}
+                    {showAlert && (
+                      <AlertComponent
+                        message="Por favor, inicia sesión para continuar."
 
-  />
-)}
+                      />
+                    )}
 
 
                   </Card>
                 ))}
-              </div>
-            )}
-          </div>
-     
-        </div>
-      </div>
 
+              </div>
+
+            )}
+          
+            
+          <AnimatedTestimonialsDemo />
+          </div>
+         
+        
+        </div>
+       
+      </div>
+     
       {selectedCar && (
         <ReservationForm car={selectedCar} onClose={handleCloseForm} />
       )}
-      
+   
+<CarComent/>
+
     </main>
   );
 }
