@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { useToast } from "@chakra-ui/react"; // Importar el toast de Chakra UI
 import supabase from "@/supabase/authTest";
@@ -14,6 +12,8 @@ export const CommentForm = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [user, setUser] = useState<User | null>(null); // Especificamos que user puede ser User o null
+  console.log(user?.user_metadata.nickname,"userese");
+  
 
   const toast = useToast(); // Chakra UI Toast
 
@@ -75,10 +75,11 @@ export const CommentForm = () => {
         .from("reviews") // Cambia "reviews" si tu tabla tiene otro nombre
         .insert([
           {
-            author: user?.email || "Anónimo", // Asigna el correo del usuario conectado o "Anónimo"
+            author: user?.user_metadata?.nickname|| "Anónimo", // Asigna el correo del usuario conectado o "Anónimo"
             comment,
             rating,
             src: base64Image, // Guardamos la imagen como Base64
+            approved: false,  // Añadimos el campo `approved` como `false` por defecto
           },
         ]);
 
@@ -108,19 +109,6 @@ export const CommentForm = () => {
         <p className="text-red-600 text-center mb-4">{errorMessage}</p>
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Campo de Nombre */}
-        <div>
-      
-          <input
-            type="text"
-            id="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-          />
-        </div>
-
         <div>
           <label
             htmlFor="comment"
@@ -148,7 +136,7 @@ export const CommentForm = () => {
             type="number"
             id="rating"
             value={rating}
-            onChange={(e) => setRating(Number(e.target.value))}
+            onChange={(e) => setRating(parseInt(e.target.value))} // Aquí usamos parseInt y un valor por defecto de 1
             min={1}
             max={5}
             required
@@ -172,10 +160,10 @@ export const CommentForm = () => {
         </div>
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !user}  // Deshabilitar si no hay usuario
           className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none"
         >
-          {loading ? "Enviando..." : "Enviar comentario"}
+          {loading ? "Enviando..." : !user ? "Debe iniciar sesión para comentar" : "Enviar comentario"}
         </button>
       </form>
     </div>

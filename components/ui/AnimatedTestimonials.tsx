@@ -1,13 +1,8 @@
-"use client";
-
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import supabase from "@/supabase/authTest";
-
-
-
 
 type Testimonial = {
   id: number;
@@ -15,27 +10,28 @@ type Testimonial = {
   author: string;  // Autor del comentario
   rating: number;  // Calificación
   src: string;     // URL de la imagen (puede ser opcional inicialmente)
+  approved: Boolean;
 };
 
 export const AnimatedTestimonials = ({ autoplay = false }: { autoplay?: boolean }) => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [active, setActive] = useState(0);
 
-  // Obtener datos desde la base de datos
+  // State to store only approved comments
+  const [showComments, setShowComments] = useState<Testimonial[]>([]); // Comments that are approved
+
   const fetchTestimonials = async () => {
     const { data, error } = await supabase
-      .from("reviews") // Cambia "reviews" si tu tabla tiene otro nombre
+      .from("reviews")
       .select("*");
 
     if (error) {
       console.error("Error fetching testimonials:", error.message);
     } else {
-      // Formatear datos para incluir imágenes predeterminadas (por ahora vacías)
-      const formattedData = data.map((item) => ({
-        ...item,
-       
-      }));
-      setTestimonials(formattedData);
+      // Filtramos los comentarios aprobados
+      const approvedTestimonials = data.filter((item) => item.approved === true);
+      setTestimonials(approvedTestimonials); // Solo comentarios aprobados
+      setShowComments(approvedTestimonials); // Solo comentarios aprobados
     }
   };
 
@@ -120,6 +116,8 @@ export const AnimatedTestimonials = ({ autoplay = false }: { autoplay?: boolean 
               <p className="text-sm text-gray-500 dark:text-neutral-500">
                 Rating: {testimonials[active].rating}/5
               </p>
+
+              {/* Renderizar los comentarios solo si el comentario está aprobado */}
               <motion.p className="text-lg text-gray-500 mt-8 dark:text-neutral-300">
                 {testimonials[active].comment.split(" ").map((word, index) => (
                   <motion.span

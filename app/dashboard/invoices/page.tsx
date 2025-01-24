@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import { useEffect, useState } from "react";
 import supabase from "@/supabase/authTest";
 import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
@@ -13,6 +12,7 @@ interface Comment {
   rating: number;
   src?: string; // URL de la imagen, opcional
   created_at: string; // Fecha de creación
+  approved: boolean; // Nuevo campo que indica si el comentario está aprobado
 }
 
 export default function Page() {
@@ -70,6 +70,31 @@ export default function Page() {
     }
   };
 
+  // Función para aprobar o desaprobar un comentario
+  const toggleApproval = async (id: number, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from("reviews")
+        .update({ approved: !currentStatus }) // Cambia el estado de aprobado
+        .eq("id", id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Actualizar la lista de comentarios localmente
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.id === id
+            ? { ...comment, approved: !currentStatus } // Actualizar el estado de aprobado
+            : comment
+        )
+      );
+    } catch (error) {
+      setErrorMessage((error as Error).message);
+    }
+  };
+
   return (
     <div className="p-6">
       <Breadcrumbs breadcrumbs={breadcrumbs} />
@@ -104,6 +129,16 @@ export default function Page() {
                     />
                   )}
                 </div>
+
+                {/* Botón de aprobar/desaprobar */}
+                <button
+                  onClick={() => toggleApproval(comment.id, comment.approved)}
+                  className={`py-1 px-3 rounded ${comment.approved ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-600 hover:bg-yellow-700'} text-white`}
+                >
+                  {comment.approved ? 'Desaprobar comentario' : 'Aprobar comentario'}
+                </button>
+
+                {/* Botón de eliminar */}
                 <button
                   onClick={() => deleteComment(comment.id)}
                   className="py-1 px-3 bg-red-600 text-white rounded hover:bg-red-700"

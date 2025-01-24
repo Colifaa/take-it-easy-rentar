@@ -276,12 +276,12 @@ export default function Home() {
             )}
           
             
-          <AnimatedTestimonialsDemo />
+         
           </div>
          
         
         </div>
-       
+        <AnimatedTestimonialsDemo />
       </div>
      
       {selectedCar && (
