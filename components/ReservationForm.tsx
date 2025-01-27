@@ -1,4 +1,6 @@
 import supabase from "@/supabase/authTest";
+import { useLanguage } from "../hooks/use-language";
+import { languages } from "../lib/languages";
 
 interface Car {
   id: string;
@@ -73,77 +75,88 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ car, onClose }
     window.open(whatsappApiUrl, "_blank");
   };
 
+  const { language} = useLanguage(); 
+  const t = languages[language];
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg p-6 w-full max-w-md mx-auto">
-        <h2 className="text-xl font-bold mb-4 text-center">Reservar {car.brand} {car.model}</h2>
-        <p className="text-gray-600 mb-4 text-center">Precio: ${car.price}/día</p>
-        <p className="text-gray-600 mb-4 text-center">Combustible: {car.fuelType}</p>
-        <p className="text-gray-600 mb-4 text-center">Transmición: {car.transmission}</p>
+        <h2 className="text-xl font-bold mb-4 text-center">
+          {t.reservation.title.replace("{carBrand}", car.brand).replace("{carModel}", car.model)}
+        </h2>
+        <p className="text-gray-600 mb-4 text-center">
+  {t.reservation.price.replace("{price}", car.price.toString())}
+</p>
+        <p className="text-gray-600 mb-4 text-center">
+          {t.reservation.fuel.replace("{fuelType}", car.fuelType)}
+        </p>
+        <p className="text-gray-600 mb-4 text-center">
+          {t.reservation.transmission.replace("{transmission}", car.transmission)}
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:space-x-4">
             <label className="block w-full sm:w-1/2 mb-2">
-              Nombre del Comprador:
+              {t.reservation.buyerName}:
               <input type="text" name="buyerName" className="w-full p-2 border rounded" required />
             </label>
             <label className="block w-full sm:w-1/2 mb-2">
-              Correo Electrónico:
+              {t.reservation.email}:
               <input type="email" name="email" className="w-full p-2 border rounded" required />
             </label>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:space-x-4">
             <label className="block w-full sm:w-1/2 mb-2">
-              Número de Teléfono:
+              {t.reservation.phone}:
               <input type="tel" name="phone" className="w-full p-2 border rounded" required />
             </label>
             <label className="block w-full sm:w-1/2 mb-2">
-              Tipo de Documento:
+              {t.reservation.idType}:
               <input type="text" name="idType" className="w-full p-2 border rounded" required />
             </label>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:space-x-4">
             <label className="block w-full sm:w-1/2 mb-2">
-              Fecha de Inicio:
+              {t.reservation.startDate}:
               <input type="date" name="startDate" className="w-full p-2 border rounded" required />
             </label>
             <label className="block w-full sm:w-1/2 mb-2">
-              Fecha de Fin:
+              {t.reservation.endDate}:
               <input type="date" name="endDate" className="w-full p-2 border rounded" required />
             </label>
           </div>
 
           <label className="block mb-2">
-            Método de Pago:
+            {t.reservation.paymentMethod}:
             <select name="paymentMethod" className="w-full p-2 border rounded" required>
-              <option value="card">Tarjeta</option>
-              <option value="transfer">Transferencia Bancaria</option>
-              <option value="cash">Efectivo</option>
+            <option value="card">{t.reservation.card}</option>
+    <option value="transfer">{t.reservation.transfer}</option>
+    <option value="cash">{t.reservation.cash}</option>   
             </select>
           </label>
 
           <label className="block mb-2">
-            Dirección de Entrega o Recogida:
+            {t.reservation.deliveryAddress}:
             <input type="text" name="deliveryAddress" className="w-full p-2 border rounded" />
           </label>
 
           <label className="block mb-4">
-            Observaciones Adicionales:
+            {t.reservation.additionalNotes}:
             <textarea name="additionalNotes" className="w-full p-2 border rounded" />
           </label>
 
           <div className="flex justify-between items-center">
             <button type="submit" className="bg-primary text-white px-4 py-2 rounded">
-              Confirmar Reserva
+              {t.reservation.confirm}
             </button>
             <button
               type="button"
               className="text-gray-500 ml-4"
               onClick={onClose}
             >
-              Cancelar
+              {t.reservation.cancel}
             </button>
           </div>
         </form>
@@ -151,3 +164,4 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ car, onClose }
     </div>
   );
 };
+

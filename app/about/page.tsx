@@ -2,24 +2,28 @@
 
 import { Shield, Star, Clock, Award } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useLanguage } from "../../hooks/use-language";
+import { languages } from "../../lib/languages";
 
 export default function About() {
+
+    const { language } = useLanguage();
+    const t = languages[language];
+  
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
       <section className="relative py-20">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold text-center mb-12">Sobre Nosotros</h1>
+          <h1 className="text-4xl font-bold text-center mb-12">{t.about.title}</h1>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
             <div>
-              <h2 className="text-3xl font-semibold mb-6">Tu Socio de Confianza en Alquiler de Autos</h2>
+              <h2 className="text-3xl font-semibold mb-6">{t.about.header}</h2>
               <p className="text-gray-600 mb-4">
-                Con más de 15 años de experiencia en el mercado, nos hemos convertido en líderes en el alquiler de vehículos, 
-                ofreciendo un servicio personalizado y de calidad a todos nuestros clientes.
+              {t.about.paragraph1}
               </p>
               <p className="text-gray-600">
-                Nuestra misión es proporcionar la mejor experiencia de alquiler de autos, 
-                con una flota moderna y un servicio excepcional que supere tus expectativas.
+              {t.about.paragraph2}
               </p>
             </div>
             <div>
@@ -34,23 +38,23 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <Card className="p-6 text-center">
               <Shield className="w-10 h-10 mx-auto mb-4 text-primary" />
-              <h3 className="font-semibold mb-2">100% Seguro</h3>
-              <p className="text-sm text-gray-600">Vehículos asegurados y certificados</p>
+              <h3 className="font-semibold mb-2">{t.about.paragraph3}</h3>
+              <p className="text-sm text-gray-600">{t.about.description1}</p>
             </Card>
             <Card className="p-6 text-center">
               <Star className="w-10 h-10 mx-auto mb-4 text-primary" />
-              <h3 className="font-semibold mb-2">Calidad Premium</h3>
-              <p className="text-sm text-gray-600">Flota de última generación</p>
+              <h3 className="font-semibold mb-2">{t.about.paragraph4}</h3>
+              <p className="text-sm text-gray-600">{t.about.description2}</p>
             </Card>
             <Card className="p-6 text-center">
               <Clock className="w-10 h-10 mx-auto mb-4 text-primary" />
-              <h3 className="font-semibold mb-2">Servicio Rápido</h3>
-              <p className="text-sm text-gray-600">Proceso de alquiler simplificado</p>
+              <h3 className="font-semibold mb-2">{t.about.paragraph5}</h3>
+              <p className="text-sm text-gray-600">{t.about.description3}</p>
             </Card>
             <Card className="p-6 text-center">
               <Award className="w-10 h-10 mx-auto mb-4 text-primary" />
-              <h3 className="font-semibold mb-2">Premiados</h3>
-              <p className="text-sm text-gray-600">Reconocidos por nuestra excelencia</p>
+              <h3 className="font-semibold mb-2">{t.about.paragraph6}</h3>
+              <p className="text-sm text-gray-600">{t.about.description4}</p>
             </Card>
           </div>
         </div>

@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import supabase from "../supabase/authTest";
+import { useLanguage } from "../hooks/use-language";
+import { languages } from "../lib/languages";
 
 async function loginUser(email: string, password: string, router: any) {
   const { data: authData, error } = await supabase.auth.signInWithPassword({
@@ -97,18 +99,21 @@ const LoginForm: React.FC = () => {
     await signUpUser(email, password, router);
   };
 
+  const { language } = useLanguage();
+  const t = languages[language];
+
+
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
       <div className="max-w-md mx-auto bg-white rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
         <div className="text-center py-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-          <h1 className="text-3xl font-bold">Welcome</h1>
+          <h1 className="text-3xl font-bold">{t.auth.welcome}</h1>
           <p className="mt-2">
-            {tab === "signup"
-              ? "Join our amazing community"
-              : "Login to access the dashboard"}
+            {tab === "signup" ? t.auth.signupMessage : t.auth.loginMessage}
           </p>
         </div>
-
+  
         <div className="p-8">
           <div className="flex justify-center mb-6">
             <button
@@ -117,7 +122,7 @@ const LoginForm: React.FC = () => {
                 tab === "signup" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
               }`}
             >
-              Sign Up
+              {t.auth.signupButton}
             </button>
             <button
               onClick={() => setTab("login")}
@@ -125,22 +130,22 @@ const LoginForm: React.FC = () => {
                 tab === "login" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
               }`}
             >
-              Login
+              {t.auth.loginButton}
             </button>
           </div>
-
+  
           {tab === "signup" ? (
             <form className="space-y-4">
               <input
                 type="email"
-                placeholder="Correo electrónico"
+                placeholder={t.auth.emailPlaceholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 border rounded-md focus:outline-none"
               />
               <input
                 type="password"
-                placeholder="Contraseña"
+                placeholder={t.auth.passwordPlaceholder}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2 border rounded-md focus:outline-none"
@@ -149,21 +154,21 @@ const LoginForm: React.FC = () => {
                 onClick={handleSignUp}
                 className="w-full bg-gradient-to-r from-green-500 to-purple-600 text-white py-2 rounded-md"
               >
-                Crear Cuenta
+                {t.auth.createAccountButton}
               </button>
             </form>
           ) : (
             <form className="space-y-4">
               <input
                 type="email"
-                placeholder="Correo electrónico"
+                placeholder={t.auth.emailPlaceholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 border rounded-md focus:outline-none"
               />
               <input
                 type="password"
-                placeholder="Contraseña"
+                placeholder={t.auth.passwordPlaceholder}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2 border rounded-md focus:outline-none"
@@ -172,41 +177,41 @@ const LoginForm: React.FC = () => {
                 onClick={handleLogin}
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-md"
               >
-                Iniciar Sesión
+                {t.auth.loginButtonSubmit}
               </button>
             </form>
           )}
-
+  
           <div className="mt-6">
-            <p className="text-center text-gray-600 mb-4">Or continue with</p>
+            <p className="text-center text-gray-600 mb-4">{t.auth.continueWith}</p>
             <div className="flex justify-center space-x-4">
               <button
                 onClick={() => loginWithGoogle(router)}
                 className="bg-red-600 text-white px-4 py-2 rounded-md"
               >
-                Google
+                {t.auth.googleButton}
               </button>
               <button
                 onClick={() => loginWithFacebook(router)}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md"
               >
-                Facebook
+                {t.auth.facebookButton}
               </button>
             </div>
           </div>
-
+  
           <div className="mt-6">
             <button
               onClick={() => logoutUser(router)}
               className="w-full bg-red-600 text-white py-2 rounded-md"
             >
-              Cerrar Sesión
+              {t.auth.logoutButton}
             </button>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default LoginForm;

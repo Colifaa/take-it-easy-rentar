@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useToast } from "@chakra-ui/react"; // Importar el toast de Chakra UI
 import supabase from "@/supabase/authTest";
 import { User } from "@supabase/supabase-js"; // Importa el tipo User
+import { useLanguage } from "../hooks/use-language";
+import { languages } from "../lib/languages";
 
 export const CommentForm = () => {
   const [author, setAuthor] = useState("");  // Aquí mantengo el estado para el autor
@@ -12,8 +14,8 @@ export const CommentForm = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [user, setUser] = useState<User | null>(null); // Especificamos que user puede ser User o null
-  console.log(user?.user_metadata.nickname,"userese");
-  
+  const { language } = useLanguage();
+  const t = languages[language].comments; // Usamos las propiedades del JSON correcto
 
   const toast = useToast(); // Chakra UI Toast
 
@@ -50,7 +52,7 @@ export const CommentForm = () => {
     // Si no hay un usuario conectado, mostramos una alerta de Chakra UI
     if (!user) {
       toast({
-        title: "Debe iniciar sesión.",
+        title: t.loginToComment,
         description: "Inicie sesión para poder dejar un comentario.",
         status: "error",
         duration: 4000,
@@ -75,7 +77,7 @@ export const CommentForm = () => {
         .from("reviews") // Cambia "reviews" si tu tabla tiene otro nombre
         .insert([
           {
-            author: user?.user_metadata?.nickname|| "Anónimo", // Asigna el correo del usuario conectado o "Anónimo"
+            author: user?.user_metadata?.nickname || "Anónimo", // Asigna el correo del usuario conectado o "Anónimo"
             comment,
             rating,
             src: base64Image, // Guardamos la imagen como Base64
@@ -87,7 +89,7 @@ export const CommentForm = () => {
         throw new Error(error.message);
       }
 
-      setSuccessMessage("¡Comentario enviado exitosamente!");
+      setSuccessMessage(t.successMessage);
       setAuthor("");  // Limpiar el campo de nombre
       setComment("");
       setRating(5);
@@ -101,7 +103,7 @@ export const CommentForm = () => {
 
   return (
     <div className="max-w-md mx-auto mt-8">
-      <h2 className="text-2xl font-bold text-center mb-4">Deja tu comentario</h2>
+      <h2 className="text-2xl font-bold text-center mb-4">{t.title}</h2>
       {successMessage && (
         <p className="text-green-600 text-center mb-4">{successMessage}</p>
       )}
@@ -114,7 +116,7 @@ export const CommentForm = () => {
             htmlFor="comment"
             className="block text-sm font-medium text-gray-700"
           >
-            Comentario
+            {t.commentLabel}
           </label>
           <textarea
             id="comment"
@@ -130,7 +132,7 @@ export const CommentForm = () => {
             htmlFor="rating"
             className="block text-sm font-medium text-gray-700"
           >
-            Calificación (1-5)
+            {t.ratingLabel}
           </label>
           <input
             type="number"
@@ -148,7 +150,7 @@ export const CommentForm = () => {
             htmlFor="file"
             className="block text-sm font-medium text-gray-700"
           >
-            Imagen (opcional)
+            {t.imageLabel}
           </label>
           <input
             type="file"
@@ -163,7 +165,7 @@ export const CommentForm = () => {
           disabled={loading || !user}  // Deshabilitar si no hay usuario
           className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none"
         >
-          {loading ? "Enviando..." : !user ? "Debe iniciar sesión para comentar" : "Enviar comentario"}
+          {loading ? t.submittingButton : !user ? t.loginToComment : t.submitButton}
         </button>
       </form>
     </div>
