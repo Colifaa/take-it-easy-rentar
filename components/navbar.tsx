@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Box,
@@ -25,9 +25,11 @@ import {
   Link as ChakraLink,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
+import { Languages } from "lucide-react"; // Asegúrate de tener este icono instalado
 import { useState, useEffect } from "react";
 import supabase from "@/supabase/authTest";
 import LoginForm from "../components/login";
+import { useLanguage } from "../hooks/use-language";
 
 interface User {
   id: string;
@@ -47,6 +49,7 @@ export default function Navbar() {
   } = useDisclosure();
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false); // Nuevo estado para verificar si es admin
+   const { language, setLanguage } = useLanguage();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -110,7 +113,17 @@ export default function Navbar() {
           </ChakraLink>
         </HStack>
 
-        <Flex alignItems={"center"}>
+        <Flex alignItems={"center"} gap={4}>
+          {/* Botón de cambio de idioma */}
+          <Button
+            variant="ghost"
+            size="sm"
+             onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
+          >
+            <Languages className="h-5 w-5" />
+            <Text ml={2}>{language.toUpperCase()}</Text>
+          </Button>
+
           {user ? (
             <Menu>
               <MenuButton
@@ -128,7 +141,7 @@ export default function Navbar() {
                   <Text>Hola, {user.user_metadata.name}!</Text>
                 </MenuItem>
                 <MenuDivider />
-                {isAdmin && ( // Verificar si es admin
+                {isAdmin && (
                   <MenuItem>
                     <ChakraLink href="/dashboard" textDecoration="none">
                       Dashboard
