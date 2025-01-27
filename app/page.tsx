@@ -13,6 +13,8 @@ import AlertComponent from "../components/AlertReserve"; // Importamos el compon
 import { AnimatedTestimonialsDemo } from "@/components/AnimatedTestimonialsDemo";
 import { CommentForm } from "@/components/CommentForm";
 import { CarComent } from "@/components/CarComent";
+import { useLanguage } from "../hooks/use-language";
+import { languages } from "../lib/languages";
 
 interface Car {
   id: string;
@@ -30,6 +32,8 @@ export default function Home() {
   const [cars, setCars] = useState<Car[]>([]);
   const [filteredCars, setFilteredCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
+  const { language } = useLanguage();
+  const t = languages[language];
 
   const [filters, setFilters] = useState({
     brand: "",
@@ -127,67 +131,66 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
-      {/* Hero Section */}
-      <section className="relative h-[600px] flex items-center justify-center">
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1485291571150-772bcfc10da5?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
+    {/* Hero Section */}
+    <section className="relative h-[600px] flex items-center justify-center">
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1485291571150-772bcfc10da5?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
 
-        <div className="relative z-10 container mx-auto px-4">
-          <h1 className="text-5xl font-bold text-white mb-6 text-center">
-            Alquila el Auto Perfecto
-          </h1>
-          <p className="text-xl text-white/90 text-center mb-12">
-            La mejor selección de autos para tus necesidades
-          </p>
+      <div className="relative z-10 container mx-auto px-4">
+        <h1 className="text-5xl font-bold text-white mb-6 text-center">
+          {t.hero.title}
+        </h1>
+        <p className="text-xl text-white/90 text-center mb-12">
+          {t.hero.subtitle}
+        </p>
 
-          <Card className="p-6 max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Lugar de Recogida
-                </label>
-                <div className="relative">
-                  <Input placeholder="Ciudad o Aeropuerto" />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Fecha de Recogida
-                </label>
-                <DatePicker date={fechaRecogida} setDate={setFechaRecogida} />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Fecha de Devolución
-                </label>
-                <DatePicker date={fechaDevolucion} setDate={setFechaDevolucion} />
-              </div>
-
-              <div className="flex items-end">
-                <Button className="w-full bg-primary hover:bg-primary/90">
-                  Buscar Autos
-                </Button>
+        <Card className="p-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                {t.booking.location}
+              </label>
+              <div className="relative">
+                <Input placeholder={t.booking.location} />
               </div>
             </div>
-          </Card>
-        </div>
-      </section>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                {t.booking.pickupDate}
+              </label>
+              <DatePicker date={fechaRecogida} setDate={setFechaRecogida} />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                {t.booking.returnDate}
+              </label>
+              <DatePicker date={fechaDevolucion} setDate={setFechaDevolucion} />
+            </div>
+
+            <div className="flex items-end">
+              <Button className="w-full bg-primary hover:bg-primary/90">
+                {t.booking.search}
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </section>
 
 
-
-      {/* Car Listings Section */}
-      <div className="container mx-auto p-6">
+  {/* Car Listings Section */}
+  <div className="container mx-auto p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="md:col-span-1">
             <CarFilters
@@ -195,12 +198,11 @@ export default function Home() {
               setFilters={setFilters}
               onApplyFilters={handleApplyFilters}
             />
-              
           </div>
 
           <div className="md:col-span-3">
             {filteredCars.length === 0 ? (
-              <p>No hay autos que coincidan con los filtros seleccionados.</p>
+              <p>{t.filters.noResults}</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredCars.map((car) => (
@@ -215,24 +217,25 @@ export default function Home() {
                         className={`absolute top-4 right-4 px-3 py-1 rounded-full text-white ${car.available ? "bg-green-500" : "bg-red-500"
                           }`}
                       >
-                        {car.available ? "Disponible" : "Reservado"}
+                        {car.available ? t.filters.available : t.filters.notAvailable}
                       </div>
                     </div>
                     <div className="p-6">
                       <h3 className="text-xl font-semibold">
                         {car.brand} {car.model}
                       </h3>
+                      <span className="text-sm text-gray-600">{t.reservation.price}</span>
                       <div className="text-xl font-bold text-primary">
                         ${car.price}
-                        <span className="text-sm text-gray-600">/día</span>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-4 mb-6">
                       <div className="flex items-center text-sm text-gray-600">
                         <Users className="w-4 h-4 mr-2" />
-                        5 asientos
+                        {t.reservation.assets}
                       </div>
+
                       <div className="flex items-center text-sm text-gray-600">
                         <Cog className="w-4 h-4 mr-2" />
                         {car.transmission}
@@ -256,13 +259,13 @@ export default function Home() {
                         }
                       }}
                     >
-                      {car.available ? "Reservar Ahora" : "No Disponible"}
+                       {car.available ? t.filters.available : t.filters.notAvailable}
                     </Button>
 
                     {/* Renderizar el componente de alerta solo si showAlert es verdadero */}
                     {showAlert && (
                       <AlertComponent
-                        message="Por favor, inicia sesión para continuar."
+                        message={t.filters.alert}
 
                       />
                     )}

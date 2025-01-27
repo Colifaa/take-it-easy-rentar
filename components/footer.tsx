@@ -24,17 +24,17 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link href="/" className="hover:text-white transition-colors">
-                  {t.nav.home}
+                  {t.navbar.home}
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="hover:text-white transition-colors">
-                  {t.nav.about}
+                  {t.navbar.about}
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:text-white transition-colors">
-                  {t.nav.contact}
+                  {t.navbar.contact}
                 </Link>
               </li>
             </ul>

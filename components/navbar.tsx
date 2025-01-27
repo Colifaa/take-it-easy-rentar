@@ -29,7 +29,9 @@ import { Languages } from "lucide-react"; // Asegúrate de tener este icono inst
 import { useState, useEffect } from "react";
 import supabase from "@/supabase/authTest";
 import LoginForm from "../components/login";
+
 import { useLanguage } from "../hooks/use-language";
+import { languages } from "../lib/languages";
 
 interface User {
   id: string;
@@ -49,7 +51,8 @@ export default function Navbar() {
   } = useDisclosure();
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false); // Nuevo estado para verificar si es admin
-   const { language, setLanguage } = useLanguage();
+  const { language, setLanguage } = useLanguage(); // Destructuramos setLanguage
+  const t = languages[language];
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -82,6 +85,8 @@ export default function Navbar() {
     setIsAdmin(false);
   };
 
+  
+
   return (
     <Box bg="gray.100" px={4}>
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
@@ -103,13 +108,13 @@ export default function Navbar() {
 
         <HStack as={"nav"} spacing={8} display={{ base: "none", md: "flex" }}>
           <ChakraLink href="/" textDecoration="none" _hover={{ color: "blue.500" }}>
-            Inicio
+            {t.navbar.home}
           </ChakraLink>
           <ChakraLink href="/about" textDecoration="none" _hover={{ color: "blue.500" }}>
-            Sobre Nosotros
+            {t.navbar.about}
           </ChakraLink>
           <ChakraLink href="/contact" textDecoration="none" _hover={{ color: "blue.500" }}>
-            Contacto
+            {t.navbar.contact}
           </ChakraLink>
         </HStack>
 
@@ -118,7 +123,7 @@ export default function Navbar() {
           <Button
             variant="ghost"
             size="sm"
-             onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
+            onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
           >
             <Languages className="h-5 w-5" />
             <Text ml={2}>{language.toUpperCase()}</Text>
@@ -138,23 +143,23 @@ export default function Navbar() {
               <MenuList>
                 <MenuDivider />
                 <MenuItem>
-                  <Text>Hola, {user.user_metadata.name}!</Text>
+                  <Text>{t.auth.welcome}, {user.user_metadata.name}!</Text>
                 </MenuItem>
                 <MenuDivider />
                 {isAdmin && (
                   <MenuItem>
                     <ChakraLink href="/dashboard" textDecoration="none">
-                      Dashboard
+                      {t.navbar.dashboard}
                     </ChakraLink>
                   </MenuItem>
                 )}
                 <MenuDivider />
-                <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+                <MenuItem onClick={handleLogout}>{t.navbar.logout}</MenuItem>
               </MenuList>
             </Menu>
           ) : (
             <Button colorScheme="teal" variant="outline" onClick={openModal}>
-              Iniciar sesión
+              {t.navbar.login}
             </Button>
           )}
         </Flex>
@@ -164,13 +169,13 @@ export default function Navbar() {
         <Box pb={4} display={{ md: "none" }}>
           <Stack as={"nav"} spacing={4}>
             <ChakraLink href="/" textDecoration="none" _hover={{ color: "blue.500" }}>
-              Inicio
+              {t.navbar.home}
             </ChakraLink>
             <ChakraLink href="/about" textDecoration="none" _hover={{ color: "blue.500" }}>
-              Sobre Nosotros
+              {t.navbar.about}
             </ChakraLink>
             <ChakraLink href="/contact" textDecoration="none" _hover={{ color: "blue.500" }}>
-              Contacto
+              {t.navbar.contact}
             </ChakraLink>
           </Stack>
         </Box>
@@ -180,14 +185,14 @@ export default function Navbar() {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Iniciar Sesión</ModalHeader>
+          <ModalHeader>{t.auth.loginMessage}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <LoginForm />
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={closeModal}>
-              Cerrar
+              {t.auth.createAccountButton}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -195,3 +200,4 @@ export default function Navbar() {
     </Box>
   );
 }
+
