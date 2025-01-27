@@ -33,10 +33,10 @@ interface EditCarDialogProps {
 
 export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
   const [editedCar, setEditedCar] = useState(initialData);
-  console.log(editedCar.fuelType,"editedCar");
-  
+  console.log(editedCar.fuelType, "editedCar");
 
-  
+
+
   const [isOpen, setIsOpen] = useState(false); // Formulario cerrado por defecto
   const [imagePreview, setImagePreview] = useState<string>(initialData.imageUrl);
   const [imageFile, setImageFile] = useState<File | null>(null); // Para mantener el archivo de imagen seleccionado
@@ -56,9 +56,9 @@ export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
       })
       .eq("id", carId);
 
-      console.log(carData);
-      
-      
+    console.log(carData);
+
+
 
     if (error) {
       console.error("Error al actualizar los datos:", error);
@@ -154,9 +154,10 @@ export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
                 <Input
                   id="price"
                   type="number"
-                  value={editedCar.price}
-                  onChange={(e) => handleChange("price", Number(e.target.value))}
+                  value={editedCar.price || ""}
+                  onChange={(e) => handleChange("price", e.target.value === "" ? "" : Number(e.target.value))}
                 />
+
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -170,7 +171,7 @@ export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="automatic">Automática</SelectItem>
+                    <SelectItem value="Automatic">Automatic</SelectItem>
                     <SelectItem value="manual">Manual</SelectItem>
                   </SelectContent>
                 </Select>

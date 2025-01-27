@@ -170,7 +170,7 @@ export default function CarsAdminPage() {
                 >
                   <option value="">Seleccione</option>
                   <option value="Manual">Manual</option>
-                  <option value="Automática">Automática</option>
+                  <option value="Automatic">Automatic</option>
                 </select>
               </div>
 
