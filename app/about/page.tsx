@@ -11,7 +11,7 @@ export default function About() {
     const t = languages[language];
   
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
+    <main className="min-h-screen bg-gradient-to-b from-white ">
       <section className="relative py-20">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold text-center mb-12">{t.about.title}</h1>
