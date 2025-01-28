@@ -102,7 +102,7 @@ export const CommentForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8">
+    <div className="max-w-md mx-auto mt-8 ">
       <h2 className="text-2xl font-bold text-center mb-4">{t.title}</h2>
       {successMessage && (
         <p className="text-green-600 text-center mb-4">{successMessage}</p>

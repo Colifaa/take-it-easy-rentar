@@ -11,10 +11,11 @@ import { Users, Fuel, Cog } from "lucide-react";
 import { ReservationForm } from "../components/ReservationForm";
 import AlertComponent from "../components/AlertReserve"; // Importamos el componente de alerta
 import { AnimatedTestimonialsDemo } from "@/components/AnimatedTestimonialsDemo";
-import { CommentForm } from "@/components/CommentForm";
+
 import { CarComent } from "@/components/CarComent";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
+
 
 interface Car {
   id: string;
@@ -130,9 +131,11 @@ export default function Home() {
 
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
+    <main className="min-h-screen bg-gradient-to-b ">
+         
     {/* Hero Section */}
     <section className="relative h-[600px] flex items-center justify-center">
+      
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -144,7 +147,7 @@ export default function Home() {
       >
         <div className="absolute inset-0 bg-black/40" />
       </div>
-
+   
       <div className="relative z-10 container mx-auto px-4">
         <h1 className="text-5xl font-bold text-white mb-6 text-center">
           {t.hero.title}

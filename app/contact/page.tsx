@@ -8,12 +8,14 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "../../hooks/use-language";
 import { languages } from "../../lib/languages";
 
+
 export default function Contact() {
   const { language } = useLanguage();
   const t = languages[language];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-gray-100">
+    <main className="min-h-screen  ">
+  
       <section className="py-20">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold text-center mb-12">{t.contact.sendMessage}</h1>
