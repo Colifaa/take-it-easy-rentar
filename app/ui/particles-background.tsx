@@ -1,5 +1,4 @@
 "use client";
-
 import { useCallback } from "react";
 import { loadFull } from "tsparticles";
 import Particles from "react-tsparticles";
@@ -11,59 +10,70 @@ export function ParticlesBackground() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full -z-50 bg-gradient-to-b from-white to-black">
-      <Particles
-        id="tsparticles"
-        init={particlesInit}
-        className="w-full h-full"
-        options={{
-          fullScreen: false, // Usamos false porque ya tenemos un contenedor que ocupa la pantalla completa
-          background: {
-            color: {
-              value: "transparent", // Deja transparente para permitir ver el gradiente
-            },
-          },
-          fpsLimit: 120,
-          particles: {
-            color: {
-              value: "#ffffff",
-            },
-            links: {
-              color: "#ffffff",
-              distance: 150,
-              enable: true,
-              opacity: 0.5,
-              width: 1,
-            },
-            move: {
-              enable: true,
-              outModes: {
-                default: "bounce",
+    <div className="fixed top-0 left-0 w-full h-full -z-50">
+      {/* Contenedor del video con z-[-1] para que esté detrás */}
+      <div className="absolute top-0 left-0 w-full h-full z-[-1]">
+        <video
+       className="w-full h-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="/video3.mp4" type="video/mp4" />
+          Tu navegador no soporta videos.
+        </video>
+      </div>
+
+      {/* Partículas encima del video */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        <Particles
+          id="tsparticles"
+          init={particlesInit}
+          className="w-full h-full"
+          options={{
+            fullScreen: false,
+            background: {
+              color: {
+                value: "transparent",
               },
-              random: false,
-              speed: 2,
-              straight: false,
             },
-            number: {
-              density: {
+            fpsLimit: 60,
+            particles: {
+              color: {
+                value: ["#ffffff", "#FFDDC1", "#FFC8A2"],
+              },
+              move: {
                 enable: true,
-                area: 800,
+                speed: 0.6,
+                direction: "top",
+                random: true,
+                straight: false,
+                outModes: {
+                  default: "out",
+                },
               },
-              value: 80,
+              number: {
+                value: 50,
+                density: {
+                  enable: true,
+                  area: 800,
+                },
+              },
+              opacity: {
+                value: { min: 0.3, max: 0.7 },
+              },
+              shape: {
+                type: ["circle", "star"],
+              },
+              size: {
+                value: { min: 2, max: 6 },
+              },
             },
-            opacity: {
-              value: 0.5,
-            },
-            shape: {
-              type: "circle",
-            },
-            size: {
-              value: { min: 1, max: 5 },
-            },
-          },
-          detectRetina: true,
-        }}
-      />
+            detectRetina: true,
+          }}
+        />
+      </div>
     </div>
   );
 }

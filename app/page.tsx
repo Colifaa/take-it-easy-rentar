@@ -262,7 +262,7 @@ export default function Home() {
                         }
                       }}
                     >
-                       {car.available ? t.filters.available : t.filters.notAvailable}
+                       {car.available ? t.filters.reservaButton : t.filters.notAvailable}
                     </Button>
 
                     {/* Renderizar el componente de alerta solo si showAlert es verdadero */}

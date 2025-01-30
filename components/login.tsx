@@ -4,18 +4,29 @@ import { useRouter } from "next/navigation";
 import supabase from "../supabase/authTest";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
+import Alert1 from "../components/Alerts/alertSingUp";
 
-async function loginUser(email: string, password: string, router: any) {
+import AlertSignInError from "../components/Alerts/AlertSignInError";
+
+
+async function loginUser(
+  email: string,
+  password: string,
+  router: any,
+  setShowErrorAlert: React.Dispatch<React.SetStateAction<boolean>>, 
+ 
+) {
   const { data: authData, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
-  console.log(authData, "data2");
-
   if (error) {
     console.error("Error al iniciar sesión:", error.message);
-    alert("Error al iniciar sesión: " + error.message);
+    setShowErrorAlert(true); // Ahora se activa correctamente la alerta
+    setTimeout(() => {
+      setShowErrorAlert(false); // Oculta la alerta después de 3 segundos
+    }, 3000);
     return;
   }
 }
@@ -59,7 +70,12 @@ const logoutUser = async (router: any) => {
   router.push("/");
 };
 
-const signUpUser = async (email: string, password: string, router: any) => {
+const signUpUser = async (
+  email: string,
+  password: string,
+  setShowAlert: React.Dispatch<React.SetStateAction<boolean>>,
+  router: any
+) => {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -71,15 +87,21 @@ const signUpUser = async (email: string, password: string, router: any) => {
     return;
   }
 
-  alert("Cuenta creada exitosamente. Por favor, verifica tu correo electrónico.");
-  router.push("/");
+  setShowAlert(true); // Muestra la alerta
+  setTimeout(() => {
+    setShowAlert(false); // Oculta la alerta después de 3 segundos
+    router.push("/"); // Redirige después de la creación exitosa
+  }, 3000);
 };
+
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
   const [tab, setTab] = useState<"signup" | "login">("login");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [showAlert, setShowAlert] = useState<boolean>(false); // Estado para la alerta
+  const [showErrorAlert, setShowErrorAlert] = useState<boolean>(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault(); // Evita el reload
@@ -87,7 +109,7 @@ const LoginForm: React.FC = () => {
       alert("Por favor, completa ambos campos.");
       return;
     }
-    await loginUser(email, password, router);
+    await loginUser(email, password, router,setShowErrorAlert);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -96,7 +118,7 @@ const LoginForm: React.FC = () => {
       alert("Por favor, completa ambos campos.");
       return;
     }
-    await signUpUser(email, password, router);
+    await signUpUser(email, password, setShowAlert, router);
   };
 
   const { language } = useLanguage();
@@ -113,8 +135,8 @@ const LoginForm: React.FC = () => {
             {tab === "signup" ? t.auth.signupMessage : t.auth.loginMessage}
           </p>
         </div>
-  
         <div className="p-8">
+      
           <div className="flex justify-center mb-6">
             <button
               onClick={() => setTab("signup")}
@@ -156,9 +178,15 @@ const LoginForm: React.FC = () => {
               >
                 {t.auth.createAccountButton}
               </button>
+                  {showAlert && (
+            <Alert1 message="Cuenta creada exitosamente. Por favor, verifica tu correo electrónico." />
+          )}
+        
             </form>
           ) : (
+
             <form className="space-y-4">
+               {showErrorAlert && <AlertSignInError message="Credenciales inválidas." />}
               <input
                 type="email"
                 placeholder={t.auth.emailPlaceholder}
