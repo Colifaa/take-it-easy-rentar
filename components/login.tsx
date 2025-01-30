@@ -104,13 +104,16 @@ const LoginForm: React.FC = () => {
   const [showErrorAlert, setShowErrorAlert] = useState<boolean>(false);
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault(); // Evita el reload
+    e.preventDefault(); // Evita el reload automático del navegador
     if (!email || !password) {
       alert("Por favor, completa ambos campos.");
       return;
     }
-    await loginUser(email, password, router,setShowErrorAlert);
+    await loginUser(email, password, router, setShowErrorAlert);
+    
+  
   };
+  
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault(); // Evita el reload
@@ -130,11 +133,15 @@ const LoginForm: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
       <div className="max-w-md mx-auto bg-white rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
         <div className="text-center py-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+          
           <h1 className="text-3xl font-bold">{t.auth.welcome}</h1>
           <p className="mt-2">
             {tab === "signup" ? t.auth.signupMessage : t.auth.loginMessage}
           </p>
         </div>
+        {showAlert && (
+            <Alert1 message="Cuenta creada exitosamente. Por favor, verifica tu correo electrónico." />
+          )}
         <div className="p-8">
       
           <div className="flex justify-center mb-6">
@@ -178,9 +185,7 @@ const LoginForm: React.FC = () => {
               >
                 {t.auth.createAccountButton}
               </button>
-                  {showAlert && (
-            <Alert1 message="Cuenta creada exitosamente. Por favor, verifica tu correo electrónico." />
-          )}
+        
         
             </form>
           ) : (

@@ -15,6 +15,8 @@ import { AnimatedTestimonialsDemo } from "@/components/AnimatedTestimonialsDemo"
 import { CarComent } from "@/components/CarComent";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
+import { VortexDemo } from "@/components/VortexDemo";
+import CarouselDemo from "../components/CarouselDemo"
 
 
 interface Car {
@@ -134,63 +136,8 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-b ">
          
     {/* Hero Section */}
-    <section className="relative h-[600px] flex items-center justify-center">
-      
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1485291571150-772bcfc10da5?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
-   
-      <div className="relative z-10 container mx-auto px-4">
-        <h1 className="text-5xl font-bold text-white mb-6 text-center">
-          {t.hero.title}
-        </h1>
-        <p className="text-xl text-white/90 text-center mb-12">
-          {t.hero.subtitle}
-        </p>
-
-        <Card className="p-6 max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                {t.booking.location}
-              </label>
-              <div className="relative">
-                <Input placeholder={t.booking.location} />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                {t.booking.pickupDate}
-              </label>
-              <DatePicker date={fechaRecogida} setDate={setFechaRecogida} />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                {t.booking.returnDate}
-              </label>
-              <DatePicker date={fechaDevolucion} setDate={setFechaDevolucion} />
-            </div>
-
-            <div className="flex items-end">
-              <Button className="w-full bg-primary hover:bg-primary/90">
-                {t.booking.search}
-              </Button>
-            </div>
-          </div>
-        </Card>
-      </div>
-    </section>
-
+    <VortexDemo/>
+    <CarouselDemo/>
 
   {/* Car Listings Section */}
   <div className="container mx-auto p-6">
