@@ -1,5 +1,5 @@
 import React from "react";
-import { Vortex } from "../app/ui/vortex";
+import { Vortex } from "../app/ui/Vortex";
 
 export function VortexDemo() {
   return (
