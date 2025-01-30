@@ -111,7 +111,7 @@ export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Editar Vehículo</Button>
+      <Button  onClick={() => setIsOpen(true)}  >Editar Vehículo</Button>
       <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
