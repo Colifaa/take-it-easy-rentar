@@ -11,12 +11,13 @@ import { Users, Fuel, Cog } from "lucide-react";
 import { ReservationForm } from "../components/ReservationForm";
 import AlertComponent from "../components/AlertReserve"; // Importamos el componente de alerta
 import { AnimatedTestimonialsDemo } from "@/components/AnimatedTestimonialsDemo";
-
 import { CarComent } from "@/components/CarComent";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
-import { VortexDemo } from "@/components/VortexDemo";
-import CarouselDemo from "../components/CarouselDemo"
+
+import {ImagesSliderDemo} from "../components/ImagesSliderDemo";
+import MotadlDetail from "../components/modalDetail";
+import { InfiniteMovingCardsDemo } from "@/components/InfiniteMovingCardsDemo";
 
 
 interface Car {
@@ -26,7 +27,7 @@ interface Car {
   price: number;
   transmission: string;
   fuelType: string;
-  imageUrl: string;
+  imageUrls: string[];  // Permite manejar múltiples archivos
   description: string;
   available: boolean;
 }
@@ -37,6 +38,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const { language } = useLanguage();
   const t = languages[language];
+
+  const [detalle, setDetalle] = useState<Car | null>(null); // Inicializa como null
 
   const [filters, setFilters] = useState({
     brand: "",
@@ -75,7 +78,7 @@ export default function Home() {
       const { data, error } = await supabase
         .from("cars")
         .select(
-          "id, brand, model, price, transmission, fuelType, imageUrl, description, available"
+          "id, brand, model, price, transmission, fuelType, imageUrls, description, available"
         );
 
       if (error) {
@@ -136,11 +139,13 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-b ">
          
     {/* Hero Section */}
-    <VortexDemo/>
-    <CarouselDemo/>
-
+   
+    <ImagesSliderDemo/>
+  
+  
   {/* Car Listings Section */}
   <div className="container mx-auto p-6">
+ 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="md:col-span-1">
             <CarFilters
@@ -149,7 +154,7 @@ export default function Home() {
               onApplyFilters={handleApplyFilters}
             />
           </div>
-
+        
           <div className="md:col-span-3">
             {filteredCars.length === 0 ? (
               <p>{t.filters.noResults}</p>
@@ -158,11 +163,12 @@ export default function Home() {
                 {filteredCars.map((car) => (
                   <Card key={car.id} className="overflow-hidden">
                     <div className="relative">
-                      <img
-                        src={car.imageUrl}
-                        alt={`${car.brand} ${car.model}`}
-                        className="w-full h-48 object-cover"
-                      />
+                    <img
+  src={car.imageUrls?.[0] }  // ✅ Mostrar solo una imagen 
+  alt={`${car.brand} ${car.model}`}
+  className="w-full h-48 object-cover cursor-pointer"
+  onClick={() => setDetalle(car)}
+/>
                       <div
                         className={`absolute top-4 right-4 px-3 py-1 rounded-full text-white ${car.available ? "bg-green-500" : "bg-red-500"
                           }`}
@@ -242,6 +248,7 @@ export default function Home() {
       )}
    
 <CarComent/>
+{detalle && <MotadlDetail car={detalle} onClose={() => setDetalle(null)} />}
 
     </main>
   );

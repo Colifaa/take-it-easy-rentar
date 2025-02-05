@@ -7,7 +7,7 @@ interface Car {
   price: number;
   transmission: string;
   fuelType: string;
-  imageUrl: string; // assuming imageUrl exists in the returned data
+  imageUrls: string[]; // Ahora es un array de strings
   description: string;
   available: boolean;
 }
@@ -25,31 +25,33 @@ export const getCarById = async (id: string): Promise<Car | null> => {
   }
   return data;
 };
-
 export const updateCarImage = async (
   carId: string,
   newImage: File
 ) => {
   try {
-    // Genera un nombre único para la nueva imagen (puedes usar un timestamp o UUID)
+    // Genera un nombre único para la nueva imagen
     const uniqueImageName = `${newImage.name.split('.')[0]}_${Date.now()}.${newImage.name.split('.').pop()}`;
-
-    // Ruta en la carpeta 'images' del bucket
     const imagePath = `images/${uniqueImageName}`;
 
-    // Eliminar la imagen antigua (si la tienes)
-    const oldImageUrl = await getCarById(carId);
-    const oldImagePath = oldImageUrl?.imageUrl || ''; // Obtiene la URL de la imagen antigua
+    console.log('Subiendo nueva imagen:', uniqueImageName);
 
-    if (oldImagePath) {
+    // Eliminar la imagen antigua si existe
+    const oldImageData = await getCarById(carId);
+    const oldImagePaths = oldImageData?.imageUrls || []; // Obtiene las URLs de las imágenes antiguas
+    console.log('Imagenes antiguas encontradas:', oldImagePaths);
+
+    if (oldImagePaths.length > 0) {
+      // Eliminamos cada imagen antigua en el array
       const { error: deleteError } = await supabase.storage
         .from('cars-images')
-        .remove([oldImagePath]);
+        .remove(oldImagePaths);
 
       if (deleteError) {
-        console.error('Error al eliminar la imagen antigua:', deleteError.message);
+        console.error('Error al eliminar las imágenes antiguas:', deleteError.message);
         return { success: false, message: deleteError.message };
       }
+      console.log('Imágenes antiguas eliminadas correctamente');
     }
 
     // Subir la nueva imagen
@@ -62,15 +64,21 @@ export const updateCarImage = async (
       return { success: false, message: error.message || 'Error desconocido al subir la imagen' };
     }
 
-    // Obtener la URL pública de la nueva imagen
-    const publicUrl = supabase.storage
-      .from('cars-images')
-      .getPublicUrl(imagePath).data.publicUrl;  // Aquí está el cambio, se usa 'publicUrl' en vez de 'publicURL'
+    console.log('Imagen subida correctamente:', data);
 
-    // Actualizar la base de datos con la URL pública de la nueva imagen
+    // Obtener la URL pública de la nueva imagen
+    const { data: urlData } = supabase.storage
+      .from('cars-images')
+      .getPublicUrl(imagePath);
+
+    const publicUrl = urlData.publicUrl; // Aquí accedemos directamente a publicUrl
+
+    console.log('URL pública de la nueva imagen:', publicUrl);
+
+    // Actualizar la base de datos con la nueva URL pública de la imagen
     const { data: updateData, error: updateError } = await supabase
       .from('cars')
-      .update({ imageUrl: publicUrl }) // Actualiza la columna 'imageUrl' con la nueva URL pública
+      .update({ imageUrls: [...oldImagePaths, publicUrl] }) // Agrega la nueva URL al array
       .eq('id', carId);
 
     if (updateError) {
@@ -78,7 +86,8 @@ export const updateCarImage = async (
       return { success: false, message: 'Error al actualizar la base de datos' };
     }
 
-    return { success: true, data };
+    console.log('Base de datos actualizada correctamente con la nueva imagen');
+    return { success: true, data: updateData };
   } catch (err) {
     if (err instanceof Error) {
       console.error('Error en la actualización de la imagen:', err.message);
@@ -89,5 +98,3 @@ export const updateCarImage = async (
     }
   }
 };
-
-

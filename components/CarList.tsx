@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import supabase from "../supabase/authTest";  // Asegúrate de que tu cliente de Supabase esté correctamente configurado
+import supabase from "../supabase/authTest";  
 import { EditCarDialog } from "./EditCarDialog";
 
-// Definir el tipo para los autos
 interface Car {
   id: string;
   brand: string;
@@ -11,30 +10,33 @@ interface Car {
   price: number;
   transmission: string;
   fuelType: string;
-  imageUrl: string;
+  imageUrls: string[]; // ✅ Ahora es un array
   description: string;
   available: boolean;
 }
 
 export function CarList() {
-  // Estado para almacenar los autos
   const [cars, setCars] = useState<Car[]>([]);
   const [editingCar, setEditingCar] = useState<Car | null>(null);
 
-  // Función para obtener los autos desde Supabase
   const fetchCars = async () => {
     const { data, error } = await supabase
       .from("cars")
-      .select("id, brand, model, year, price, transmission, fuelType, imageUrl, description, available");
+      .select("id, brand, model, year, price, transmission, fuelType, imageUrls, description, available");
 
     if (error) {
       console.error("Error al obtener los autos:", error.message);
     } else {
-      setCars(data || []); // Establecer los autos obtenidos en el estado
+      // 🔹 Nos aseguramos de que `imageUrls` sea un array
+      const formattedCars = data?.map(car => ({
+        ...car,
+        imageUrls: Array.isArray(car.imageUrls) ? car.imageUrls : [], 
+      })) || [];
+
+      setCars(formattedCars);
     }
   };
 
-  // Llamar a la función para obtener los autos cuando el componente se monte
   useEffect(() => {
     fetchCars();
   }, []);
@@ -45,21 +47,27 @@ export function CarList() {
     if (error) {
       console.error("Error al eliminar el auto:", error.message);
     } else {
-      // Después de eliminar el coche, actualizamos la lista
-      setCars((prevCars) => prevCars.filter((car) => car.id !== id));
-      
+      setCars(prevCars => prevCars.filter(car => car.id !== id));
     }
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {cars.map((car) => (
+      {cars.map(car => (
         <div key={car.id} className="bg-white shadow-lg rounded-lg overflow-hidden">
-          <img
-            src={car.imageUrl}
-            alt={`${car.brand} ${car.model}`}
-            className="w-full h-48 object-cover"
-          />
+          {/* 🔹 Solo mostramos la primera imagen si existe */}
+          {car.imageUrls.length > 0 ? (
+            <img
+              src={car.imageUrls[0]}
+              alt={`${car.brand} ${car.model}`}
+              className="w-full h-48 object-cover"
+            />
+          ) : (
+            <div className="w-full h-48 bg-gray-300 flex items-center justify-center text-gray-600">
+              No image available
+            </div>
+          )}
+
           <div className="p-4">
             <h2 className="text-xl font-semibold text-gray-800">
               {`${car.brand} ${car.model} ${car.year}`}
@@ -78,19 +86,19 @@ export function CarList() {
             <div className="mt-2 text-gray-700 text-sm">
               <p>
                 <strong>Transmisión: </strong>
-                {car.transmission }
+                {car.transmission}
               </p>
               <p>
-              <strong>Tipo de combustible: </strong>
-{car.fuelType === "gasoline"
-  ? "Gasolina"
-  : car.fuelType === "diesel"
-  ? "Diésel"
-  : car.fuelType === "electric"
-  ? "Eléctrico"
-  : car.fuelType === "hybrid"
-  ? "Híbrido"
-  : "Desconocido"}
+                <strong>Tipo de combustible: </strong>
+                {car.fuelType === "gasoline"
+                  ? "Gasolina"
+                  : car.fuelType === "diesel"
+                  ? "Diésel"
+                  : car.fuelType === "electric"
+                  ? "Eléctrico"
+                  : car.fuelType === "hybrid"
+                  ? "Híbrido"
+                  : "Desconocido"}
               </p>
             </div>
 
@@ -102,24 +110,23 @@ export function CarList() {
               >
                 Borrar
               </button>
-                     {/* Reemplazar el botón de editar con el componente EditCarDialog */}
-            <EditCarDialog
-              carId={car.id}
-              initialData={{
-                brand: car.brand,
-                model: car.model,
-                year: car.year,
-                price: car.price,
-                transmission: car.transmission,
-                fuelType: car.fuelType,
-                imageUrl: car.imageUrl,
-                description: car.description,
-                available: car.available,
-              }}
-            />
-            </div>
 
-     
+              {/* Editar auto */}
+              <EditCarDialog
+                carId={car.id}
+                initialData={{
+                  brand: car.brand,
+                  model: car.model,
+                  year: car.year,
+                  price: car.price,
+                  transmission: car.transmission,
+                  fuelType: car.fuelType,
+                  imageUrls: car.imageUrls,
+                  description: car.description,
+                  available: car.available,
+                }}
+              />
+            </div>
           </div>
         </div>
       ))}

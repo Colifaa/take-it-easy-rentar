@@ -9,7 +9,7 @@ interface Car {
   price: number;
   fuelType: string;
   transmission: string;
-  imageUrl: string; // URL de la imagen del coche
+  imageUrls: string[];  // Permite manejar múltiples archivos
 }
 
 interface ReservationFormProps {
@@ -57,7 +57,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ car, onClose }
     const startDate = formData.get("startDate");
     const endDate = formData.get("endDate");
     const phone = formData.get("phone");
-    const imageUrl = car.imageUrl; // URL de la imagen del coche
+    const imageUrl = car.imageUrls; // URL de la imagen del coche
     
     const message = encodeURIComponent(
       `Hola, soy el cliente: ${buyerName} 👋👋 . Quiero hacer la reserva del siguiente auto: 🚘 ${carDetails}.\n` +
