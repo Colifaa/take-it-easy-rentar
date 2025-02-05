@@ -88,6 +88,7 @@ export const languages = {
       noResults: "No results found",
       notAvailable: "Not Available",  // Aquí se agrega la traducción de "Not Available"
       alert:"Please log in to continue.",
+      disponibilidad:"Availability",
 
     },
     comments: {
@@ -206,6 +207,7 @@ export const languages = {
       logoutButton: "Cerrar Sesión",
     },
     filters: {
+       disponibilidad:"Disponibilidad",
       carFilters: "Filtros de Autos",
       brand: "Marca",
       selectBrand: "Seleccionar Marca",

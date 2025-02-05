@@ -1,30 +1,35 @@
 import supabase from "../supabase/authTest";
+export const uploadImages = async (path: string, files: File[]): Promise<string[]> => {
+  const uploadedImageUrls: string[] = [];
 
-// Función para subir una imagen al bucket
-export async function uploadImage(bucketName: string, file: File) {
-  // Nombre único para la imagen
-  const filePath = `images/${Date.now()}-${file.name}`;
+  // Subir cada imagen
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    try {
+      const { data, error } = await supabase.storage
+        .from("cars-images")  // Cambiado de "images" a "cars-images"
+        .upload(`${path}/${file.name}`, file);
 
-  // Subir la imagen al bucket
-  const { data, error } = await supabase.storage.from(bucketName).upload(filePath, file);
+      if (error) throw error;
 
-  if (error) {
-    console.error("Error al subir la imagen:", error.message);
-    throw new Error(`Error al subir la imagen: ${error.message}`);
+      // Almacenamos la URL de la imagen
+      const imageUrl = supabase.storage.from("cars-images").getPublicUrl(data.path).data.publicUrl;  // Cambiado aquí también
+
+      uploadedImageUrls.push(imageUrl);
+
+      // Debug para verificar que se están subiendo todas las imágenes
+      console.log(`Imagen subida: ${imageUrl}`);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      throw error;  // Manejar el error según sea necesario
+    }
   }
 
-  // Obtener la URL pública
-  const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+  console.log("Todas las URLs de imágenes subidas:", uploadedImageUrls);  // Ver las URLs finales
+  return uploadedImageUrls;  // Devolver las URLs de todas las imágenes subidas
+};
 
-  if (!publicUrlData.publicUrl) {
-    console.error("Error: No se pudo generar la URL pública.");
-    throw new Error("No se pudo generar la URL pública.");
-  }
-
-  return publicUrlData.publicUrl;
-}
-
-// Función para agregar un vehículo a la base de datos
+// Función para agregar un vehículo a la base de datos con múltiples imágenes
 export async function addCar(carDetails: {
   brand: string;
   model: string;
@@ -32,11 +37,10 @@ export async function addCar(carDetails: {
   price: number;
   transmission: string;
   fuelType: string;
-  imageUrl: string;
+  imageUrls: string[]; // Ahora acepta un array de URLs
   description: string;
   available: boolean;
 }) {
-  // Validar los detalles del vehículo antes de intentar insertarlos
   if (!carDetails.brand || !carDetails.model || !carDetails.year || !carDetails.price || !carDetails.transmission || !carDetails.fuelType || !carDetails.description) {
     throw new Error("Faltan detalles obligatorios del vehículo.");
   }
@@ -51,10 +55,10 @@ export async function addCar(carDetails: {
   return data;
 }
 
-// Función para subir imagen y agregar vehículo
-export async function uploadImageAndAddCar(
+// Función para subir imágenes y agregar vehículo
+export async function uploadImagesAndAddCar(
   bucketName: string,
-  file: File,
+  files: File[],
   carDetails: {
     brand: string;
     model: string;
@@ -67,18 +71,17 @@ export async function uploadImageAndAddCar(
   }
 ) {
   try {
-    // Subir imagen al bucket
-    const imageUrl = await uploadImage(bucketName, file);
-
-    // Agregar vehículo a la base de datos con la URL de la imagen
-    const carWithImage = { ...carDetails, imageUrl };
-    
-    // Verificar que todos los detalles del vehículo sean válidos
-    if (!carWithImage.imageUrl) {
-      throw new Error("La URL de la imagen no es válida.");
+    if (files.length === 0) {
+      throw new Error("Debe cargar al menos una imagen.");
     }
 
-    const result = await addCar(carWithImage);
+    // Subir imágenes al bucket y obtener las URLs
+    const imageUrls = await uploadImages(bucketName, files);
+
+    // Agregar vehículo a la base de datos con las URLs de las imágenes
+    const carWithImages = { ...carDetails, imageUrls };
+
+    const result = await addCar(carWithImages);
     return result;
   } catch (error) {
     console.error("Error al procesar la solicitud:", error);
