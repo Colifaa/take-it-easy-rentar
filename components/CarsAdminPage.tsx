@@ -16,7 +16,7 @@ export default function CarsAdminPage() {
     imageUrls: File[];  // Permite manejar múltiples archivos
     description: string;
     available: boolean;
-  }>( {
+  }>({
     brand: "",
     model: "",
     year: "",
@@ -35,7 +35,6 @@ export default function CarsAdminPage() {
       return;
     }
     console.log(formData.imageUrls);  // Verifica que el estado tiene todas las imágenes acumuladas
-
 
     try {
       // Subir las imágenes
@@ -115,165 +114,166 @@ export default function CarsAdminPage() {
           Agregar Vehículo
         </button>
       </div>
-
+  
       {isDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
-            <h2 className="text-lg font-bold mb-4">Agregar Nuevo Vehículo</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="brand" className="block text-sm font-medium">Marca</label>
-                <input
-                  id="brand"
-                  type="text"
-                  className="w-full border px-3 py-2 rounded"
-                  onChange={handleChange}
-                  value={formData.brand}
-                  required
-                />
-              </div>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="bg-white p-6 rounded shadow-lg w-full h-full max-w-full max-h-full overflow-auto">
+      <h2 className="text-lg font-bold mb-4">Agregar Nuevo Vehículo</h2>
+      <form onSubmit={handleSubmit} className="space-y-4 h-full overflow-y-auto">
+        <div>
+          <label htmlFor="brand" className="block text-sm font-medium">Marca</label>
+          <input
+            id="brand"
+            type="text"
+            className="w-full border px-3 py-2 rounded"
+            onChange={handleChange}
+            value={formData.brand}
+            required
+          />
+        </div>
 
-              <div>
-                <label htmlFor="model" className="block text-sm font-medium">Modelo</label>
-                <input
-                  id="model"
-                  type="text"
-                  className="w-full border px-3 py-2 rounded"
-                  onChange={handleChange}
-                  value={formData.model}
-                  required
-                />
-              </div>
+        <div>
+          <label htmlFor="model" className="block text-sm font-medium">Modelo</label>
+          <input
+            id="model"
+            type="text"
+            className="w-full border px-3 py-2 rounded"
+            onChange={handleChange}
+            value={formData.model}
+            required
+          />
+        </div>
 
-              <div>
-                <label htmlFor="year" className="block text-sm font-medium">Año</label>
-                <input
-                  id="year"
-                  type="number"
-                  className="w-full border px-3 py-2 rounded"
-                  onChange={handleChange}
-                  value={formData.year}
-                  required
-                />
-              </div>
+        <div>
+          <label htmlFor="year" className="block text-sm font-medium">Año</label>
+          <input
+            id="year"
+            type="number"
+            className="w-full border px-3 py-2 rounded"
+            onChange={handleChange}
+            value={formData.year}
+            required
+          />
+        </div>
 
-              <div>
-                <label htmlFor="price" className="block text-sm font-medium">Precio</label>
-                <input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  className="w-full border px-3 py-2 rounded"
-                  onChange={handleChange}
-                  value={formData.price}
-                  required
-                />
-              </div>
+        <div>
+          <label htmlFor="price" className="block text-sm font-medium">Precio</label>
+          <input
+            id="price"
+            type="number"
+            step="0.01"
+            className="w-full border px-3 py-2 rounded"
+            onChange={handleChange}
+            value={formData.price}
+            required
+          />
+        </div>
 
-              <div>
-                <label htmlFor="transmission" className="block text-sm font-medium">Transmisión</label>
-                <select
-                  id="transmission"
-                  className="w-full border px-3 py-2 rounded"
-                  onChange={handleChange}
-                  value={formData.transmission}
-                  required
-                >
-                  <option value="">Seleccione</option>
-                  <option value="Manual">Manual</option>
-                  <option value="Automatic">Automática</option>
-                </select>
-              </div>
+        <div>
+          <label htmlFor="transmission" className="block text-sm font-medium">Transmisión</label>
+          <select
+            id="transmission"
+            className="w-full border px-3 py-2 rounded"
+            onChange={handleChange}
+            value={formData.transmission}
+            required
+          >
+            <option value="">Seleccione</option>
+            <option value="Manual">Manual</option>
+            <option value="Automatic">Automática</option>
+          </select>
+        </div>
 
-              <div>
-                <label htmlFor="fuelType" className="block text-sm font-medium">Tipo de Combustible</label>
-                <select
-                  id="fuelType"
-                  className="w-full border px-3 py-2 rounded"
-                  onChange={handleChange}
-                  value={formData.fuelType}
-                  required
-                >
-                  <option value="">Seleccione</option>
-                  <option value="gasoline">Gasolina</option>
-                  <option value="diesel">Diésel</option>
-                  <option value="electric">Eléctrico</option>
-                  <option value="hybrid">Híbrido</option>
-                </select>
-              </div>
+        <div>
+          <label htmlFor="fuelType" className="block text-sm font-medium">Tipo de Combustible</label>
+          <select
+            id="fuelType"
+            className="w-full border px-3 py-2 rounded"
+            onChange={handleChange}
+            value={formData.fuelType}
+            required
+          >
+            <option value="">Seleccione</option>
+            <option value="gasoline">Gasolina</option>
+            <option value="diesel">Diésel</option>
+            <option value="electric">Eléctrico</option>
+            <option value="hybrid">Híbrido</option>
+          </select>
+        </div>
 
-              <div>
-                <label htmlFor="imageUrls" className="block text-sm font-medium">Imágenes</label>
-                <input
-                  id="imageUrls"
-                  type="file"
-                  className="w-full border px-3 py-2 rounded"
-                  onChange={handleChange}
-                  accept="image/*"
-                  multiple  // Permite seleccionar varias imágenes
-                  required
-                />
-              </div>
+        <div>
+          <label htmlFor="imageUrls" className="block text-sm font-medium">Imágenes</label>
+          <input
+            id="imageUrls"
+            type="file"
+            className="w-full border px-3 py-2 rounded"
+            onChange={handleChange}
+            accept="image/*"
+            multiple
+            required
+          />
+        </div>
 
-              {imagePreviews.length > 0 && (
-                <div className="grid grid-cols-3 gap-4 mt-4">
-                  {imagePreviews.map((preview, index) => (
-                    <div key={index} className="relative">
-                      <img src={preview} alt={`Preview ${index}`} className="w-full h-auto object-cover rounded-md" />
-                      <button
-                        type="button"
-                        className="absolute top-0 right-0 p-1 bg-red-600 text-white rounded-full"
-                        onClick={() => handleRemoveImage(index)}
-                      >
-                        X
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium">Descripción</label>
-                <textarea
-                  id="description"
-                  className="w-full border px-3 py-2 rounded"
-                  onChange={handleChange}
-                  value={formData.description}
-                  rows={3}
-                  required
-                ></textarea>
-              </div>
-
-              <div className="flex items-center">
-                <input
-                  id="available"
-                  type="checkbox"
-                  className="mr-2"
-                  onChange={handleChange}
-                  checked={formData.available}
-                />
-                <label htmlFor="available" className="text-sm">Disponible</label>
-              </div>
-
-              <div className="flex justify-end space-x-4">
+        {imagePreviews.length > 0 && (
+          <div className="grid grid-cols-11 gap-4 mt-4">
+            {imagePreviews.map((preview, index) => (
+              <div key={index} className="relative">
+                <img src={preview} alt={`Preview ${index}`} className="w-full h-auto object-cover rounded-md" />
                 <button
                   type="button"
-                  className="bg-gray-300 text-black px-4 py-2 rounded"
-                  onClick={() => setIsDialogOpen(false)}
+                  className="absolute top-0 right-0 p-1 bg-red-600 text-white rounded-full"
+                  onClick={() => handleRemoveImage(index)}
                 >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                  Guardar Vehículo
+                  X
                 </button>
               </div>
-            </form>
+            ))}
           </div>
+        )}
+
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium">Descripción</label>
+          <textarea
+            id="description"
+            className="w-full border px-3 py-2 rounded"
+            onChange={handleChange}
+            value={formData.description}
+            rows={3}
+            required
+          ></textarea>
         </div>
-      )}
+
+        <div className="flex items-center">
+          <input
+            id="available"
+            type="checkbox"
+            className="mr-2"
+            onChange={handleChange}
+            checked={formData.available}
+          />
+          <label htmlFor="available" className="text-sm">Disponible</label>
+        </div>
+
+        <div className="flex justify-end space-x-4">
+          <button
+            type="button"
+            className="bg-gray-300 text-black px-4 py-2 rounded"
+            onClick={() => setIsDialogOpen(false)}
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Guardar Vehículo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

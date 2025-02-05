@@ -11,7 +11,7 @@ export function ImagesSliderDemo() {
   ];
 
   return (
-    <ImagesSlider className="h-screen sm:h-80 md:h-[30rem] lg:h-[40rem] bg-transparent" images={videos}>
+    <ImagesSlider className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[40rem] bg-transparent" images={videos}>
       <motion.div
         initial={{
           opacity: 0,
