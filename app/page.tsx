@@ -143,113 +143,100 @@ export default function Home() {
     <ImagesSliderDemo/>
   
   
-  {/* Car Listings Section */}
-  <div className="container mx-auto p-6">
  
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="md:col-span-1">
-            <CarFilters
-              filters={filters}
-              setFilters={setFilters}
-              onApplyFilters={handleApplyFilters}
-            />
-          </div>
-        
-          <div className="md:col-span-3">
-            {filteredCars.length === 0 ? (
-              <p>{t.filters.noResults}</p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredCars.map((car) => (
-                  <Card key={car.id} className="overflow-hidden">
-                    <div className="relative">
-                    <img
-  src={car.imageUrls?.[0] }  // ✅ Mostrar solo una imagen 
-  alt={`${car.brand} ${car.model}`}
-  className="w-full h-48 object-cover cursor-pointer"
-  onClick={() => setDetalle(car)}
-/>
-                      <div
-                        className={`absolute top-4 right-4 px-3 py-1 rounded-full text-white ${car.available ? "bg-green-500" : "bg-red-500"
-                          }`}
-                      >
-                        {car.available ? t.filters.available : t.filters.notAvailable}
-                      </div>
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold">
-                        {car.brand} {car.model}
-                      </h3>
-                      <span className="text-sm text-gray-600">{t.reservation.price}</span>
-                      <div className="text-xl font-bold text-primary">
-                        ${car.price}
-                      </div>
-                    </div>
+   {/* Sección de Filtros y Listado de Autos */}
+        <div  id="autos" className="container mx-auto p-4">
+            <h2 className="text-2xl font-bold mb-4 text-center bg-[#3C888A]/60 backdrop-blur-md p-2 rounded-md">
+                🚗 Encuentra tu Auto Ideal
+            </h2>
 
-                    <div className="grid grid-cols-3 gap-4 mb-6">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Users className="w-4 h-4 mr-2" />
-                        {t.reservation.assets}
-                      </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {/* Filtros */}
+               
+                
+                    <CarFilters filters={filters} setFilters={setFilters} onApplyFilters={handleApplyFilters} />
+           
 
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Cog className="w-4 h-4 mr-2" />
-                        {car.transmission}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Fuel className="w-4 h-4 mr-2" />
-                        {car.fuelType}
-                      </div>
-                    </div>
+                {/* Lista de Autos */}
+                <section  className="md:col-span-3">
+                  
+                    {filteredCars.length === 0 ? (
+                        <p className="text-center text-lg text-[#3C888A]">{t.filters.noResults}</p>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                          
+                            {filteredCars.map((car) => (
+                                <Card key={car.id} className="overflow-hidden shadow-lg rounded-lg bg-[#AE7666]/90">
+                                  
+                                    <div className="relative">
+                                        <img
+                                            src={car.imageUrls?.[0] || "/placeholder.jpg"}
+                                            alt={`${car.brand} ${car.model}`}
+                                            className="w-full h-48 object-cover cursor-pointer"
+                                            onClick={() => setDetalle(car)}
+                                        />
+                                        <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-white ${car.available ? "bg-[#3C888A]" : "bg-[#C1625D]"}`}>
+                                            {car.available ? t.filters.available : t.filters.notAvailable}
+                                        </div>
+                                    </div>
+  {/* Alerta si el usuario no está autenticado */}
+  {showAlert && <AlertComponent message={t.filters.alert} />}
+                                    <div className="p-4">
+                                        <h3 className="text-lg font-semibold text-[#3C888A]">{car.brand} {car.model}</h3>
+                                        <p className="text-sm text-[#D8AC6B]">{t.reservation.price}</p>
+                                        <div className="text-xl font-bold text-[#5C798C]">${car.price}</div>
 
-                    <Button
-                      className="w-full"
-                      disabled={!car.available}
-                      onClick={() => {
+                                        {/* Características del Auto */}
+                                        <div className="grid grid-cols-3 gap-2 text-sm text-[#D8AC6B] mt-3">
+                                            <div className="flex items-center">
+                                                <Users className="w-4 h-4 mr-1" /> {t.reservation.assets}
+                                            </div>
+                                            <div className="flex items-center">
+                                                <Cog className="w-4 h-4 mr-1" /> {car.transmission}
+                                            </div>
+                                            <div className="flex items-center">
+                                                <Fuel className="w-4 h-4 mr-1" /> {car.fuelType}
+                                            </div>
+                                        </div>
+
+     {/* Botón de Reserva */}
+     <Button className="w-full mt-4" disabled={!car.available} onClick={() => {
                         if (!user?.user.id) {
-                          // Si no hay usuario autenticado, mostrar el componente de alerta
                           setShowAlert(true);
                         } else {
-                          // Si hay un usuario autenticado, abrir el formulario
                           handleOpenForm(car);
                         }
-                      }}
-                    >
-                       {car.available ? t.filters.reservaButton : t.filters.notAvailable}
-                    </Button>
+                      }}>
+                        {car.available ? t.filters.reservaButton : t.filters.notAvailable}
+                      </Button>
 
-                    {/* Renderizar el componente de alerta solo si showAlert es verdadero */}
-                    {showAlert && (
-                      <AlertComponent
-                        message={t.filters.alert}
-
-                      />
+                                      
+                                    </div>
+                                </Card>
+                            ))}
+                        </div>
+                        
                     )}
-
-
-                  </Card>
-                ))}
-
-              </div>
-
-            )}
-          
+                    
+                </section>
+            </div>
             
-         
-          </div>
-         
-        
         </div>
-        <AnimatedTestimonialsDemo />
-      </div>
-     
-      {selectedCar && (
-        <ReservationForm car={selectedCar} onClose={handleCloseForm} />
-      )}
-   
-<CarComent/>
-{detalle && <MotadlDetail car={detalle} onClose={() => setDetalle(null)} />}
 
+        {/* Sección de Testimonios */}
+        <section className="mt-16">
+            <AnimatedTestimonialsDemo />
+        </section>
+
+        {/* Comentarios de Autos */}
+        <CarComent />
+
+        {/* Modal de Detalles */}
+        {detalle && <MotadlDetail car={detalle} onClose={() => setDetalle(null)} />}
+
+        {/* Formulario de Reserva */}
+        {selectedCar && <ReservationForm car={selectedCar} onClose={handleCloseForm} />}
     </main>
-  );
+);
+
 }

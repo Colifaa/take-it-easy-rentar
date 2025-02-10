@@ -5,24 +5,22 @@ import { CommentForm } from "./CommentForm";
 
 export const CarComent = () => {
   return (
-   
     <Box
       bgColor="white"
-      width={["90%", "80%", "400px"]} // 90% para pantallas pequeñas, 80% para medianas, 400px para grandes
-      height={["450px", "350px", "400px"]} // Ajuste dinámico del alto según el ancho
-      margin="0 auto" // Centrado horizontalmente
-      mt={["10", "16", "20"]} // Margen superior adaptado a diferentes pantallas
-      borderRadius="md" // Bordes redondeados
-      display="flex" // Para centrar el contenido dentro del cuadrado
-      alignItems="center" // Centrado verticalmente
-      justifyContent="center" // Centrado horizontalmente
-      boxShadow="md" // Sombra opcional para mejor visibilidad
-      mb="14"
-   
-    
+      width={["100%", "85%", "full"]} // Más ancho en pantallas grandes
+      maxW="full" // Evita que se expanda demasiado en pantallas grandes
+      padding={["4", "6", "8"]} // Padding adaptado a diferentes tamaños
+      margin="auto" // Centrado en la pantalla
+      mt={["8", "12", "16"]} // Margen superior adaptado
+      borderRadius="lg" // Bordes más redondeados para un look moderno
+      boxShadow="lg" // Sombra más marcada para resaltar el contenedor
+      display="flex"
+      flexDirection="column" // Para que el contenido fluya mejor
+      alignItems="center"
+      justifyContent="center"
+      transition="all 0.3s ease-in-out" // Suaviza cambios de tamaño
     >
       <CommentForm />
     </Box>
-
   );
 };

@@ -131,7 +131,7 @@ export const ImagesSlider = ({
       {areMediaLoaded && children}
       {areMediaLoaded && overlay && (
         <div
-          className={cn("absolute inset-0 bg-black/30 z-40", overlayClassName)}
+          className={cn("absolute inset-0 bg-black/10 z-40", overlayClassName)}
         />
       )}
 
