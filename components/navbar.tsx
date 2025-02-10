@@ -1,4 +1,4 @@
-"use client";  
+"use client";
 
 import {  
   Box,  
@@ -12,8 +12,6 @@ import {
   MenuButton,  
   MenuList,  
   MenuItem,  
-  MenuDivider,  
-  useDisclosure,  
   Stack,  
   Modal,  
   ModalOverlay,  
@@ -23,23 +21,21 @@ import {
   ModalBody,  
   ModalFooter,  
   Link as ChakraLink,  
+  Image,  
+  useDisclosure  
 } from "@chakra-ui/react";  
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";  
-import { Languages } from "lucide-react"; // Asegúrate de tener este icono instalado  
-import { useState, useEffect } from "react";  
+import { Languages } from "lucide-react";  
+import { useState, useEffect, useMemo } from "react";  
 import supabase from "@/supabase/authTest";  
 import LoginForm from "../components/login";  
-
 import { useLanguage } from "../hooks/use-language";  
 import { languages } from "../lib/languages";  
 
 interface User {  
   id: string;  
   email: string;  
-  user_metadata: {  
-    name: string;  
-    avatar_url: string;  
-  };  
+  user_metadata: { name: string; avatar_url: string };  
 }  
 
 export default function Navbar() {  
@@ -52,23 +48,20 @@ export default function Navbar() {
 
   useEffect(() => {  
     const fetchUser = async () => {  
-      const {  
-        data: { user },  
-      } = await supabase.auth.getUser();  
-
+      const { data: { user } } = await supabase.auth.getUser();  
       setUser(user as User | null);  
+
       if (user) {  
-        const { data, error } = await supabase  
+        const { data } = await supabase  
           .from("user_roles")  
           .select("role_id")  
           .eq("user_id", user.id)  
           .single();  
 
-        if (data && data.role_id === 1) {  
-          setIsAdmin(true);  
-        }  
+        setIsAdmin(data?.role_id === 1);  
       }  
     };  
+
     fetchUser();  
   }, []);  
 
@@ -79,101 +72,116 @@ export default function Navbar() {
     window.location.reload();
   };  
 
+  const menuItems = useMemo(() => (  
+    [  
+      { label: t.navbar.home, href: "/" },  
+      { label: t.navbar.about, href: "/about" },  
+      { label: t.navbar.contact, href: "/contact" },  
+    ]  
+  ), [t]);  
+
   return (  
-    <Box bg="linear-gradient(to right, #4facfe, #00f2fe)" px={4}>  
-      <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>  
+    <Box bg="#D0F4F4" px={4} boxShadow="md">  
+      <Flex h={20} alignItems="center" justifyContent="space-between">  
+        {/* Botón menú hamburguesa */}
         <IconButton  
-          size={"md"}  
+          size="md"  
           icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}  
-          aria-label={"Open Menu"}  
+          aria-label="Open Menu"  
           display={{ md: "none" }}  
           onClick={isOpen ? onClose : onOpen}  
+          color="gray.700"
         />  
 
-        <Flex alignItems="center">  
-          <ChakraLink href="/" textDecoration="none">  
-            <Text fontSize="xl" fontWeight="bold" color="white">  
-              Take-It-Easy  
-            </Text>  
-          </ChakraLink>  
-        </Flex>  
+        {/* Logo */}
+        <ChakraLink href="/">  
+          <Image src="/logoo2.png" alt="Logo" boxSize="150px" objectFit="contain" />  
+        </ChakraLink>  
 
-        <HStack as={"nav"} spacing={8} display={{ base: "none", md: "flex" }}>  
-          <ChakraLink href="/" textDecoration="none" _hover={{ color: "yellow.400" }}>  
-            {t.navbar.home}  
-          </ChakraLink>  
-          <ChakraLink href="/about" textDecoration="none" _hover={{ color: "yellow.400" }}>  
-            {t.navbar.about}  
-          </ChakraLink>  
-          <ChakraLink href="/contact" textDecoration="none" _hover={{ color: "yellow.400" }}>  
-            {t.navbar.contact}  
-          </ChakraLink>  
+        {/* Menú de Navegación */}
+        <HStack as="nav" spacing={6} display={{ base: "none", md: "flex" }}>  
+          {menuItems.map((item) => (  
+            <ChakraLink  
+              key={item.href}  
+              href={item.href}  
+              fontWeight="bold"
+              color="gray.800"  
+              fontSize="lg"
+              _hover={{ color: "#009688", textDecoration: "underline" }}  
+            >  
+              {item.label}  
+            </ChakraLink>  
+          ))}  
         </HStack>  
 
-        <Flex alignItems={"center"} gap={4}>  
+        {/* Botones y Usuario */}
+        <Flex alignItems="center" gap={4}>  
+          {/* Selector de idioma */}
           <Button  
             variant="ghost"  
             size="sm"  
             onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}  
-            color="white"  
-            _hover={{ color: "yellow.400" }}  
+            color="gray.800"  
+            fontWeight="bold"
+            _hover={{ color: "#009688" }}  
           >  
             <Languages className="h-5 w-5" />  
             <Text ml={2}>{language.toUpperCase()}</Text>  
           </Button>  
 
+          {/* Usuario Autenticado */}
           {user ? (  
             <Menu>  
-              <MenuButton  
-                as={Button}  
-                rounded={"full"}  
-                variant={"link"}  
-                cursor={"pointer"}  
-                minW={0}  
-              >  
-                <Avatar size={"sm"} src={user.user_metadata.avatar_url} />  
+              <MenuButton as={Button} rounded="full" variant="link" cursor="pointer" minW={0}>  
+                <Avatar size="sm" src={user.user_metadata.avatar_url} />  
               </MenuButton>  
-              <MenuList>  
-                <MenuDivider />  
-                <MenuItem>  
-                  <Text>{t.auth.welcome}, {user.user_metadata.name}!</Text>  
-                </MenuItem>  
-                <MenuDivider />  
+              <MenuList bg="white" color="gray.800">  
+                <MenuItem fontWeight="bold">{t.auth.welcome}, {user.user_metadata.name}!</MenuItem>  
                 {isAdmin && (  
                   <MenuItem>  
-                    <ChakraLink href="/dashboard" textDecoration="none">  
+                    <ChakraLink href="/dashboard" textDecoration="none" fontWeight="bold" color="#009688">  
                       {t.navbar.dashboard}  
                     </ChakraLink>  
                   </MenuItem>  
                 )}  
-                <MenuDivider />  
-                <MenuItem onClick={handleLogout}>{t.navbar.logout}</MenuItem>  
+                <MenuItem fontWeight="bold" onClick={handleLogout}>{t.navbar.logout}</MenuItem>  
               </MenuList>  
             </Menu>  
           ) : (  
-            <Button colorScheme="yellow" variant="outline" onClick={openModal}>  
+            <Button  
+              bg="#009688"  
+              color="white"  
+              fontWeight="bold"
+              _hover={{ bg: "white", color: "#009688", border: "2px solid #009688" }}  
+              onClick={openModal}  
+            >  
               {t.navbar.login}  
             </Button>  
           )}  
         </Flex>  
       </Flex>  
 
+      {/* Menú Responsive */}
       {isOpen && (  
         <Box pb={4} display={{ md: "none" }}>  
-          <Stack as={"nav"} spacing={4}>  
-            <ChakraLink href="/" textDecoration="none" _hover={{ color: "yellow.400" }}>  
-              {t.navbar.home}  
-            </ChakraLink>  
-            <ChakraLink href="/about" textDecoration="none" _hover={{ color: "yellow.400" }}>  
-              {t.navbar.about}  
-            </ChakraLink>  
-            <ChakraLink href="/contact" textDecoration="none" _hover={{ color: "yellow.400" }}>  
-              {t.navbar.contact}  
-            </ChakraLink>  
+          <Stack as="nav" spacing={4}>  
+            {menuItems.map((item) => (  
+              <ChakraLink  
+                key={item.href}  
+                href={item.href}  
+                fontWeight="bold"
+                color="gray.800"  
+                fontSize="lg"
+                _hover={{ color: "#009688", textDecoration: "underline" }}  
+              >  
+                {item.label}  
+              </ChakraLink>  
+            ))}  
           </Stack>  
         </Box>  
       )}  
 
+      {/* Modal de Login */}
       <Modal isOpen={isModalOpen} onClose={closeModal}>  
         <ModalOverlay />  
         <ModalContent>  
@@ -183,7 +191,7 @@ export default function Navbar() {
             <LoginForm />  
           </ModalBody>  
           <ModalFooter>  
-            <Button colorScheme="blue" mr={3} onClick={closeModal}>  
+            <Button colorScheme="teal" mr={3} onClick={closeModal}>  
               {t.auth.createAccountButton}  
             </Button>  
           </ModalFooter>  
@@ -191,4 +199,4 @@ export default function Navbar() {
       </Modal>  
     </Box>  
   );  
-}
+}  
