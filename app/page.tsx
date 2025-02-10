@@ -145,10 +145,8 @@ export default function Home() {
   
  
    {/* Sección de Filtros y Listado de Autos */}
-        <div  id="autos" className="container mx-auto p-4">
-            <h2 className="text-2xl font-bold mb-4 text-center bg-[#3C888A]/60 backdrop-blur-md p-2 rounded-md">
-                🚗 Encuentra tu Auto Ideal
-            </h2>
+        <div  className="container mx-auto p-4">
+         
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {/* Filtros */}
@@ -158,7 +156,11 @@ export default function Home() {
            
 
                 {/* Lista de Autos */}
-                <section  className="md:col-span-3">
+                
+                <section   id="autos" className="md:col-span-3">
+                <h2 className="text-2xl font-bold mb-4 text-center bg-[#3C888A]/60 backdrop-blur-md p-2 rounded-md">
+                🚗 Encuentra tu Auto Ideal
+            </h2>
                   
                     {filteredCars.length === 0 ? (
                         <p className="text-center text-lg text-[#3C888A]">{t.filters.noResults}</p>
