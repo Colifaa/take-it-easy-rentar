@@ -76,6 +76,7 @@ export default function Navbar() {
     await supabase.auth.signOut();  
     setUser(null);  
     setIsAdmin(false);  
+    window.location.reload();
   };  
 
   return (  
