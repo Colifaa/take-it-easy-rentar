@@ -182,21 +182,43 @@ export default function Navbar() {
       )}  
 
       {/* Modal de Login */}
-      <Modal isOpen={isModalOpen} onClose={closeModal}>  
-        <ModalOverlay />  
-        <ModalContent>  
-          <ModalHeader>{t.auth.loginMessage}</ModalHeader>  
-          <ModalCloseButton />  
-          <ModalBody>  
-            <LoginForm />  
-          </ModalBody>  
-          <ModalFooter>  
-            <Button colorScheme="teal" mr={3} onClick={closeModal}>  
-              {t.auth.createAccountButton}  
-            </Button>  
-          </ModalFooter>  
-        </ModalContent>  
-      </Modal>  
+      <Modal size="full" isOpen={isModalOpen} onClose={closeModal}>
+  <ModalOverlay />
+  <ModalContent position="relative" bg="transparent" overflow="hidden">
+    
+    {/* Video de fondo */}
+    <Box 
+      as="video"
+      autoPlay
+      loop
+      muted
+      playsInline
+      position="absolute"
+      top={0}
+      left={0}
+      width="100%"
+      height="100%"
+      objectFit="cover"
+      zIndex={-1}
+    >
+      <source src="/flamenco4.mp4" type="video/mp4" />
+      Tu navegador no soporta videos.
+    </Box>
+
+    {/* Contenido del Modal */}
+    <ModalHeader color="white">{t.auth.loginMessage}</ModalHeader>
+    <ModalCloseButton 
+      color="white" 
+      _hover={{ bg: "#009688", color: "white" }} 
+    />
+    <ModalBody>
+      <LoginForm />
+    </ModalBody>
+    <ModalFooter>
+    </ModalFooter>
+  </ModalContent>
+</Modal>
+
     </Box>  
   );  
 }  

@@ -36,7 +36,7 @@ export const languages = {
     auth: {
       welcome: "Welcome",
       signupMessage: "Join our amazing community",
-      loginMessage: "Login to access the dashboard",
+      loginMessage: "Login to reserve your car",
       signupButton: "Sign Up",
       loginButton: "Login",
       emailPlaceholder: "Email",
@@ -194,7 +194,7 @@ export const languages = {
     auth: {
       welcome: "Bienvenido",
       signupMessage: "Únete a nuestra increíble comunidad",
-      loginMessage: "Inicia sesión para acceder al panel",
+      loginMessage: "Inicia sesión para reservar tu auto",
       signupButton: "Registrarse",
       loginButton: "Iniciar Sesión",
       emailPlaceholder: "Correo electrónico",
