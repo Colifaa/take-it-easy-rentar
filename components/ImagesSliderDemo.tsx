@@ -8,7 +8,6 @@ export function ImagesSliderDemo() {
   const videos = [
     "/202501302126.mp4",  // Video 1
     "/202502101422.mp4",
-    "/202502101422 (3).mp4",
     "/202502101422 (4).mp4",
     "/202502101422 (5).mp4",
   ];
@@ -21,7 +20,7 @@ export function ImagesSliderDemo() {
   };
 
   return (
-    <ImagesSlider className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[40rem] bg-transparent flex flex-col items-center justify-end relative" images={videos}>
+    <ImagesSlider className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[40rem] bg-black flex flex-col items-center justify-end relative" images={videos}>
     <VortexDemo />
     <button
       onClick={handleScrollToAutos}
