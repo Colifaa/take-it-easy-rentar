@@ -9,7 +9,7 @@ export function ImagesSliderDemo() {
     "/202501302126.mp4",  // Video 1
     "/202502101422.mp4",
     "/202502101422 (4).mp4",
-    "/202502101422 (5).mp4",
+
   ];
 
   const handleScrollToAutos = () => {
