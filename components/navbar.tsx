@@ -82,7 +82,7 @@ export default function Navbar() {
 
   return (  
     <Box bg="#D0F4F4" px={4} boxShadow="md">  
-      <Flex h={20} alignItems="center" justifyContent="space-between">  
+      <Flex h={24} alignItems="center" justifyContent="space-between">  
         {/* Botón menú hamburguesa */}
         <IconButton  
           size="md"  
@@ -95,7 +95,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <ChakraLink href="/">  
-          <Image src="/logoo2.png" alt="Logo" boxSize="150px" objectFit="contain" />  
+          <Image src="/logoo2.png" alt="Logo" boxSize="120px" objectFit="contain" />  
         </ChakraLink>  
 
         {/* Menú de Navegación */}
@@ -186,24 +186,6 @@ export default function Navbar() {
   <ModalOverlay />
   <ModalContent position="relative" bg="transparent" overflow="hidden">
     
-    {/* Video de fondo */}
-    <Box 
-      as="video"
-      autoPlay
-      loop
-      muted
-      playsInline
-      position="absolute"
-      top={0}
-      left={0}
-      width="100%"
-      height="100%"
-      objectFit="cover"
-      zIndex={-1}
-    >
-      <source src="/flamenco4.mp4" type="video/mp4" />
-      Tu navegador no soporta videos.
-    </Box>
 
     {/* Contenido del Modal */}
     <ModalHeader color="white">{t.auth.loginMessage}</ModalHeader>

@@ -93,3 +93,9 @@
 .animate-scroll {
   animation: scroll var(--animation-duration, 40s) linear infinite var(--animation-direction, forwards);
 }
+
+
+[data-rmiz-modal-overlay="visible"] {
+  background: url("/auto2.png") no-repeat center center;
+  background-size: cover;
+}
