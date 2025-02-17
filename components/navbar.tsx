@@ -81,7 +81,7 @@ export default function Navbar() {
   ), [t]);  
 
   return (  
-    <Box bg="#D0F4F4" px={4} boxShadow="md">  
+    <Box bg="#CB9A99 " px={4} boxShadow="md">  
       <Flex h={24} alignItems="center" justifyContent="space-between">  
         {/* Botón menú hamburguesa */}
         <IconButton  
@@ -95,7 +95,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <ChakraLink href="/">  
-          <Image src="/logoo2.png" alt="Logo" boxSize="120px" objectFit="contain" />  
+          <Image src="/logo.png" alt="Logo" boxSize="150px" objectFit="contain" />  
         </ChakraLink>  
 
         {/* Menú de Navegación */}

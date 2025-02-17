@@ -158,38 +158,41 @@ export default function Home() {
                 {/* Lista de Autos */}
                 
                 <section   id="autos" className="md:col-span-3">
-                <h2 className="text-2xl font-bold mb-4 text-center bg-[#3C888A]/60 backdrop-blur-md p-2 rounded-md">
-                🚗 Encuentra tu Auto Ideal
-            </h2>
-                  
-                    {filteredCars.length === 0 ? (
-                        <p className="text-center text-lg text-[#3C888A]">{t.filters.noResults}</p>
-                    ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                          
-                            {filteredCars.map((car) => (
-                                <Card key={car.id} className="overflow-hidden shadow-lg rounded-lg bg-[#AE7666]/90">
-                                  
-                                    <div className="relative">
-                                        <img
-                                            src={car.imageUrls?.[0] || "/placeholder.jpg"}
-                                            alt={`${car.brand} ${car.model}`}
-                                            className="w-full h-48 object-cover cursor-pointer"
-                                            onClick={() => setDetalle(car)}
-                                        />
-                                        <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-white ${car.available ? "bg-[#3C888A]" : "bg-[#C1625D]"}`}>
-                                            {car.available ? t.filters.available : t.filters.notAvailable}
-                                        </div>
-                                    </div>
+                <h2 className="text-3xl font-bold mb-6 text-center bg-[#3C888A]/80 text-white backdrop-blur-md p-3 rounded-md shadow-md">
+    🚗 Encuentra tu Auto Ideal
+  </h2>
+                 
+  {filteredCars.length === 0 ? (
+    <p className="text-center text-lg text-[#3C888A]">{t.filters.noResults}</p>
+  ) : (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {filteredCars.map((car) => (
+        <Card key={car.id} className="overflow-hidden shadow-lg rounded-lg bg-[#C47369] border border-gray-200">
+          <div className="relative">
+            <img
+              src={car.imageUrls?.[0] || "/placeholder.jpg"}
+              alt={`${car.brand} ${car.model}`}
+              className="w-full h-52 object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
+              onClick={() => setDetalle(car)}
+            />
+            <div
+              className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-semibold text-white shadow-md ${
+                car.available ? "bg-[#3C888A]" : "bg-[#C1625D]"
+              }`}
+            >
+              {car.available ? t.filters.available : t.filters.notAvailable}
+            </div>
+          </div>
+
   {/* Alerta si el usuario no está autenticado */}
   {showAlert && <AlertComponent message={t.filters.alert} />}
                                     <div className="p-4">
-                                        <h3 className="text-lg font-semibold text-[#3C888A]">{car.brand} {car.model}</h3>
-                                        <p className="text-sm text-[#D8AC6B]">{t.reservation.price}</p>
-                                        <div className="text-xl font-bold text-[#5C798C]">${car.price}</div>
+                                        <h3 className="text-lg font-semibold text-[#103c3d]">{car.brand} {car.model}</h3>
+                                        <p className="text-sm text-[#e3b167]">{t.reservation.price}</p>
+                                        <div className="text-xl font-bold text-[#505e32]">${car.price}</div>
 
                                         {/* Características del Auto */}
-                                        <div className="grid grid-cols-3 gap-2 text-sm text-[#D8AC6B] mt-3">
+                                        <div className="grid grid-cols-3 gap-2 text-sm text-[#e3b167] mt-3">
                                             <div className="flex items-center">
                                                 <Users className="w-4 h-4 mr-1" /> {t.reservation.assets}
                                             </div>
