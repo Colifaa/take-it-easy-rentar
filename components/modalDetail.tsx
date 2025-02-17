@@ -202,7 +202,7 @@ export default function ModalDetail({ car, onClose }: ModalDetailProps) {
       {selectedImage && (
         <Modal isOpen onClose={() => setSelectedImage(null)} size="4xl">
           <ModalOverlay />
-          <ModalContent bgImage="auto2.png" bgPos="center" bgSize="cover"  borderRadius="lg" p={4} maxWidth="60%">
+          <ModalContent bgImage="auto.png" bgPos="center" bgSize="cover"  borderRadius="lg" p={4} maxWidth="60%">
             <ModalCloseButton color="white" />
             <ModalBody display="flex" justifyContent="center">
               <Zoom>
