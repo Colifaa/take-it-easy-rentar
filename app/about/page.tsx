@@ -4,6 +4,7 @@ import { Shield, Star, Clock, Award } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "../../hooks/use-language";
 import { languages } from "../../lib/languages";
+import { Footer } from "@/components/footer";
 
 export default function About() {
 
@@ -59,6 +60,7 @@ export default function About() {
           </div>
         </div>
       </section>
+      <Footer />
     </main>
   );
 }

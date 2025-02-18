@@ -96,6 +96,6 @@
 
 
 [data-rmiz-modal-overlay="visible"] {
-  background: url("/auto2.png") no-repeat center center;
+  background: linear-gradient(to bottom, #CF9E9B, #C47369);
   background-size: cover;
 }

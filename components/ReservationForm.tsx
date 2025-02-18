@@ -38,6 +38,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ car, onClose }
       startDate: formData.get("startDate"),
       endDate: formData.get("endDate"),
       paymentMethod: formData.get("paymentMethod"),
+      deliveryAddress: formData.get("deliveryAddress"),
       additionalNotes: formData.get("additionalNotes"),
     };
 
@@ -48,23 +49,24 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ car, onClose }
       console.log("Reserva guardada con éxito!");
       onClose();
     }
-
     const message = encodeURIComponent(
-      `📢 *Nueva Reserva de Auto* 📢\n\n` +
-      `👤 *Cliente:* ${reservationData.buyerName}\n` +
-      `✉️ *Email:* ${reservationData.email}\n` +
-      `📞 *Teléfono:* ${reservationData.phone}\n` +
-      `🆔 *Documento:* ${reservationData.idType}\n\n` +
-      `🚗 *Auto Reservado:* ${reservationData.brand} ${reservationData.model}\n` +
-      `💰 *Precio:* $${reservationData.price}/día\n` +
-      `⏳ *Desde:* ${reservationData.startDate}  ➡️  *Hasta:* ${reservationData.endDate}\n` +
-      `⚙️ *Transmisión:* ${reservationData.transmission}\n` +
-      `⛽ *Combustible:* ${reservationData.fuelType}\n\n` +
-      `💳 *Método de Pago:* ${reservationData.paymentMethod}\n` +
-      `📝 *Notas Adicionales:* ${reservationData.additionalNotes || "Ninguna"}\n\n` +
-      `📸 *Imagen del Coche:* ${car.imageUrls.length > 0 ? car.imageUrls[0] : "No disponible"}\n\n` +
-      `✅ ¡Gracias por reservar con nosotros!`
+      `${t.reservationMessages.NewCarReservation}\n\n` +
+      `${t.reservationMessages.Customer} ${reservationData.buyerName}\n` +
+      `${t.reservationMessages.Email} ${reservationData.email}\n` +
+      `${t.reservationMessages.Phone} ${reservationData.phone}\n` +
+      `${t.reservationMessages.ID} ${reservationData.idType}\n\n` +
+      `${t.reservationMessages.ReservedCar} ${reservationData.brand} ${reservationData.model}\n` +
+      `${t.reservationMessages.Price} $${reservationData.price}/día\n` +
+      `${t.reservationMessages.From} ${reservationData.startDate}  ➡️  ${t.reservationMessages.To} ${reservationData.endDate}\n` +
+      `${t.reservationMessages.Transmission} ${reservationData.transmission}\n` +
+      `${t.reservationMessages.FuelType} ${reservationData.fuelType}\n\n` +
+      `${t.reservationMessages.PaymentMethod} ${reservationData.paymentMethod}\n` +
+      `${t.reservationMessages.DeliveryAddress} ${reservationData.deliveryAddress || "No especificada"}\n` +
+      `${t.reservationMessages.AdditionalNotes} ${reservationData.additionalNotes || "Ninguna"}\n\n` +
+      `${t.reservationMessages.CarImage} ${car.imageUrls.length > 0 ? car.imageUrls[0] : "No disponible"}\n\n` +
+      `${t.reservationMessages.ThankYou}`
     );
+    
 
     const whatsappApiUrl = `https://wa.me/+61421602018?text=${message}`;
 
@@ -76,7 +78,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ car, onClose }
 
     return (
       <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 backdrop-blur-md">
-        <div className="bg-gradient-to-b from-[#C47369] to-[#D88C7A] shadow-lg rounded-lg p-6 w-full max-w-2xl text-white max-h-[80vh] overflow-y-auto">
+        <div className="bg-gradient-to-b from-[#C47369] to-[#D88C7A] shadow-lg rounded-lg p-6 w-full max-w-2xl text-white max-h-[90vh] overflow-y-auto">
           <h2 className="text-2xl font-bold mb-4 text-center">
             {t.reservation.title.replace("{carBrand}", car.brand).replace("{carModel}", car.model)}
           </h2>
@@ -130,7 +132,16 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ car, onClose }
               </select>
             </label>
   
-        
+         <label className="block">
+  {t.reservation.deliveryAddress}:
+  <input
+    type="text"
+    name="deliveryAddress"
+    defaultValue="El dueño te dirá la ubicación exacta donde puedes retirar el auto."
+    className="w-full p-3 bg-white/20 border border-white/30 rounded-md text-black focus:ring-2 focus:ring-yellow-300"
+  />
+</label>
+
   
             <label className="block">
               {t.reservation.additionalNotes}:

@@ -1,5 +1,25 @@
 export const languages = {
   en: {
+
+ 
+    reservationMessages: {
+      NewCarReservation: "📢 *New Car Reservation* 📢",
+      Customer: "👤 Customer:",
+      Email: "✉️ Email:",
+      Phone: "📞 Phone:",
+      ID: "🆔 ID:",
+      ReservedCar: "🚗 *Reserved Car:",
+      Price: "💰 Price:* ${price}/day",
+      From: "⏳ From:",
+      To: "➡️  To:",
+      Transmission: "⚙️ *Transmission:",
+      FuelType: "⛽ *Fuel Type:",
+      PaymentMethod: "💳 Payment Method:",
+      DeliveryAddress: "📍 Delivery Address:",
+      AdditionalNotes: "📝 Additional Notes:",
+      CarImage: "📸 Car Image:",
+      ThankYou: "✅ Thank you for booking with us!",
+    },
     
     navbar: {
       home: "Home",
@@ -267,7 +287,29 @@ export const languages = {
       emailPlaceholder: "tu@email.com",
       subjectPlaceholder: "Asunto del mensaje",
       messagePlaceholder: "Escribe tu mensaje aquí",
-    }
+    },
+
+     
+    reservationMessages: {
+      NewCarReservation: "📢 *Nueva Reserva de Auto* 📢",
+      Customer: "👤 Cliente:",
+      Email: "✉️ Correo Electrónico:",
+      Phone: "📞 Teléfono:",
+      ID: "🆔 Documento:",
+      ReservedCar: "🚗 Auto Reservado:",
+      Price: "💰 Precio:",
+      From: "⏳ Desde:",
+      To: "➡️  Hasta:",
+      Transmission: "⚙️ Transmisión:",
+      FuelType: "⛽ Tipo de Combustible:",
+      PaymentMethod: "💳 Método de Pago:",
+      DeliveryAddress: "📍 Dirección de Entrega:",
+      AdditionalNotes: "📝 Notas Adicionales:",
+      CarImage: "📸 Imagen del Auto:",
+      ThankYou: "✅ ¡Gracias por reservar con nosotros!",
+    },
+    
+    
   
   },
 };
