@@ -20,7 +20,7 @@ export function ImagesSliderDemo() {
   };
 
   return (
-    <ImagesSlider className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[40rem] bg-black flex flex-col items-center justify-end relative" images={videos}>
+    <ImagesSlider className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[40rem] bg-transparent flex flex-col items-center justify-end relative" images={videos}>
     <VortexDemo />
     <button
   onClick={handleScrollToAutos}
