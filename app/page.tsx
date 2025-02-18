@@ -18,6 +18,7 @@ import { languages } from "../lib/languages";
 import {ImagesSliderDemo} from "../components/ImagesSliderDemo";
 import MotadlDetail from "../components/modalDetail";
 import { InfiniteMovingCardsDemo } from "@/components/InfiniteMovingCardsDemo";
+import { Footer } from "@/components/footer";
 
 
 interface Car {
@@ -241,6 +242,7 @@ export default function Home() {
 
         {/* Formulario de Reserva */}
         {selectedCar && <ReservationForm car={selectedCar} onClose={handleCloseForm} />}
+        <Footer />
     </main>
 );
 

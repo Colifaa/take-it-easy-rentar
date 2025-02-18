@@ -103,12 +103,12 @@ export default function CarsAdminPage() {
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Gestión de Vehículos</h1>
-          <p className="text-gray-600">Administra el inventario de vehículos disponibles</p>
+          <h1 className="text-3xl font-bold text-[#49243E]">Gestión de Vehículos</h1>
+          <p className="text-[#704264]">Administra el inventario de vehículos disponibles</p>
         </div>
         <button
           onClick={() => setIsDialogOpen(true)}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500"
+          className="flex items-center px-4 py-2 bg-[#BB8493] text-white rounded-md hover:bg-[#DBAFA0]"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           Agregar Vehículo

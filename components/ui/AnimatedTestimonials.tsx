@@ -1,4 +1,5 @@
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import { ArrowLeft, ArrowRight, Palmtree, Glasses } from "lucide-react";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai"; // Importamos las estrellas
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -6,32 +7,25 @@ import supabase from "@/supabase/authTest";
 
 type Testimonial = {
   id: number;
-  comment: string; // Comentario del usuario
-  author: string;  // Autor del comentario
-  rating: number;  // Calificación
-  src: string;     // URL de la imagen (puede ser opcional inicialmente)
-  approved: Boolean;
+  comment: string;
+  author: string;
+  rating: number;
+  src: string;
+  approved: boolean;
 };
 
 export const AnimatedTestimonials = ({ autoplay = false }: { autoplay?: boolean }) => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [active, setActive] = useState(0);
 
-  // State to store only approved comments
-  const [showComments, setShowComments] = useState<Testimonial[]>([]); // Comments that are approved
-
   const fetchTestimonials = async () => {
-    const { data, error } = await supabase
-      .from("reviews")
-      .select("*");
+    const { data, error } = await supabase.from("reviews").select("*");
 
     if (error) {
       console.error("Error fetching testimonials:", error.message);
     } else {
-      // Filtramos los comentarios aprobados
       const approvedTestimonials = data.filter((item) => item.approved === true);
-      setTestimonials(approvedTestimonials); // Solo comentarios aprobados
-      setShowComments(approvedTestimonials); // Solo comentarios aprobados
+      setTestimonials(approvedTestimonials);
     }
   };
 
@@ -49,63 +43,70 @@ export const AnimatedTestimonials = ({ autoplay = false }: { autoplay?: boolean 
 
   const isActive = (index: number) => index === active;
 
-  const randomRotateY = () => Math.floor(Math.random() * 21) - 10;
+  const renderStars = (rating: number) => {
+    return (
+      <div className="flex gap-1 mt-2">
+        {[...Array(5)].map((_, i) =>
+          i < rating ? (
+            <AiFillStar key={i} className="text-yellow-400 text-xl" />
+          ) : (
+            <AiOutlineStar key={i} className="text-yellow-400 text-xl" />
+          )
+        )}
+      </div>
+    );
+  };
+
+  const gradientStyle = "bg-gradient-to-br from-[#c47369] to-[#f8c4bc]";
 
   return (
+    <div className={`max-w-sm md:max-w-4xl mx-auto antialiased font-sans px-6 md:px-10 lg:px-14 py-16 ${gradientStyle} backdrop-blur-md rounded-xl shadow-2xl relative overflow-hidden`}>
+      {/* Decorative elements */}
+      <div className="absolute top-4 right-4 text-white/20">
+        <Palmtree size={64} />import 
+      </div>
+      <div className="absolute bottom-4 left-4 text-white/20">
+        <Glasses size={48} />
+      </div>
 
-    <div className="max-w-sm md:max-w-4xl mx-auto antialiased font-sans px-4 md:px-8 lg:px-12 py-20 bg-white/70 dark:bg-black/60 backdrop-blur-md rounded-lg shadow-lg">
-    <h2 className="text-2xl font-bold text-center mb-6 bg-white/60 backdrop-blur-md p-2 rounded-md">
-    ⭐ Testimonios de Clientes
-  </h2>
-      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-20">
-        {/* Imagen del Testimonial */}
-        <div>
-          <div className="relative h-80 w-full">
-            <AnimatePresence>
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={testimonial.id}
-                  initial={{
-                    opacity: 0,
-                    scale: 0.9,
-                    z: -100,
-                    rotate: randomRotateY(),
-                  }}
-                  animate={{
-                    opacity: isActive(index) ? 1 : 0.7,
-                    scale: isActive(index) ? 1 : 0.95,
-                    z: isActive(index) ? 0 : -100,
-                    rotate: isActive(index) ? 0 : randomRotateY(),
-                    zIndex: isActive(index) ? 999 : testimonials.length + 2 - index,
-                    y: isActive(index) ? [0, -80, 0] : 0,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0.9,
-                    z: 100,
-                    rotate: randomRotateY(),
-                  }}
-                  transition={{
-                    duration: 0.4,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute inset-0 origin-bottom"
-                >
-                  <Image
-                    src={testimonial.src || "/default-avatar.png"} // Imagen predeterminada si no hay imagen
-                    alt={testimonial.author}
-                    width={500}
-                    height={500}
-                    draggable={false}
-                    className="h-full w-full rounded-3xl object-cover object-center"
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+      <h2 className="text-2xl font-bold text-center mb-6 text-white bg-white/20 px-6 py-3 rounded-full shadow-lg backdrop-blur-sm border border-white/30 flex items-center justify-center gap-2">
+        <span className="text-yellow-400">⭐</span>
+        Customer Reviews
+        <span className="text-yellow-400">⭐</span>
+      </h2>
+
+      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-12">
+        {/* Image section */}
+        <div className="relative h-80 w-full">
+          <AnimatePresence>
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={testimonial.id}
+                initial={{ opacity: 0, scale: 0.9, z: -100 }}
+                animate={{
+                  opacity: isActive(index) ? 1 : 0.7,
+                  scale: isActive(index) ? 1 : 0.95,
+                  zIndex: isActive(index) ? 999 : testimonials.length + 2 - index,
+                }}
+                exit={{ opacity: 0, scale: 0.9, z: 100 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="absolute inset-0 origin-bottom"
+              >
+                <Image
+                  src={testimonial.src || "/default-avatar.png"}
+                  alt={testimonial.author}
+                  width={500}
+                  height={500}
+                  draggable={false}
+                  className="h-full w-full rounded-3xl object-cover object-center shadow-lg border-4 border-white/30 hover:border-white/50 transition-all duration-300"
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
-        {/* Detalles del Testimonial */}
-        <div className="flex justify-between flex-col py-4">
+
+        {/* Testimonial content */}
+        <div className="flex flex-col justify-between py-4 text-white">
           {testimonials.length > 0 && (
             <motion.div
               key={active}
@@ -113,16 +114,11 @@ export const AnimatedTestimonials = ({ autoplay = false }: { autoplay?: boolean 
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -20, opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="bg-white/10 p-6 rounded-xl backdrop-blur-sm border border-white/20"
             >
-              <h3 className="text-2xl font-bold dark:text-white text-black">
-                {testimonials[active].author}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-neutral-500">
-                Rating: {testimonials[active].rating}/5
-              </p>
-
-              {/* Renderizar los comentarios solo si el comentario está aprobado */}
-              <motion.p className="text-lg text-gray-500 mt-8 dark:text-neutral-300">
+              <h3 className="text-2xl font-bold">{testimonials[active].author}</h3>
+              {renderStars(testimonials[active].rating)}
+              <motion.p className="text-lg mt-6 leading-relaxed">
                 {testimonials[active].comment.split(" ").map((word, index) => (
                   <motion.span
                     key={index}
@@ -137,19 +133,20 @@ export const AnimatedTestimonials = ({ autoplay = false }: { autoplay?: boolean 
               </motion.p>
             </motion.div>
           )}
-          {/* Botones de navegación */}
-          <div className="flex gap-4 pt-12 md:pt-0">
+
+          {/* Navigation buttons */}
+          <div className="flex gap-4 pt-10">
             <button
               onClick={handlePrev}
-              className="h-7 w-7 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center group/button"
+              className="h-12 w-12 rounded-full bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center shadow-lg backdrop-blur-sm border border-white/30"
             >
-              <IconArrowLeft className="h-5 w-5 text-black dark:text-neutral-400 group-hover/button:rotate-12 transition-transform duration-300" />
+              <ArrowLeft className="h-6 w-6 text-white" />
             </button>
             <button
               onClick={handleNext}
-              className="h-7 w-7 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center group/button"
+              className="h-12 w-12 rounded-full bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center shadow-lg backdrop-blur-sm border border-white/30"
             >
-              <IconArrowRight className="h-5 w-5 text-black dark:text-neutral-400 group-hover/button:-rotate-12 transition-transform duration-300" />
+              <ArrowRight className="h-6 w-6 text-white" />
             </button>
           </div>
         </div>

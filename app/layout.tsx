@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ChakraProvider } from '@chakra-ui/react';  // Importa ChakraProvider
 import  Navbar  from '@/components/navbar';
-import { Footer } from '@/components/footer';
 import { ParticlesBackground } from './ui/particles-background';
 import Wsp from "../components/Wsp"
 
@@ -31,7 +30,6 @@ export default function RootLayout({
           <ParticlesBackground />
         
           {children}
-          <Footer />
           <Wsp/>
         </ChakraProvider>
       </body>

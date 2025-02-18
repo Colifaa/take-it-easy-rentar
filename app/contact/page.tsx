@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "../../hooks/use-language";
 import { languages } from "../../lib/languages";
+import { Footer } from "@/components/footer";
 
 
 export default function Contact() {
@@ -67,6 +68,7 @@ export default function Contact() {
           </Card>
         </div>
       </section>
+      <Footer />
     </main>
   );
 }

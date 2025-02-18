@@ -1,18 +1,17 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import supabase from "@/supabase/authTest";
-import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
 import "../../ui/global.css";
 
-// Definimos la interfaz para los comentarios
+// Interfaz para los comentarios
 interface Comment {
   id: number;
   author: string;
   comment: string;
   rating: number;
-  src?: string; // URL de la imagen, opcional
-  created_at: string; // Fecha de creación
-  approved: boolean; // Nuevo campo que indica si el comentario está aprobado
+  src?: string;
+  created_at: string;
+  approved: boolean;
 }
 
 export default function Page() {
@@ -20,26 +19,17 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const breadcrumbs = [
-    { label: "Home", href: "/" },
-    { label: "Invoices", href: "/invoices" },
-    { label: "Details", href: "/invoices/details", active: true },
-  ];
-
   // Cargar comentarios al montar el componente
   useEffect(() => {
     const fetchComments = async () => {
       setLoading(true);
       try {
         const { data, error } = await supabase
-          .from("reviews") // Cambia "reviews" si tu tabla tiene otro nombre
+          .from("reviews")
           .select("*")
           .order("created_at", { ascending: false });
 
-        if (error) {
-          throw new Error(error.message);
-        }
-
+        if (error) throw new Error(error.message);
         setComments(data as Comment[]);
       } catch (error) {
         setErrorMessage((error as Error).message);
@@ -51,43 +41,29 @@ export default function Page() {
     fetchComments();
   }, []);
 
-  // Función para eliminar un comentario
+  // Eliminar comentario
   const deleteComment = async (id: number) => {
     try {
-      const { error } = await supabase
-        .from("reviews") // Cambia "reviews" si tu tabla tiene otro nombre
-        .delete()
-        .eq("id", id);
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      // Actualizar lista de comentarios localmente
-      setComments((prevComments) => prevComments.filter((comment) => comment.id !== id));
+      const { error } = await supabase.from("reviews").delete().eq("id", id);
+      if (error) throw new Error(error.message);
+      setComments((prev) => prev.filter((comment) => comment.id !== id));
     } catch (error) {
       setErrorMessage((error as Error).message);
     }
   };
 
-  // Función para aprobar o desaprobar un comentario
+  // Aprobar/desaprobar comentario
   const toggleApproval = async (id: number, currentStatus: boolean) => {
     try {
       const { error } = await supabase
         .from("reviews")
-        .update({ approved: !currentStatus }) // Cambia el estado de aprobado
+        .update({ approved: !currentStatus })
         .eq("id", id);
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      // Actualizar la lista de comentarios localmente
-      setComments((prevComments) =>
-        prevComments.map((comment) =>
-          comment.id === id
-            ? { ...comment, approved: !currentStatus } // Actualizar el estado de aprobado
-            : comment
+      if (error) throw new Error(error.message);
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment.id === id ? { ...comment, approved: !currentStatus } : comment
         )
       );
     } catch (error) {
@@ -96,31 +72,23 @@ export default function Page() {
   };
 
   return (
-    <div className="p-6">
-      <Breadcrumbs breadcrumbs={breadcrumbs} />
+    <div className="flex flex-col min-h-screen p-4 md:p-6">
+      <h1 className="text-2xl font-bold mb-4 text-[#704264]">Comentarios</h1>
 
-      <h1 className="text-2xl font-bold mb-4">Comentarios</h1>
-
-      {errorMessage && (
-        <p className="text-red-600 text-center mb-4">{errorMessage}</p>
-      )}
+      {errorMessage && <p className="text-red-600 text-center mb-4">{errorMessage}</p>}
 
       {loading ? (
-        <p>Cargando comentarios...</p>
+        <p className="text-center text-gray-600">Cargando comentarios...</p>
       ) : (
-        <div className="space-y-4">
+        <div className="flex-grow overflow-auto">
           {comments.length > 0 ? (
-            comments.map((comment) => (
-              <div
-                key={comment.id}
-                className="p-4 border rounded-md shadow-md bg-white flex justify-between items-center"
-              >
-                <div>
-                  <p>
-                    <span className="font-bold">{comment.author}</span>:{" "}
-                    {comment.comment}
-                  </p>
+            <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {comments.map((comment) => (
+                <div key={comment.id} className="p-4 border rounded-lg shadow bg-white">
+                  <p className="text-[#49243E] font-semibold">{comment.author}:</p>
+                  <p className="text-gray-700">{comment.comment}</p>
                   <p className="text-sm text-gray-500">Calificación: {comment.rating}/5</p>
+
                   {comment.src && (
                     <img
                       src={comment.src}
@@ -128,27 +96,31 @@ export default function Page() {
                       className="w-20 h-20 mt-2 object-cover rounded"
                     />
                   )}
+
+                  <div className="flex justify-between mt-4">
+                    <button
+                      onClick={() => toggleApproval(comment.id, comment.approved)}
+                      className={`py-1 px-3 rounded text-white transition ${
+                        comment.approved
+                          ? "bg-green-600 hover:bg-green-700"
+                          : "bg-yellow-600 hover:bg-yellow-700"
+                      }`}
+                    >
+                      {comment.approved ? "Desaprobar" : "Aprobar"}
+                    </button>
+
+                    <button
+                      onClick={() => deleteComment(comment.id)}
+                      className="py-1 px-3 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
-
-                {/* Botón de aprobar/desaprobar */}
-                <button
-                  onClick={() => toggleApproval(comment.id, comment.approved)}
-                  className={`py-1 px-3 rounded ${comment.approved ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-600 hover:bg-yellow-700'} text-white`}
-                >
-                  {comment.approved ? 'Desaprobar comentario' : 'Aprobar comentario'}
-                </button>
-
-                {/* Botón de eliminar */}
-                <button
-                  onClick={() => deleteComment(comment.id)}
-                  className="py-1 px-3 bg-red-600 text-white rounded hover:bg-red-700"
-                >
-                  Eliminar
-                </button>
-              </div>
-            ))
+              ))}
+            </div>
           ) : (
-            <p>No hay comentarios disponibles.</p>
+            <p className="text-center text-gray-500">No hay comentarios disponibles.</p>
           )}
         </div>
       )}

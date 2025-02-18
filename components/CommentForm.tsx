@@ -1,17 +1,22 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
+import { FaStar } from "react-icons/fa";
+import { Palmtree, Glasses, Camera } from 'lucide-react';
 import supabase from "@/supabase/authTest";
 import { User } from "@supabase/supabase-js";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const CommentForm = () => {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(5);
+  const [hover, setHover] = useState(0);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  
+
   const { language } = useLanguage();
   const t = languages[language].comments;
   const toast = useToast();
@@ -86,12 +91,25 @@ export const CommentForm = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-lg p-6 space-y-6">
-      <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">{t.title}</h2>
+    <div className="max-w-6xl mx-auto bg-gradient-to-br from-[#c47369] to-[#f8c4bc] backdrop-blur-md shadow-2xl rounded-xl p-8 space-y-6 border border-white/30 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-4 right-4 text-white/20 transform rotate-45">
+        <Palmtree size={64} />
+      </div>
+      <div className="absolute bottom-4 left-4 text-white/20">
+        <Glasses size={48} />
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="comment" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <h2 className="text-2xl font-bold text-center text-white bg-white/20 px-6 py-3 rounded-full shadow-lg backdrop-blur-sm border border-white/30 flex items-center justify-center gap-2">
+        <span className="text-yellow-400">⭐</span>
+        {t.title}
+        <span className="text-yellow-400">⭐</span>
+      </h2>
+
+      <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+        {/* Comment Field */}
+        <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/30">
+          <label htmlFor="comment" className="block text-sm font-medium text-white mb-2">
             {t.commentLabel}
           </label>
           <textarea
@@ -100,46 +118,55 @@ export const CommentForm = () => {
             onChange={(e) => setComment(e.target.value)}
             required
             rows={4}
-            className="mt-1 block w-full p-3 rounded-md border border-gray-300 dark:border-gray-700 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+            className="w-full p-3 rounded-lg border border-white/30 bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all duration-200"
           />
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="w-1/2">
-            <label htmlFor="rating" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t.ratingLabel}
-            </label>
-            <input
-              type="number"
-              id="rating"
-              value={rating}
-              onChange={(e) => setRating(parseInt(e.target.value))}
-              min={1}
-              max={5}
-              required
-              className="mt-1 block w-full p-3 rounded-md border border-gray-300 dark:border-gray-700 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div className="w-1/2">
-            <label htmlFor="file" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t.imageLabel}
-            </label>
-            <input
-              type="file"
-              id="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="mt-1 block w-full p-3 rounded-md border border-gray-300 dark:border-gray-700 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
-            />
+        {/* Star Rating */}
+        <div className="flex flex-col items-center gap-2 bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/30">
+          <label className="text-sm font-medium text-white">{t.ratingLabel}</label>
+          <div className="flex space-x-2">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <FaStar
+                key={star}
+                className={`cursor-pointer transition-colors ${
+                  (hover || rating) >= star ? "text-yellow-400" : "text-white/40"
+                }`}
+                size={28}
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHover(star)}
+                onMouseLeave={() => setHover(0)}
+              />
+            ))}
           </div>
         </div>
 
+        {/* Image Upload */}
+        <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/30">
+          <Label htmlFor="file" className="block text-sm font-medium text-white mb-2 flex items-center gap-2">
+            <Camera className="w-4 h-4" />
+            {t.imageLabel}
+          </Label>
+          <Input
+            type="file"
+            id="file"
+            accept="image/*"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="w-full p-3 rounded-lg border border-white/30 bg-white/10 text-white file:bg-white/20 file:border-0 file:text-white file:rounded-lg file:px-4 file:py-0 file:mr-4 file:hover:bg-white/30 file:transition-colors"
+          />
+        </div>
+
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading || !user}
-          className={`w-full py-2 px-4 text-white font-semibold rounded-md transition 
-            ${!user ? "bg-gray-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"}`}
+          className={`w-full py-3 px-6 text-white font-semibold rounded-full transition-all duration-200 
+            ${
+              !user
+                ? "bg-white/20 cursor-not-allowed"
+                : "bg-white/20 hover:bg-white/30 focus:ring-2 focus:ring-white/50 backdrop-blur-sm border border-white/30"
+            }
+          `}
         >
           {loading ? t.submittingButton : !user ? t.loginToComment : t.submitButton}
         </button>
