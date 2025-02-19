@@ -7,7 +7,7 @@ import supabase from "../supabase/authTest";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
 import { Palmtree, Car, Gauge } from 'lucide-react';
-import MusicPlayer from "./MusicPlayer";
+
 
 interface Filters {
   brand: string;
@@ -174,7 +174,7 @@ className="w-full p-2 rounded border bg-white/20 text-black focus:bg-white focus
           {t.filters.applyFilters}
         </Button>
 
-        <MusicPlayer />
+      
       </div>
     </div>
   )

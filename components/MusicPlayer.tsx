@@ -1,119 +1,120 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { Play, Pause, Music } from "lucide-react";
 
-export default function MusicPlayer() {
+export default function FloatingMusicPlayer() {
   const songs = [
-    "/Lasser - Take it easy (ft. Cráneo)  Prod. Sloth Brite.mp3",
-    "/Cráneo - Panteras (Prod. Sr. Guayaba).mp3"
+    { name: "Take it easy", src: "/TakeItEasy.mp3" },
+    { name: "Panteras", src: "/Panteras.mp3" },
   ];
 
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [selectedSong, setSelectedSong] = useState("");
+  // Evita el acceso a localStorage en el servidor
+  const getLocalStorageItem = (key: string, defaultValue: string) => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(key) || defaultValue;
+    }
+    return defaultValue;
+  };
+
+  const getLocalStorageBoolean = (key: string) => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(key) === "true";
+    }
+    return false;
+  };
+
+  const [selectedSong, setSelectedSong] = useState<string>(() => getLocalStorageItem("selectedSong", songs[0].src));
+  const [isPlaying, setIsPlaying] = useState<boolean>(() => getLocalStorageBoolean("isPlaying"));
+  const [currentTime, setCurrentTime] = useState<number>(() =>
+    typeof window !== "undefined" ? parseFloat(localStorage.getItem("songTime") || "0") : 0
+  );
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Seleccionar una canción al azar cuando se carga la página
-    const randomSong = songs[Math.floor(Math.random() * songs.length)];
-    setSelectedSong(randomSong);
-  }, []);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      const handleLoadedMetadata = () => {
-        setDuration(audioRef.current?.duration || 0);
-        audioRef.current?.play(); // Reproducir automáticamente
-      };
-
-      audioRef.current.addEventListener("loadedmetadata", handleLoadedMetadata);
-
-      return () => {
-        audioRef.current?.removeEventListener("loadedmetadata", handleLoadedMetadata);
-      };
+    const audio = audioRef.current;
+    if (audio) {
+      audio.currentTime = currentTime;
+      if (isPlaying) {
+        audio.play().catch(() => setIsPlaying(false));
+      }
     }
   }, [selectedSong]);
 
+  useEffect(() => {
+    const saveTime = () => {
+      if (audioRef.current && typeof window !== "undefined") {
+        localStorage.setItem("songTime", audioRef.current.currentTime.toString());
+      }
+    };
+
+    const audio = audioRef.current;
+    if (audio) {
+      audio.addEventListener("timeupdate", saveTime);
+      return () => audio.removeEventListener("timeupdate", saveTime);
+    }
+  }, [currentTime]);
+
   const togglePlayPause = () => {
-    if (audioRef.current) {
+    const audio = audioRef.current;
+    if (audio) {
       if (isPlaying) {
-        audioRef.current.pause();
+        audio.pause();
       } else {
-        audioRef.current.play();
+        audio.play().catch(() => setIsPlaying(false));
       }
       setIsPlaying(!isPlaying);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("isPlaying", (!isPlaying).toString());
+      }
     }
   };
 
   const handleSongChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedSong(event.target.value);
+    const newSong = event.target.value;
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedSong", newSong);
+      localStorage.setItem("songTime", "0");
+    }
+
+    setSelectedSong(newSong);
     setIsPlaying(false);
     setCurrentTime(0);
+
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.load();
-      setTimeout(() => audioRef.current?.play(), 500);
-    }
-    setIsPlaying(true);
-  };
-
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
-    }
-  };
-
-  const handleSeek = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = parseFloat(event.target.value);
-      setCurrentTime(parseFloat(event.target.value));
     }
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-4 bg-[#c47369] text-white rounded-lg shadow-lg">
-      <h2 className="text-lg font-semibold text-center mb-4">🎶 Reproductor de Música</h2>
+    <div className="fixed bottom-2 z-10 bg-gray-900 text-white p-3 rounded-lg shadow-lg flex items-center space-x-4 w-80">
+      <Music size={24} className="text-rose-500" />
 
+      {/* Botón de play/pausa */}
+      <button
+        onClick={togglePlayPause}
+        className="bg-rose-500 hover:bg-rose-600 text-white py-2 px-4 rounded-lg flex items-center transition"
+      >
+        {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+      </button>
+
+      {/* Selector de canción */}
       <select
-        className="w-full p-2 border border-white bg-[#d8847a] rounded-md mb-4 text-white"
+        className="bg-gray-800 border border-gray-600 text-white text-xs p-1 rounded flex-grow"
         value={selectedSong}
         onChange={handleSongChange}
       >
-        <option value={songs[0]}>Canción 1</option>
-        <option value={songs[1]}>Canción 2</option>
+        {songs.map((song) => (
+          <option key={song.src} value={song.src}>
+            {song.name}
+          </option>
+        ))}
       </select>
 
-      <audio
-        ref={audioRef}
-        src={selectedSong}
-        onTimeUpdate={handleTimeUpdate}
-        onEnded={() => setIsPlaying(false)}
-      ></audio>
-
-      <div className="flex items-center space-x-4 justify-center">
-        <button
-          onClick={togglePlayPause}
-          className="px-4 py-2 bg-[#d8847a] text-white rounded-md"
-        >
-          {isPlaying ? "⏸️ Pausar" : "▶️ Reproducir"}
-        </button>
-      </div>
-
-      <div className="mt-4">
-        <input
-          type="range"
-          min="0"
-          max={duration}
-          value={currentTime}
-          onChange={handleSeek}
-          className="w-full accent-[#d8847a]"
-        />
-        <p className="text-sm text-center">
-          {Math.floor(currentTime)}s / {Math.floor(duration)}s
-        </p>
-      </div>
+      {/* Audio */}
+      <audio ref={audioRef} src={selectedSong} autoPlay={isPlaying} onEnded={() => setIsPlaying(false)}></audio>
     </div>
   );
 }
