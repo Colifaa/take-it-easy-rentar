@@ -16,7 +16,7 @@ export default function LoadingScreen() {
 
       {/* Texto animado sobre la imagen */}
       <h2 className="absolute text-3xl font-bold animate-pulse bg-black bg-opacity-50 px-6 py-2 rounded-md">
-        Cargando autos...
+        Loading...
       </h2>
     </div>
   );
