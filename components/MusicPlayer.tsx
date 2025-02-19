@@ -89,7 +89,7 @@ export default function FloatingMusicPlayer() {
   };
 
   return (
-    <div className="fixed bottom-2 z-10 bg-gray-900 text-white p-3 rounded-lg shadow-lg flex items-center space-x-4 w-80">
+    <div className="fixed bottom-2 left-4 z-10 bg-gray-900 text-white p-3 rounded-lg shadow-lg flex items-center space-x-4 w-64">
       <Music size={24} className="text-rose-500" />
 
       {/* Botón de play/pausa */}
