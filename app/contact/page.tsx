@@ -10,6 +10,7 @@ import { languages } from "../../lib/languages";
 import { Footer } from "@/components/footer";
 
 
+
 export default function Contact() {
   const { language } = useLanguage();
   const t = languages[language];
@@ -66,8 +67,11 @@ export default function Contact() {
               <Button className="w-full">{t.contact.sendButton}</Button>
             </form>
           </Card>
+         
         </div>
+        
       </section>
+     
       <Footer />
     </main>
   );

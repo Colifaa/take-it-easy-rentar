@@ -31,6 +31,7 @@ import supabase from "@/supabase/authTest";
 import LoginForm from "../components/login";  
 import { useLanguage } from "../hooks/use-language";  
 import { languages } from "../lib/languages";  
+import MusicPlayer from "./MusicPlayer";
 
 interface User {  
   id: string;  
@@ -77,11 +78,16 @@ export default function Navbar() {
       { label: t.navbar.home, href: "/" },  
       { label: t.navbar.about, href: "/about" },  
       { label: t.navbar.contact, href: "/contact" },  
+      
     ]  
   ), [t]);  
 
   return (  
-    <Box bg="#CB9A99 " px={4} boxShadow="md">  
+    
+    <Box bg="#CB9A99 " px={4} boxShadow="xl"> 
+
+
+        
       <Flex h={24} alignItems="center" justifyContent="space-between">  
         {/* Botón menú hamburguesa */}
         <IconButton  
@@ -97,8 +103,11 @@ export default function Navbar() {
         <ChakraLink href="/">  
           <Image src="/logo.png" alt="Logo" boxSize="150px" objectFit="contain" />  
         </ChakraLink>  
+        
+    
 
         {/* Menú de Navegación */}
+        
         <HStack as="nav" spacing={6} display={{ base: "none", md: "flex" }}>  
           {menuItems.map((item) => (  
             <ChakraLink  
@@ -112,11 +121,15 @@ export default function Navbar() {
               {item.label}  
             </ChakraLink>  
           ))}  
+          
         </HStack>  
 
         {/* Botones y Usuario */}
+        
         <Flex alignItems="center" gap={4}>  
+          
           {/* Selector de idioma */}
+          
           <Button  
             variant="ghost"  
             size="sm"  

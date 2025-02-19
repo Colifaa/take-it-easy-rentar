@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { useLanguage } from "../../hooks/use-language";
 import { languages } from "../../lib/languages";
 
+
 export default function About() {
 
     const { language } = useLanguage();
@@ -33,6 +34,7 @@ export default function About() {
                 className="rounded-lg shadow-xl"
               />
             </div>
+         
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -56,9 +58,13 @@ export default function About() {
               <h3 className="font-semibold mb-2">{t.about.paragraph6}</h3>
               <p className="text-sm text-gray-600">{t.about.description4}</p>
             </Card>
+           
           </div>
+          
         </div>
+        
       </section>
+     
     </main>
   );
 }
