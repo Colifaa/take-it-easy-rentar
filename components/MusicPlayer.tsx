@@ -9,10 +9,26 @@ export default function FloatingMusicPlayer() {
     { name: "Panteras", src: "/Panteras.mp3" },
   ];
 
-  // Estados con recuperación desde localStorage
-  const [selectedSong, setSelectedSong] = useState<string>(() => localStorage.getItem("selectedSong") || songs[0].src);
-  const [isPlaying, setIsPlaying] = useState<boolean>(() => localStorage.getItem("isPlaying") === "true");
-  const [currentTime, setCurrentTime] = useState<number>(() => parseFloat(localStorage.getItem("songTime") || "0"));
+  // Evita el acceso a localStorage en el servidor
+  const getLocalStorageItem = (key: string, defaultValue: string) => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(key) || defaultValue;
+    }
+    return defaultValue;
+  };
+
+  const getLocalStorageBoolean = (key: string) => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(key) === "true";
+    }
+    return false;
+  };
+
+  const [selectedSong, setSelectedSong] = useState<string>(() => getLocalStorageItem("selectedSong", songs[0].src));
+  const [isPlaying, setIsPlaying] = useState<boolean>(() => getLocalStorageBoolean("isPlaying"));
+  const [currentTime, setCurrentTime] = useState<number>(() =>
+    typeof window !== "undefined" ? parseFloat(localStorage.getItem("songTime") || "0") : 0
+  );
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -28,7 +44,7 @@ export default function FloatingMusicPlayer() {
 
   useEffect(() => {
     const saveTime = () => {
-      if (audioRef.current) {
+      if (audioRef.current && typeof window !== "undefined") {
         localStorage.setItem("songTime", audioRef.current.currentTime.toString());
       }
     };
@@ -49,14 +65,18 @@ export default function FloatingMusicPlayer() {
         audio.play().catch(() => setIsPlaying(false));
       }
       setIsPlaying(!isPlaying);
-      localStorage.setItem("isPlaying", (!isPlaying).toString());
+      if (typeof window !== "undefined") {
+        localStorage.setItem("isPlaying", (!isPlaying).toString());
+      }
     }
   };
 
   const handleSongChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newSong = event.target.value;
-    localStorage.setItem("selectedSong", newSong);
-    localStorage.setItem("songTime", "0");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedSong", newSong);
+      localStorage.setItem("songTime", "0");
+    }
 
     setSelectedSong(newSong);
     setIsPlaying(false);
@@ -69,7 +89,7 @@ export default function FloatingMusicPlayer() {
   };
 
   return (
-    <div className="fixed bottom-2  z-10 bg-gray-900 text-white p-3 rounded-lg shadow-lg flex items-center space-x-4 w-80">
+    <div className="fixed bottom-2 z-10 bg-gray-900 text-white p-3 rounded-lg shadow-lg flex items-center space-x-4 w-80">
       <Music size={24} className="text-rose-500" />
 
       {/* Botón de play/pausa */}
