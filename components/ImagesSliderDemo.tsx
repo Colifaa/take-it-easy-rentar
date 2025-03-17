@@ -6,9 +6,10 @@ import { VortexDemo } from "./VortexDemo";
 
 export function ImagesSliderDemo() {
   const videos = [
-    "/202501302126.mp4",  // Video 1
-    "/202502101422.mp4",
-    "/202502101422 (4).mp4",
+  
+    "/video1.mp4",
+    "/video2.mp4",
+    "/video4.mp4",  // Video 1
 
   ];
 
