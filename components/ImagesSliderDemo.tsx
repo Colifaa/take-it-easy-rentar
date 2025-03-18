@@ -1,29 +1,39 @@
-"use client";
+import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import React from "react";
 import { ImagesSlider } from "../app/ui/ImagesSlider";
 import { VortexDemo } from "./VortexDemo";
 
 export function ImagesSliderDemo() {
   const videos = [
-  
     "/video1.mp4",
     "/video2.mp4",
-    "/video4.mp4",  // Video 1
-
+    "/video4.mp4", // Video comprimido
   ];
 
+  
+  const [loadedVideos, setLoadedVideos] = useState([videos[0]]);
+  const autosSectionRef = useRef<HTMLDivElement | null>(null); // Tipo correcto
+
+  useEffect(() => {
+    const loadMoreVideos = () => {
+      setLoadedVideos(videos);
+    };
+    setTimeout(loadMoreVideos, 3000); // Carga otros videos después de 3 segundos
+  }, []);
+
   const handleScrollToAutos = () => {
-    const autosSection = document.getElementById("autos");
-    if (autosSection) {
-      autosSection.scrollIntoView({ behavior: "smooth" });
+    if (autosSectionRef.current) {
+      autosSectionRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
-    <ImagesSlider className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[40rem] bg-transparent flex flex-col items-center justify-end relative" images={videos}>
-    <VortexDemo />
-    <button
+    <ImagesSlider
+      className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[40rem] bg-transparent flex flex-col items-center justify-end relative"
+      images={loadedVideos}
+    >
+      <VortexDemo />
+      <button
   onClick={handleScrollToAutos}
   className="mb-20 absolute bottom-10 left-1/2 transform -translate-x-1/2 z-50 inline-flex h-14 w-auto active:scale-95 transition-transform overflow-hidden rounded-full p-[2px] focus:outline-none shadow-lg"
 >
@@ -46,8 +56,11 @@ export function ImagesSliderDemo() {
     </svg>
   </span>
 </button>
-
-
-  </ImagesSlider>
-  )  
+      
+      {/* Sección con referencia */}
+      <div id="autos" ref={autosSectionRef}>
+        {/* Contenido */}
+      </div>
+    </ImagesSlider>
+  );
 }
