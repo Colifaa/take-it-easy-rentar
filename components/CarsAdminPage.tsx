@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { uploadImages, addCar } from "../supabase/supabaseHelpers";
 import { PlusCircle } from "lucide-react";
