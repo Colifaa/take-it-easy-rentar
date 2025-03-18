@@ -76,23 +76,20 @@ export const ImagesSlider = ({
     window.addEventListener("keydown", handleKeyDown);
 
     let interval: NodeJS.Timeout;
-    if (autoplay) {
-      interval = setInterval(() => {
-        handleNext();
-      }, 5000);
-    }
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      clearInterval(interval);
-    };
-  }, [autoplay, handleNext, handlePrevious]);
+  if (autoplay && !loading) {
+    interval = setInterval(() => {
+      handleNext();
+    }, 7000); // Incrementa el intervalo a 7 segundos
+  }
+
+  return () => clearInterval(interval);
+}, [autoplay, handleNext, loading]);
 
   const slideVariants = {
-    initial: { scale: 0, opacity: 0, rotateX: 45 },
-    visible: { scale: 1, rotateX: 0, opacity: 1, transition: { duration: 0.5, ease: [0.645, 0.045, 0.355, 1.0] } },
-    upExit: { opacity: 1, y: "-150%", transition: { duration: 1 } },
-    downExit: { opacity: 1, y: "150%", transition: { duration: 1 } },
+    initial: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, transition: { duration: 0.3 } },
   };
 
   return (
@@ -107,15 +104,20 @@ export const ImagesSlider = ({
       {!loading && (
         <>
           {children}
-          {overlay && <div className={cn("absolute inset-0 bg-black/10 z-40", overlayClassName)} />}
+          {overlay && (
+  <div
+    className={cn("absolute inset-0 bg-black/10 z-40", overlayClassName)}
+  />
+)}
           <AnimatePresence>
             <motion.div
               key={currentIndex}
               initial="initial"
               animate="visible"
-              exit={direction === "up" ? "upExit" : "downExit"}
+              exit="exit"
               variants={slideVariants}
               className="video h-full w-full absolute inset-0"
+              style={{ willChange: "opacity" }}
             >
               <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
                 <source src={loadedMedia[currentIndex]} type="video/mp4" />
