@@ -19,8 +19,11 @@ export const AnimatedTestimonials = ({ autoplay = false }: { autoplay?: boolean 
   const [active, setActive] = useState(0);
 
   const fetchTestimonials = async () => {
-    const { data, error } = await supabase.from("reviews").select("*");
-
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("*")
+      .limit(10); // Limitar a 10 testimonios iniciales
+  
     if (error) {
       console.error("Error fetching testimonials:", error.message);
     } else {
@@ -92,14 +95,17 @@ export const AnimatedTestimonials = ({ autoplay = false }: { autoplay?: boolean 
                 transition={{ duration: 0.4, ease: "easeInOut" }}
                 className="absolute inset-0 origin-bottom"
               >
-                <Image
-                  src={testimonial.src || "/default-avatar.png"}
-                  alt={testimonial.author}
-                  width={500}
-                  height={500}
-                  draggable={false}
-                  className="h-full w-full rounded-3xl object-cover object-center shadow-lg border-4 border-white/30 hover:border-white/50 transition-all duration-300"
-                />
+               <Image
+  src={testimonial.src || "/default-avatar.png"}
+  alt={testimonial.author}
+  width={500}
+  height={500}
+  priority={isActive(index)} // Prioriza la imagen activa
+  placeholder="blur"
+  blurDataURL="/placeholder.jpg" // Placeholder mientras carga
+  draggable={false}
+  className="h-full w-full rounded-3xl object-cover object-center shadow-lg border-4 border-white/30 hover:border-white/50 transition-all duration-300"
+/>
               </motion.div>
             ))}
           </AnimatePresence>
@@ -118,19 +124,14 @@ export const AnimatedTestimonials = ({ autoplay = false }: { autoplay?: boolean 
             >
               <h3 className="text-2xl font-bold">{testimonials[active].author}</h3>
               {renderStars(testimonials[active].rating)}
-              <motion.p className="text-lg mt-6 leading-relaxed">
-                {testimonials[active].comment.split(" ").map((word, index) => (
-                  <motion.span
-                    key={index}
-                    initial={{ filter: "blur(10px)", opacity: 0, y: 5 }}
-                    animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2, ease: "easeInOut", delay: 0.02 * index }}
-                    className="inline-block"
-                  >
-                    {word}&nbsp;
-                  </motion.span>
-                ))}
-              </motion.p>
+              <motion.p
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 0.4, ease: "easeInOut" }}
+  className="text-lg mt-6 leading-relaxed"
+>
+  {testimonials[active].comment}
+</motion.p>
             </motion.div>
           )}
 
