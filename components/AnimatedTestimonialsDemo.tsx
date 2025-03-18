@@ -1,4 +1,5 @@
 
+"use client";
 import { AnimatedTestimonials } from "../components/ui/AnimatedTestimonials";
 
 

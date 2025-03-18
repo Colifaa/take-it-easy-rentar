@@ -1,4 +1,7 @@
+
+"use client";
 // components/AlertComponent.tsx
+
 import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 
 interface AlertComponentProps {

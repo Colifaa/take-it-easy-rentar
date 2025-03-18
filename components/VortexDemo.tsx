@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { Vortex } from "../app/ui/Vortex";
 import { useLanguage } from "../hooks/use-language";

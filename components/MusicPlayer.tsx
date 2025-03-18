@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Indica que este componente se ejecuta solo en el cliente
 
 import { useState, useRef, useEffect } from "react";
 import { Play, Pause, Music } from "lucide-react";
@@ -9,28 +9,19 @@ export default function FloatingMusicPlayer() {
     { name: "Panteras", src: "/Panteras.mp3" },
   ];
 
-  // Evita el acceso a localStorage en el servidor
-  const getLocalStorageItem = (key: string, defaultValue: string) => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem(key) || defaultValue;
-    }
-    return defaultValue;
-  };
-
-  const getLocalStorageBoolean = (key: string) => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem(key) === "true";
-    }
-    return false;
-  };
-
-  const [selectedSong, setSelectedSong] = useState<string>(() => getLocalStorageItem("selectedSong", songs[0].src));
-  const [isPlaying, setIsPlaying] = useState<boolean>(() => getLocalStorageBoolean("isPlaying"));
-  const [currentTime, setCurrentTime] = useState<number>(() =>
-    typeof window !== "undefined" ? parseFloat(localStorage.getItem("songTime") || "0") : 0
-  );
+  const [selectedSong, setSelectedSong] = useState<string>(songs[0].src);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<number>(0);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setSelectedSong(localStorage.getItem("selectedSong") || songs[0].src);
+      setIsPlaying(localStorage.getItem("isPlaying") === "true");
+      setCurrentTime(parseFloat(localStorage.getItem("songTime") || "0"));
+    }
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -38,9 +29,11 @@ export default function FloatingMusicPlayer() {
       audio.currentTime = currentTime;
       if (isPlaying) {
         audio.play().catch(() => setIsPlaying(false));
+      } else {
+        audio.pause();
       }
     }
-  }, [selectedSong]);
+  }, [isPlaying, selectedSong, currentTime]);
 
   useEffect(() => {
     const saveTime = () => {
@@ -54,7 +47,7 @@ export default function FloatingMusicPlayer() {
       audio.addEventListener("timeupdate", saveTime);
       return () => audio.removeEventListener("timeupdate", saveTime);
     }
-  }, [currentTime]);
+  }, []);
 
   const togglePlayPause = () => {
     const audio = audioRef.current;

@@ -20,7 +20,7 @@ export function ParticlesBackground() {
           muted
           playsInline
         >
-          <source src="/background.mp4" type="video/mp4" />
+          <source src="/background 2.mp4" type="video/mp4" />
           Tu navegador no soporta videos.
         </video>
       </div>
