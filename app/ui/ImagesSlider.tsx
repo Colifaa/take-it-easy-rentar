@@ -91,24 +91,19 @@ export const ImagesSlider = ({
     visible: { opacity: 1, transition: { duration: 0.3 } },
     exit: { opacity: 0, transition: { duration: 0.3 } },
   };
-
   return (
     <div
       className={cn("overflow-hidden h-full w-full relative flex items-center justify-center", className)}
       style={{ perspective: "1000px" }}
     >
-      {/* Muestra el loading cuando los videos aún están cargando */}
       {loading && <LoadingOverlay loading={loading} />}
 
-      {/* Solo renderiza los videos si ya cargaron */}
       {!loading && (
         <>
           {children}
           {overlay && (
-  <div
-    className={cn("absolute inset-0 bg-black/10 z-40", overlayClassName)}
-  />
-)}
+            <div className={cn("absolute inset-0 bg-black/10 z-40", overlayClassName)} />
+          )}
           <AnimatePresence>
             <motion.div
               key={currentIndex}
