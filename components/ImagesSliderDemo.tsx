@@ -9,7 +9,7 @@ export function ImagesSliderDemo() {
   
     "/video1.mp4",
     "/video2.mp4",
-    "/video4.mp4",  // Video 1
+    "/video4.mp4",  
 
   ];
 
