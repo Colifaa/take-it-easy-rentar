@@ -1,8 +1,6 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import LoadingOverlay from "../../components/LoadingOverlay"; // Importa el componente de carga
 
 export const ImagesSlider = ({
@@ -25,37 +23,51 @@ export const ImagesSlider = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadedMedia, setLoadedMedia] = useState<string[]>([]);
   const [loading, setLoading] = useState(true); // Inicializa en true
+  const [error, setError] = useState(false); // Estado para manejar errores
+  const videoRef = useRef<HTMLVideoElement>(null); // Referencia al video actual
 
   const handleNext = useCallback(() => {
     setCurrentIndex((prevIndex) =>
-      prevIndex + 1 === images.length ? 0 : prevIndex + 1
+      prevIndex + 1 === loadedMedia.length ? 0 : prevIndex + 1
     );
-  }, [images.length]);
+  }, [loadedMedia.length]);
 
   const handlePrevious = useCallback(() => {
     setCurrentIndex((prevIndex) =>
-      prevIndex - 1 < 0 ? images.length - 1 : prevIndex - 1
+      prevIndex - 1 < 0 ? loadedMedia.length - 1 : prevIndex - 1
     );
-  }, [images.length]);
+  }, [loadedMedia.length]);
 
   const loadMedia = useCallback(() => {
     setLoading(true);
+    setError(false); // Reinicia el estado de error
     const loadPromises = images.map((media) => {
       return new Promise((resolve, reject) => {
         const video = document.createElement("video");
         video.src = media;
         video.onloadeddata = () => resolve(media);
-        video.onerror = reject;
+        video.onerror = (err) => {
+          console.error(`Error al cargar el video: ${media}`, err);
+          reject(err);
+        };
       });
     });
 
-    Promise.all(loadPromises)
-      .then((loadedVideos) => {
-        setLoadedMedia(loadedVideos as string[]);
+    Promise.allSettled(loadPromises)
+      .then((results) => {
+        const loadedVideos = results
+          .filter((result) => result.status === "fulfilled")
+          .map((result) => (result as any).value);
+
+        if (loadedVideos.length === 0) {
+          setError(true); // Si ningún video se carga, marca un error
+        }
+        setLoadedMedia(loadedVideos);
         setLoading(false);
       })
       .catch((error) => {
         console.error("Failed to load videos", error);
+        setError(true);
         setLoading(false);
       });
   }, [images]);
@@ -75,25 +87,35 @@ export const ImagesSlider = ({
 
     window.addEventListener("keydown", handleKeyDown);
 
-    let interval: NodeJS.Timeout;
-
-  if (autoplay && !loading) {
-    interval = setInterval(() => {
-      handleNext();
-    }, 7000); // Incrementa el intervalo a 7 segundos
-  }
-
-  return () => clearInterval(interval);
-}, [autoplay, handleNext, loading]);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleNext, handlePrevious]);
 
   const slideVariants = {
     initial: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.3 } },
     exit: { opacity: 0, transition: { duration: 0.3 } },
   };
+
+  const handleVideoEnd = () => {
+    handleNext(); // Cambia al siguiente video cuando termine el actual
+  };
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-full w-full bg-red-500 text-white">
+        Error al cargar los videos. Por favor, inténtalo más tarde.
+      </div>
+    );
+  }
+
   return (
     <div
-      className={cn("overflow-hidden h-full w-full relative flex items-center justify-center", className)}
+      className={cn(
+        "overflow-hidden h-full w-full relative flex items-center justify-center",
+        className
+      )}
       style={{ perspective: "1000px" }}
     >
       {loading && <LoadingOverlay loading={loading} />}
@@ -114,7 +136,14 @@ export const ImagesSlider = ({
               className="video h-full w-full absolute inset-0"
               style={{ willChange: "opacity" }}
             >
-              <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                playsInline
+                onEnded={handleVideoEnd} // Cambia al siguiente video cuando termine
+              >
                 <source src={loadedMedia[currentIndex]} type="video/mp4" />
               </video>
             </motion.div>
