@@ -21,7 +21,6 @@ import { InfiniteMovingCardsDemo } from "@/components/InfiniteMovingCardsDemo";
 import { Footer } from "@/components/footer";
 import LoadingScreen from "@/components/LoadingScreen";
 
-
 interface Car {
   id: string;
   brand: string;
@@ -29,7 +28,7 @@ interface Car {
   price: number;
   transmission: string;
   fuelType: string;
-  imageUrls: string[];  // Permite manejar múltiples archivos
+  imageUrls: string[]; // Permite manejar múltiples archivos
   description: string;
   available: boolean;
 }
@@ -56,10 +55,9 @@ export default function Home() {
   const [fechaDevolucion, setFechaDevolucion] = useState<Date>();
 
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
-  const [showAlert, setShowAlert] = useState(false);   // Estado para manejar el mensaje de alerta
+  const [showAlert, setShowAlert] = useState(false); // Estado para manejar el mensaje de alerta
   const [user, setUser] = useState<any>(null); // Estado para almacenar información del usuario
   console.log(user?.user.id);
-
 
   useEffect(() => {
     const checkSession = async () => {
@@ -121,6 +119,19 @@ export default function Home() {
     setFilteredCars(filtered);
   };
 
+  // Función para reiniciar los filtros y restaurar los autos
+  const handleResetFilters = () => {
+    setFilters({
+      brand: "",
+      model: "",
+      maxPrice: 500,
+      transmission: "",
+      fuelType: "",
+      available: false,
+    });
+    setFilteredCars(cars); // Restaura la lista completa de autos
+  };
+
   const handleOpenForm = (car: Car) => {
     setSelectedCar(car);
   };
@@ -133,45 +144,37 @@ export default function Home() {
     return <LoadingScreen />;
   }
 
-
-
-
-
   return (
-    <main className="min-h-screen bg-gradient-to-b ">
-
+    <main className="min-h-screen bg-gradient-to-b">
       {/* Hero Section */}
-
       <ImagesSliderDemo />
-
-
 
       {/* Sección de Filtros y Listado de Autos */}
       <div className="container mx-auto p-4">
-
-
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Filtros */}
-
-
-          <CarFilters filters={filters} setFilters={setFilters} onApplyFilters={handleApplyFilters} />
-
+          <CarFilters
+            filters={filters}
+            setFilters={setFilters}
+            onApplyFilters={handleApplyFilters}
+            onResetFilters={handleResetFilters} // Pasar la función de reinicio
+          />
 
           {/* Lista de Autos */}
-
           <section id="autos" className="md:col-span-3">
-          <h2 className="text-md  md:text-4xl font-extrabold text-center bg-[linear-gradient(45deg,#c47369,#3C888A,#E8A74D)]
-           text-white p-4 rounded-lg shadow-lg backdrop-blur-xl tracking-wide animate-pulse">
+            <h2 className="text-md md:text-4xl font-extrabold text-center bg-[linear-gradient(45deg,#c47369,#3C888A,#E8A74D)] text-white p-4 rounded-lg shadow-lg backdrop-blur-xl tracking-wide animate-pulse">
               🌴 Encuentra tu Auto Ideal 🌴
             </h2>
-
 
             {filteredCars.length === 0 ? (
               <p className="text-center text-lg text-[#3C888A]">{t.filters.noResults}</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredCars.map((car) => (
-                  <Card key={car.id} className="overflow-hidden shadow-lg rounded-lg bg-[#C47369] border border-gray-200">
+                  <Card
+                    key={car.id}
+                    className="overflow-hidden shadow-lg rounded-lg bg-[#C47369] border border-gray-200"
+                  >
                     <div className="relative">
                       <img
                         src={car.imageUrls?.[0] || "/placeholder.jpg"}
@@ -190,7 +193,9 @@ export default function Home() {
                     {/* Alerta si el usuario no está autenticado */}
                     {showAlert && <AlertComponent message={t.filters.alert} />}
                     <div className="p-4">
-                      <h3 className="text-lg font-semibold text-[#103c3d]">{car.brand} {car.model}</h3>
+                      <h3 className="text-lg font-semibold text-[#103c3d]">
+                        {car.brand} {car.model}
+                      </h3>
                       <p className="text-sm text-[#e3b167]">{t.reservation.price}</p>
                       <div className="text-xl font-bold text-[#505e32]">${car.price}</div>
 
@@ -208,27 +213,26 @@ export default function Home() {
                       </div>
 
                       {/* Botón de Reserva */}
-                      <Button className="w-full mt-4" disabled={!car.available} onClick={() => {
-                        if (!user?.user.id) {
-                          setShowAlert(true);
-                        } else {
-                          handleOpenForm(car);
-                        }
-                      }}>
+                      <Button
+                        className="w-full mt-4"
+                        disabled={!car.available}
+                        onClick={() => {
+                          if (!user?.user.id) {
+                            setShowAlert(true);
+                          } else {
+                            handleOpenForm(car);
+                          }
+                        }}
+                      >
                         {car.available ? t.filters.reservaButton : t.filters.notAvailable}
                       </Button>
-
-
                     </div>
                   </Card>
                 ))}
               </div>
-
             )}
-
           </section>
         </div>
-
       </div>
 
       {/* Sección de Testimonios */}
@@ -247,5 +251,4 @@ export default function Home() {
       <Footer />
     </main>
   );
-
 }

@@ -72,7 +72,7 @@ export function VortexDemo() {
 </motion.h2>
 
 <motion.p
-  className="text-white text-xl sm:text-2xl md:text-3xl max-w-3xl mt-6 text-center mx-auto drop-shadow-md px-6 sm:px-10"
+  className="text-[#FFA060] text-xl sm:text-2xl md:text-3xl max-w-3xl mt-6 text-center mx-auto drop-shadow-md px-6 sm:px-10 font-bold"
   initial={{ opacity: 0 }}
   animate={{ opacity: 1 }}
   transition={{ duration: 0.5, delay: 0.5 }}

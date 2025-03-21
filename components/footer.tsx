@@ -44,7 +44,7 @@ export function Footer() {
             <ul className="space-y-2 text-neutral-200">
               <li className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-white" />
-                <span>+1 234 567 890</span>
+                <span>+61 421 602 018</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-white" />
@@ -52,7 +52,7 @@ export function Footer() {
               </li>
               <li className="flex items-center space-x-3">
                 <MapPin className="h-5 w-5 text-white" />
-                <span>123 Calle Principal</span>
+                <span> 21 Eumundi Rd </span>
               </li>
             </ul>
           </div>

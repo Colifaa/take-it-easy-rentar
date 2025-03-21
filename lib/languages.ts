@@ -109,6 +109,7 @@ export const languages = {
       notAvailable: "Not Available",  // Aquí se agrega la traducción de "Not Available"
       alert:"Please log in to continue.",
       disponibilidad:"Availability",
+     resetFilters: "Reset Filters", // Nueva clave
 
     },
     comments: {
@@ -245,7 +246,8 @@ export const languages = {
       hasta: "Hasta",
       noResults: "No se encontraron resultados",
       notAvailable: "No Disponible",  // Aquí se agrega la traducción de "No Disponible"
-      alert:"Por favor, inicia sesión para continuar."
+      alert:"Por favor, inicia sesión para continuar.",
+      resetFilters: "Reiniciar Filtros", // Nueva clave
     },
     comments: {
       title: "Deja tu Comentario",
