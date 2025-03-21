@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
-import { Button } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react"; // Botones de Chakra UI
 import supabase from "../supabase/authTest";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
@@ -21,24 +21,27 @@ interface CarFiltersProps {
   filters: Filters;
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   onApplyFilters: () => void;
+  onResetFilters: () => void; // Nueva función para restablecer los autos
 }
 
-export const CarFilters = ({ filters, setFilters, onApplyFilters }: CarFiltersProps) => {
+export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters }: CarFiltersProps) => {
   const [brands, setBrands] = useState<string[]>([]);
   const [models, setModels] = useState<string[]>([]);
-  const [transmissions, setTransmissions] = useState<string[]>([]);
-  const [fuelTypes, setFuelTypes] = useState<string[]>([]);
   const [brandsLoaded, setBrandsLoaded] = useState(false);
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const { language } = useLanguage();
   const t = languages[language];
+
+  // Datos hardcodeados para transmisión y tipo de combustible
+  const transmissions = ["Manual", "Automatic"];
+  const fuelTypes = ["gasoline", "electric", "diesel", "hybrid"];
 
   useEffect(() => {
     if (!brandsLoaded && !modelsLoaded) return;
 
     const fetchOptions = async () => {
       try {
-        const { data } = await supabase.from("cars").select("brand, model, transmission, fuelType");
+        const { data } = await supabase.from("cars").select("brand, model");
 
         if (brandsLoaded) {
           setBrands(Array.from(new Set(data?.map((item) => item.brand) || [])));
@@ -46,8 +49,6 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters }: CarFiltersPr
         if (modelsLoaded) {
           setModels(Array.from(new Set(data?.map((item) => item.model) || [])));
         }
-        setTransmissions(Array.from(new Set(data?.map((item) => item.transmission) || [])));
-        setFuelTypes(Array.from(new Set(data?.map((item) => item.fuelType) || [])));
       } catch (error) {
         console.error("Error fetching data from Supabase:", error);
       }
@@ -68,6 +69,19 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters }: CarFiltersPr
 
   const handleSliderChange = (value: number[]) => {
     setFilters((prevFilters) => ({ ...prevFilters, maxPrice: value[0] }));
+  };
+
+  // Función para reiniciar los filtros
+  const resetFilters = () => {
+    setFilters({
+      brand: "",
+      model: "",
+      maxPrice: 0,
+      transmission: "",
+      fuelType: "",
+      available: false,
+    });
+    onResetFilters(); // Llama a la función para restablecer los autos
   };
 
   return (
@@ -168,15 +182,30 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters }: CarFiltersPr
           <span className="text-sm">{t.filters.availableOnly}</span>
         </div>
 
-        {/* Apply Filters Button */}
-        <Button
-          onClick={onApplyFilters}
-          className="w-full py-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full
-          transition-all duration-200 border border-white/30 backdrop-blur-sm
-          transform hover:scale-102 shadow-lg mt-6"
-        >
-          {t.filters.applyFilters}
-        </Button>
+        {/* Botones: Aplicar Filtros y Reiniciar Filtros */}
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Botón para Reiniciar Filtros */}
+          <Button
+            onClick={resetFilters}
+            colorScheme="red" // Color rojo para "Reiniciar Filtros"
+            variant="solid"
+            size="md"
+            className="w-full md:w-auto py-4 text-white font-semibold rounded-full shadow-lg transform hover:scale-102 transition-all duration-200"
+          >
+            {t.filters.resetFilters}
+          </Button>
+
+          {/* Apply Filters Button */}
+          <Button
+            onClick={onApplyFilters}
+            colorScheme="teal" // Color azul-verde para "Aplicar Filtros"
+            variant="solid"
+            size="md"
+            className="w-full md:w-auto py-4 text-white font-semibold rounded-full shadow-lg transform hover:scale-102 transition-all duration-200"
+          >
+            {t.filters.applyFilters}
+          </Button>
+        </div>
       </div>
     </div>
   );

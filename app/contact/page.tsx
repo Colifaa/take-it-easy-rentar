@@ -25,7 +25,7 @@ export default function Contact() {
             <Card className="p-6">
               <Phone className="w-8 h-8 text-primary mb-4" />
               <h3 className="font-semibold mb-2">{t.contact.phone}</h3>
-              <p className="text-gray-600">+1 234 567 890</p>
+              <p className="text-gray-600">+61 421 602 018</p>
               <p className="text-gray-600">{t.contact.hours}</p>
             </Card>
             <Card className="p-6">
@@ -37,8 +37,8 @@ export default function Contact() {
             <Card className="p-6">
               <MapPin className="w-8 h-8 text-primary mb-4" />
               <h3 className="font-semibold mb-2">{t.contact.location}</h3>
-              <p className="text-gray-600">123 Calle Principal</p>
-              <p className="text-gray-600">Ciudad, País</p>
+              <p className="text-gray-600">21 Eumundi Rd</p>
+              <p className="text-gray-600">Australia Noosaville Queensland</p>
             </Card>
           </div>
 
