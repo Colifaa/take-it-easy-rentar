@@ -14,13 +14,17 @@ export function ParticlesBackground() {
       {/* Contenedor del video con z-[-1] para que esté detrás */}
       <div className="absolute top-0 left-0 w-full h-full z-[-1]">
         <video
-       className="w-full h-full object-cover"
+          className="w-full h-full object-cover"
           autoPlay
           loop
           muted
           playsInline
         >
-          <source src="/background 2.mp4" type="video/mp4" />
+          {/* Actualiza la URL del video para apuntar a Supabase */}
+          <source
+            src="https://osffhjnmklypecylepyw.supabase.co/storage/v1/object/public/videos/Background/background.mp4"
+            type="video/mp4"
+          />
           Tu navegador no soporta videos.
         </video>
       </div>
