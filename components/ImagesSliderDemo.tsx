@@ -6,26 +6,17 @@ import { VortexDemo } from "./VortexDemo";
 import supabase from "../supabase/authTest";
 
 export function ImagesSliderDemo() {
-  const [videos, setVideos] = useState<string[]>([]);
-  console.log("videos",videos);
-  
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  console.log("videoUrl", videoUrl);
 
- 
-
-  // Función para obtener las URLs de los videos
-  const fetchVideos = async () => {
-    const videoPaths = ["video1.mp4", "video2.mp4", "video3.mp4"];
-    const urls = await Promise.all(
-      videoPaths.map(async (path) => {
-        const { data } = supabase.storage.from("videos").getPublicUrl(path);
-        return data.publicUrl;
-      })
-    );
-    setVideos(urls);
+  // Función para obtener la URL del video combinado
+  const fetchCombinedVideo = async () => {
+    const { data } = supabase.storage.from("videos").getPublicUrl("video4.mp4");
+    setVideoUrl(data.publicUrl);
   };
 
   useEffect(() => {
-    fetchVideos();
+    fetchCombinedVideo();
   }, []);
 
   const handleScrollToAutos = () => {
@@ -38,7 +29,7 @@ export function ImagesSliderDemo() {
   return (
     <ImagesSlider
       className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[40rem] bg-transparent flex flex-col items-center justify-end relative"
-      images={videos}
+      images={videoUrl ? [videoUrl] : []} // Solo un video en el array
     >
       <VortexDemo />
       <button
