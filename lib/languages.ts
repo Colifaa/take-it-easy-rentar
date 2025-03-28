@@ -90,6 +90,7 @@ export const languages = {
       cancel: "Cancel"
     },
     filters: {
+      filters: "Filters",
       carFilters: "Car Filters",
       brand: "Brand",
       selectBrand: "Select Brand",
@@ -228,6 +229,7 @@ export const languages = {
       logoutButton: "Cerrar Sesión",
     },
     filters: {
+         filters: "Filtros",
        disponibilidad:"Disponibilidad",
       carFilters: "Filtros de Autos",
       brand: "Marca",
