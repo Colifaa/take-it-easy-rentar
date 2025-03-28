@@ -1,7 +1,7 @@
-"use client"
+"use client";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import React, { useEffect, useState, useRef,useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import LoadingOverlay from "../../components/LoadingOverlay"; // Importa el componente de carga
 
 export const ImagesSlider = ({
@@ -17,12 +17,13 @@ export const ImagesSlider = ({
   overlayClassName?: string;
   className?: string;
 }) => {
-  const [loadedMedia, setLoadedMedia] = useState<string | null>(null);
+  const [loadedImages, setLoadedImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true); // Inicializa en true
   const [error, setError] = useState(false); // Estado para manejar errores
-  const videoRef = useRef<HTMLVideoElement>(null); // Referencia al video actual
+  const [currentIndex, setCurrentIndex] = useState(0); // Índice de la imagen actual
 
-  const loadMedia = useCallback(() => {
+  // Función para cargar las imágenes
+  const loadImages = useCallback(() => {
     setLoading(true);
     setError(false); // Reinicia el estado de error
 
@@ -32,27 +33,56 @@ export const ImagesSlider = ({
       return;
     }
 
-    const video = document.createElement("video");
-    video.src = images[0]; // Solo cargamos el primer video
-    video.onloadeddata = () => {
-      setLoadedMedia(images[0]);
-      setLoading(false);
-    };
-    video.onerror = (err) => {
-      console.error(`Error al cargar el video: ${images[0]}`, err);
-      setError(true);
-      setLoading(false);
-    };
+    const loadPromises = images.map((src) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => resolve(src);
+        img.onerror = (err) => {
+          console.error(`Error al cargar la imagen: ${src}`, err);
+          reject(err);
+        };
+      });
+    });
+
+    Promise.allSettled(loadPromises)
+      .then((results) => {
+        const loadedImages = results
+          .filter((result) => result.status === "fulfilled")
+          .map((result) => (result as any).value);
+
+        if (loadedImages.length === 0) {
+          setError(true); // Si ninguna imagen se carga, marca un error
+        }
+        setLoadedImages(loadedImages);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to load images", error);
+        setError(true);
+        setLoading(false);
+      });
   }, [images]);
 
   useEffect(() => {
-    loadMedia();
-  }, [loadMedia]);
+    loadImages();
+  }, [loadImages]);
+
+  // Lógica para cambiar automáticamente de imagen
+  useEffect(() => {
+    if (loadedImages.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % loadedImages.length);
+    }, 5000); // Cambia cada 5 segundos
+
+    return () => clearInterval(interval); // Limpia el intervalo al desmontar
+  }, [loadedImages]);
 
   if (error) {
     return (
       <div className="flex items-center justify-center h-full w-full bg-red-500 text-white">
-        Error al cargar el video. Por favor, inténtalo más tarde.
+        Error al cargar las imágenes. Por favor, inténtalo más tarde.
       </div>
     );
   }
@@ -67,32 +97,22 @@ export const ImagesSlider = ({
     >
       {loading && <LoadingOverlay loading={loading} />}
 
-      {!loading && loadedMedia && (
+      {!loading && loadedImages.length > 0 && (
         <>
           {children}
           {overlay && (
             <div className={cn("absolute inset-0 bg-black/10 z-40", overlayClassName)} />
           )}
-          <AnimatePresence>
-            <motion.div
-              key="video"
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentIndex}
+              src={loadedImages[currentIndex]}
+              alt={`Slide ${currentIndex}`}
+              className="w-full h-full object-cover absolute inset-0"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { duration: 0.3 } }}
-              exit={{ opacity: 0, transition: { duration: 0.3 } }}
-              className="video h-full w-full absolute inset-0"
-              style={{ willChange: "opacity" }}
-            >
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                playsInline
-                loop // Atributo para reproducir en bucle
-              >
-                <source src={loadedMedia} type="video/mp4" />
-              </video>
-            </motion.div>
+              animate={{ opacity: 1, transition: { duration: 0.5 } }}
+              exit={{ opacity: 0, transition: { duration: 0.5 } }}
+            />
           </AnimatePresence>
         </>
       )}

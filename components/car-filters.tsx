@@ -84,7 +84,7 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters
   return (
     <>
       {/* Botón de Filtros para Móviles */}
-      <div className="md:hidden z-50 relative">
+      <div className="md:hidden z-20 relative">
         <Sheet >
           <SheetTrigger asChild>
             <div className="grid place-items-center">
