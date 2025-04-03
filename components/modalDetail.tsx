@@ -1,6 +1,6 @@
 "use client";
 import "../app/globals.css";
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -16,8 +16,10 @@ import {
   SimpleGrid,
   Divider,
   Icon,
+  IconButton,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import { FaCar, FaGasPump, FaCogs, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { FaCar, FaGasPump, FaCogs, FaCheckCircle, FaTimesCircle, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
 import { InfiniteMovingCards } from "../app/ui/InfiniteMovingCards";
@@ -41,255 +43,183 @@ interface ModalDetailProps {
   onClose: () => void;
 }
 
-export default function ModalDetail({ car, onClose }: ModalDetailProps) {
+const ModalDetail = memo(({ car, onClose }: ModalDetailProps) => {
   const { language } = useLanguage();
   const t = languages[language];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const bgColor = useColorModeValue("white", "gray.800");
+  const textColor = useColorModeValue("gray.800", "white");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % car.imageUrls.length);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + car.imageUrls.length) % car.imageUrls.length);
+  };
 
   return (
-    <>
-      <Modal isOpen onClose={onClose} size="full" scrollBehavior="inside">
-        <ModalOverlay />
-        <ModalContent
-          maxW="full"
-          height="full"
-          borderRadius="lg"
+    <Modal isOpen={!!car} onClose={onClose} size="full" motionPreset="slideInBottom">
+      <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
+      <ModalContent
+        bg={bgColor}
+        color={textColor}
+        maxW="1200px"
+        mx="auto"
+        my={8}
+        borderRadius="xl"
+        overflow="hidden"
+        boxShadow="2xl"
+      >
+        <ModalHeader
+          fontSize="2xl"
+          fontWeight="bold"
+          borderBottom="1px"
+          borderColor={borderColor}
           p={6}
-          bgGradient="linear(to-b, #e600c4, #000191)" // Fondo principal: gradiente de rosa (#e600c4) al azul (#000191)
         >
-          <VStack align="center" spacing={3} width="full">
-            <ModalHeader
-              fontSize="4xl"
-              fontWeight="bold"
-              textAlign="center"
-              bg="rgba(255, 255, 255, 0.1)"
-              color="#ffffff" // Texto en blanco
-              borderRadius="lg"
-              boxShadow="lg"
-            >
-              🌴 {car.brand} {car.model} 🌴
-            </ModalHeader>
-          </VStack>
-          <ModalCloseButton color="#ffffff" /> {/* Botón de cierre en blanco */}
-          <ModalBody>
-            <VStack spacing={8} align="stretch">
-              {/* Precio */}
-              <VStack align="center" spacing={3} width="full">
-              <Box
-                p={4}
-                borderRadius="lg"
-                bg="rgba(255, 255, 255, 0.1)"
-                boxShadow="lg"
-                backdropFilter="blur(10px)"
-              >
-                <Text fontSize="2xl" fontWeight="bold" color="#ffffff">
-                  🌺 {t.filters.pricePerDay}: ${car.price}
-                </Text>
+          {car.brand} {car.model}
+        </ModalHeader>
+        <ModalCloseButton
+          size="lg"
+          color={textColor}
+          _hover={{ bg: "#009688", color: "white" }}
+        />
+        <ModalBody p={6}>
+          <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={8}>
+            <Box>
+              <Box position="relative" borderRadius="lg" overflow="hidden">
+                <Zoom>
+                  <Image
+                    src={car.imageUrls[currentImageIndex]}
+                    alt={`${car.brand} ${car.model}`}
+                    objectFit="cover"
+                    w="100%"
+                    h="400px"
+                  />
+                </Zoom>
+                {car.imageUrls.length > 1 && (
+                  <Box
+                    position="absolute"
+                    bottom={4}
+                    left={4}
+                    right={4}
+                    display="flex"
+                    justifyContent="space-between"
+                  >
+                    <IconButton
+                      aria-label="Previous image"
+                      icon={<FaChevronLeft />}
+                      onClick={handlePrevImage}
+                      bg="blackAlpha.500"
+                      color="white"
+                      _hover={{ bg: "#009688" }}
+                    />
+                    <IconButton
+                      aria-label="Next image"
+                      icon={<FaChevronRight />}
+                      onClick={handleNextImage}
+                      bg="blackAlpha.500"
+                      color="white"
+                      _hover={{ bg: "#009688" }}
+                    />
+                  </Box>
+                )}
               </Box>
-              </VStack>
-
-              {/* Descripción Breve */}
-              <Box
-                p={4}
-                borderRadius="lg"
-                bg="rgba(255, 255, 255, 0.1)"
-                boxShadow="lg"
-                backdropFilter="blur(10px)"
-              >
-                <Text fontSize="xl" fontWeight="bold" color="#ffffff">
-                  Aquí tienes un resumen de las especificaciones clave de este vehículo. Desde el tipo de transmisión hasta el combustible que utiliza, conoce todos los detalles que hacen de este modelo una excelente elección.
-                </Text>
-              </Box>
-              <Divider borderColor="#ffffff" />
-
-              {/* Galería de Imágenes */}
-              <VStack align="center" spacing={3} width="full">
-              <Box
-                p={4}
-                borderRadius="lg"
-                bg="rgba(255, 255, 255, 0.1)"
-                boxShadow="lg"
-                backdropFilter="blur(10px)"
-              >
-                <Text fontSize="2xl" fontWeight="bold" color="#ffffff">
-                    🌺 Galería de Imágenes
-                  </Text>
-                </Box>
-              </VStack>
-
-              <Box
-                className="h-[50vh] w-full rounded-lg flex flex-col items-center justify-center relative overflow-hidden"
-                bg="rgba(255, 255, 255, 0.1)"
-                boxShadow="lg"
-                backdropFilter="blur(10px)"
-              >
-                <InfiniteMovingCards
-                  items={car.imageUrls.map((url) => ({ image: url }))}
-                  direction="right"
-                  speed="slow"
-                />
-              </Box>
-
-              {/* Miniaturas de Imágenes */}
-              <SimpleGrid
-                columns={{ base: 2, sm: 3, md: 4, lg: 5 }}
-                gap={3}
-                justifyItems="center"
-              >
+              <SimpleGrid columns={3} spacing={4} mt={4}>
                 {car.imageUrls.map((url, index) => (
                   <Box
                     key={index}
                     cursor="pointer"
-                    onClick={() => setSelectedImage(url)}
-                    borderRadius="md"
-                    overflow="hidden"
-                    _hover={{ transform: "scale(1.08)", boxShadow: "xl" }}
+                    onClick={() => setCurrentImageIndex(index)}
+                    opacity={currentImageIndex === index ? 1 : 0.6}
                     transition="all 0.3s ease"
-                    border="2px solid #ffffff"
+                    _hover={{ opacity: 1 }}
                   >
-                    <Image src={url} alt={`Car ${index}`} boxSize="130px" objectFit="cover" />
+                    <Image
+                      src={url}
+                      alt={`${car.brand} ${car.model} ${index + 1}`}
+                      objectFit="cover"
+                      w="100%"
+                      h="100px"
+                      borderRadius="md"
+                    />
                   </Box>
                 ))}
               </SimpleGrid>
+            </Box>
 
-              {/* Descripción Detallada */}
-              <Box
-                p={4}
-                borderRadius="lg"
-                bg="rgba(255, 255, 255, 0.1)"
-                boxShadow="lg"
-                backdropFilter="blur(10px)"
-              >
-                <Text fontSize="2xl" fontWeight="bold" color="#ffffff" textAlign="center">
-                  🌺 Descripción del Auto
+            <VStack spacing={6} align="stretch">
+              <Box>
+                <Text fontSize="xl" fontWeight="bold" mb={2}>
+                  Descripción
                 </Text>
-                <Text fontSize="md" color="#ffffff" textAlign="justify">
-                  "El {car.brand} {car.model} combina estilo, rendimiento y comodidad para brindarte una experiencia de conducción única. Diseñado para ofrecer eficiencia y potencia, este modelo cuenta con una transmisión {car.transmission} y un motor {car.fuelType}, ideal para cualquier tipo de viaje."
-                </Text>
-                <Text fontSize="sm" color="#ffffff" textAlign="justify">
-                  {car.description}
-                </Text>
+                <Text color={textColor}>{car.description}</Text>
               </Box>
 
-              {/* Detalles Técnicos */}
-              <Box
-                p={4}
-                borderRadius="lg"
-                bg="rgba(255, 255, 255, 0.1)"
-                boxShadow="lg"
-                backdropFilter="blur(10px)"
-              >
-                <Text fontSize="2xl" fontWeight="bold" color="#ffffff" textAlign="center">
-                  🌺 Detalles Técnicos
-                </Text>
-              </Box>
+              <Divider borderColor={borderColor} />
 
-              <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
-                {/* Transmisión */}
-                <Box
-                  p={4}
-                  bg="rgba(255, 255, 255, 0.1)"
-                  borderRadius="lg"
-                  boxShadow="md"
-                  backdropFilter="blur(10px)"
-                  display="flex"
-                  alignItems="center"
-                >
-                  <Icon as={FaCogs} color="#ffffff" boxSize={6} mr={3} />
-                  <Box>
-                    <Text fontWeight="semibold" color="#ffffff">{t.filters.transmission}</Text>
-                    <Text color="#ffffff">{car.transmission}</Text>
-                  </Box>
+              <SimpleGrid columns={2} spacing={4}>
+                <Box>
+                  <Icon as={FaCar} color="#009688" mr={2} />
+                  <Text display="inline" fontWeight="bold">
+                    Transmisión:
+                  </Text>
+                  <Text display="inline" ml={2}>
+                    {car.transmission}
+                  </Text>
                 </Box>
-
-                {/* Tipo de Combustible */}
-                <Box
-                  p={4}
-                  bg="rgba(255, 255, 255, 0.1)"
-                  borderRadius="lg"
-                  boxShadow="md"
-                  backdropFilter="blur(10px)"
-                  display="flex"
-                  alignItems="center"
-                >
-                  <Icon as={FaGasPump} color="#ffffff" boxSize={6} mr={3} />
-                  <Box>
-                    <Text fontWeight="semibold" color="#ffffff">{t.filters.fuelType}</Text>
-                    <Text color="#ffffff">{car.fuelType}</Text>
-                  </Box>
+                <Box>
+                  <Icon as={FaGasPump} color="#009688" mr={2} />
+                  <Text display="inline" fontWeight="bold">
+                    Combustible:
+                  </Text>
+                  <Text display="inline" ml={2}>
+                    {car.fuelType}
+                  </Text>
                 </Box>
-
-                {/* Marca */}
-                <Box
-                  p={4}
-                  bg="rgba(255, 255, 255, 0.1)"
-                  borderRadius="lg"
-                  boxShadow="md"
-                  backdropFilter="blur(10px)"
-                  display="flex"
-                  alignItems="center"
-                >
-                  <Icon as={FaCar} color="#ffffff" boxSize={6} mr={3} />
-                  <Box>
-                    <Text fontWeight="semibold" color="#ffffff">{t.filters.brand}</Text>
-                    <Text color="#ffffff">{car.brand}</Text>
-                  </Box>
+                <Box>
+                  <Icon as={FaCogs} color="#009688" mr={2} />
+                  <Text display="inline" fontWeight="bold">
+                    Precio:
+                  </Text>
+                  <Text display="inline" ml={2}>
+                    ${car.price}/día
+                  </Text>
                 </Box>
-
-                {/* Disponibilidad */}
-                <Box
-                  p={4}
-                  bg="rgba(255, 255, 255, 0.1)"
-                  borderRadius="lg"
-                  boxShadow="md"
-                  backdropFilter="blur(10px)"
-                  display="flex"
-                  alignItems="center"
-                >
+                <Box>
                   <Icon
                     as={car.available ? FaCheckCircle : FaTimesCircle}
-                    color={car.available ? "#00ff00" : "#ff0000"}
-                    boxSize={6}
-                    mr={3}
+                    color={car.available ? "green.500" : "red.500"}
+                    mr={2}
                   />
-                  <Box>
-                    <Text fontWeight="semibold" color="#ffffff">{t.filters.disponibilidad}</Text>
-                    <Text color={car.available ? "#00ff00" : "#ff0000"}>
-                      {car.available ? t.filters.available : t.filters.notAvailable}
-                    </Text>
-                  </Box>
+                  <Text display="inline" fontWeight="bold">
+                    Disponibilidad:
+                  </Text>
+                  <Text display="inline" ml={2}>
+                    {car.available ? "Disponible" : "No disponible"}
+                  </Text>
                 </Box>
-              </Grid>
-            </VStack>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+              </SimpleGrid>
 
-      {/* Modal de Imagen Ampliada */}
-      {selectedImage && (
-        <Modal isOpen onClose={() => setSelectedImage(null)} size="4xl">
-          <ModalOverlay />
-          <ModalContent
-            bgGradient="linear(to-b, #e600c4, #000191)" // Fondo principal: gradiente de rosa (#e600c4) al azul (#000191)
-            borderRadius="lg"
-            p={4}
-            maxWidth="60%"
-          >
-            <ModalCloseButton color="#ffffff" />
-            <ModalBody display="flex" justifyContent="center">
-              <Zoom>
-                <Image
-                  src={selectedImage}
-                  alt="Selected Car"
-                  maxH="70vh"
-                  borderRadius="lg"
-                />
-              </Zoom>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-      )}
-    </>
+              <Divider borderColor={borderColor} />
+
+              <InfiniteMovingCards 
+                items={car.imageUrls.map(url => ({ image: url }))}
+                direction="right"
+                speed="slow"
+                pauseOnHover={true}
+              />
+            </VStack>
+          </Grid>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
-}
+});
+
+ModalDetail.displayName = "ModalDetail";
+
+export default ModalDetail;
