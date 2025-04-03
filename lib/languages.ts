@@ -138,8 +138,56 @@ export const languages = {
         description2:"State-of-the-art fleet",
         description3:"Simplified rental process",
         description4:"Recognized for our excellence",
-  
-      },
+        team: {
+          title: "Our Team",
+          members: [
+            {
+              name: "John Smith",
+              role: "CEO & Founder",
+              image: "/images/team/john.jpg"
+            },
+            {
+              name: "Sarah Johnson",
+              role: "Operations Manager",
+              image: "/images/team/sarah.jpg"
+            },
+            {
+              name: "Michael Brown",
+              role: "Customer Service Director",
+              image: "/images/team/michael.jpg"
+            },
+            {
+              name: "Emily Davis",
+              role: "Marketing Manager",
+              image: "/images/team/emily.jpg"
+            }
+          ]
+        },
+        rooms: {
+          title: "Our Meeting Rooms",
+          description: "Modern and comfortable spaces for your business meetings",
+          rooms: [
+            {
+              name: "Executive Suite",
+              capacity: "Up to 10 people",
+              features: ["High-speed WiFi", "Projector", "Whiteboard", "Coffee service"],
+              image: "/images/rooms/executive.jpg"
+            },
+            {
+              name: "Conference Room",
+              capacity: "Up to 20 people",
+              features: ["Video conferencing", "Smart TV", "Sound system", "Catering available"],
+              image: "/images/rooms/conference.jpg"
+            },
+            {
+              name: "Board Room",
+              capacity: "Up to 15 people",
+              features: ["Premium furniture", "Natural lighting", "Private restroom", "Breakout area"],
+              image: "/images/rooms/board.jpg"
+            }
+          ]
+        }
+    },
       
       contact:{
       phone: "Phone",
@@ -155,7 +203,19 @@ export const languages = {
       namePlaceholder: "Your Name",
       emailPlaceholder: "your@email.com",
       subjectPlaceholder: "Subject of the message",
-      messagePlaceholder: "Write your message here"
+      messagePlaceholder: "Write your message here",
+      rooms: {
+        title: "Book a Meeting Room",
+        description: "Reserve our modern meeting spaces for your next business event",
+        form: {
+          roomType: "Room Type",
+          date: "Date",
+          time: "Time",
+          attendees: "Number of Attendees",
+          requirements: "Special Requirements",
+          submit: "Request Booking"
+        }
+      }
       }
 
 },
@@ -275,6 +335,55 @@ export const languages = {
       description2:"Flota de última generación",
       description3:"Proceso de alquiler simplificado",
       description4:"Reconocidos por nuestra excelencia",
+      team: {
+        title: "Nuestro Equipo",
+        members: [
+          {
+            name: "Juan Pérez",
+            role: "CEO y Fundador",
+            image: "/images/team/juan.jpg"
+          },
+          {
+            name: "María García",
+            role: "Gerente de Operaciones",
+            image: "/images/team/maria.jpg"
+          },
+          {
+            name: "Carlos Rodríguez",
+            role: "Director de Servicio al Cliente",
+            image: "/images/team/carlos.jpg"
+          },
+          {
+            name: "Ana Martínez",
+            role: "Gerente de Marketing",
+            image: "/images/team/ana.jpg"
+          }
+        ]
+      },
+      rooms: {
+        title: "Nuestras Salas de Reuniones",
+        description: "Espacios modernos y cómodos para tus reuniones de negocios",
+        rooms: [
+          {
+            name: "Sala Ejecutiva",
+            capacity: "Hasta 10 personas",
+            features: ["WiFi de alta velocidad", "Proyector", "Pizarra", "Servicio de café"],
+            image: "/images/rooms/ejecutiva.jpg"
+          },
+          {
+            name: "Sala de Conferencias",
+            capacity: "Hasta 20 personas",
+            features: ["Videoconferencia", "TV inteligente", "Sistema de sonido", "Servicio de catering disponible"],
+            image: "/images/rooms/conferencias.jpg"
+          },
+          {
+            name: "Sala de Directorio",
+            capacity: "Hasta 15 personas",
+            features: ["Mobiliario premium", "Iluminación natural", "Baño privado", "Área de descanso"],
+            image: "/images/rooms/directorio.jpg"
+          }
+        ]
+      }
     },
     contact:{
       phone: "Teléfono",
@@ -291,6 +400,18 @@ export const languages = {
       emailPlaceholder: "tu@email.com",
       subjectPlaceholder: "Asunto del mensaje",
       messagePlaceholder: "Escribe tu mensaje aquí",
+      rooms: {
+        title: "Reserva una Sala de Reuniones",
+        description: "Reserva nuestros espacios modernos para tu próximo evento de negocios",
+        form: {
+          roomType: "Tipo de Sala",
+          date: "Fecha",
+          time: "Hora",
+          attendees: "Número de Asistentes",
+          requirements: "Requisitos Especiales",
+          submit: "Solicitar Reserva"
+        }
+      }
     },
 
      
