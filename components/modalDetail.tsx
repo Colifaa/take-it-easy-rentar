@@ -18,11 +18,12 @@ import {
   Icon,
   IconButton,
   useColorModeValue,
+  Button,
+  Flex,
 } from "@chakra-ui/react";
 import { FaCar, FaGasPump, FaCogs, FaCheckCircle, FaTimesCircle, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
-import { InfiniteMovingCards } from "../app/ui/InfiniteMovingCards";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 
@@ -41,16 +42,19 @@ interface Car {
 interface ModalDetailProps {
   car: Car;
   onClose: () => void;
+  onReserve?: () => void;
 }
 
-const ModalDetail = memo(({ car, onClose }: ModalDetailProps) => {
+const ModalDetail = memo(({ car, onClose, onReserve }: ModalDetailProps) => {
   const { language } = useLanguage();
   const t = languages[language];
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const bgColor = useColorModeValue("white", "gray.800");
-  const textColor = useColorModeValue("gray.800", "white");
-  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const bgColor = "white";
+  const textColor = "#103c3d";
+  const borderColor = "#e3b167";
+  const accentColor = "#3C888A";
+  const hoverColor = "#c47369";
 
   const handleNextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % car.imageUrls.length);
@@ -61,12 +65,12 @@ const ModalDetail = memo(({ car, onClose }: ModalDetailProps) => {
   };
 
   return (
-    <Modal isOpen={!!car} onClose={onClose} size="full" motionPreset="slideInBottom">
+    <Modal isOpen={!!car} onClose={onClose} size="xl" motionPreset="slideInBottom">
       <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
       <ModalContent
         bg={bgColor}
         color={textColor}
-        maxW="1200px"
+        maxW="900px"
         mx="auto"
         my={8}
         borderRadius="xl"
@@ -78,17 +82,19 @@ const ModalDetail = memo(({ car, onClose }: ModalDetailProps) => {
           fontWeight="bold"
           borderBottom="1px"
           borderColor={borderColor}
-          p={6}
+          p={4}
+          bg="white"
+          color={textColor}
         >
           {car.brand} {car.model}
         </ModalHeader>
         <ModalCloseButton
           size="lg"
           color={textColor}
-          _hover={{ bg: "#009688", color: "white" }}
+          _hover={{ bg: hoverColor, color: "white" }}
         />
-        <ModalBody p={6}>
-          <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={8}>
+        <ModalBody p={4}>
+          <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
             <Box>
               <Box position="relative" borderRadius="lg" overflow="hidden">
                 <Zoom>
@@ -97,7 +103,7 @@ const ModalDetail = memo(({ car, onClose }: ModalDetailProps) => {
                     alt={`${car.brand} ${car.model}`}
                     objectFit="cover"
                     w="100%"
-                    h="400px"
+                    h="300px"
                   />
                 </Zoom>
                 {car.imageUrls.length > 1 && (
@@ -115,7 +121,7 @@ const ModalDetail = memo(({ car, onClose }: ModalDetailProps) => {
                       onClick={handlePrevImage}
                       bg="blackAlpha.500"
                       color="white"
-                      _hover={{ bg: "#009688" }}
+                      _hover={{ bg: hoverColor }}
                     />
                     <IconButton
                       aria-label="Next image"
@@ -123,12 +129,12 @@ const ModalDetail = memo(({ car, onClose }: ModalDetailProps) => {
                       onClick={handleNextImage}
                       bg="blackAlpha.500"
                       color="white"
-                      _hover={{ bg: "#009688" }}
+                      _hover={{ bg: hoverColor }}
                     />
                   </Box>
                 )}
               </Box>
-              <SimpleGrid columns={3} spacing={4} mt={4}>
+              <SimpleGrid columns={3} spacing={2} mt={2}>
                 {car.imageUrls.map((url, index) => (
                   <Box
                     key={index}
@@ -143,7 +149,7 @@ const ModalDetail = memo(({ car, onClose }: ModalDetailProps) => {
                       alt={`${car.brand} ${car.model} ${index + 1}`}
                       objectFit="cover"
                       w="100%"
-                      h="100px"
+                      h="80px"
                       borderRadius="md"
                     />
                   </Box>
@@ -151,67 +157,86 @@ const ModalDetail = memo(({ car, onClose }: ModalDetailProps) => {
               </SimpleGrid>
             </Box>
 
-            <VStack spacing={6} align="stretch">
+            <VStack spacing={4} align="stretch">
               <Box>
-                <Text fontSize="xl" fontWeight="bold" mb={2}>
+                <Text fontSize="lg" fontWeight="bold" mb={2} color={textColor}>
                   Descripción
                 </Text>
-                <Text color={textColor}>{car.description}</Text>
+                <Text color={textColor} fontSize="sm" lineHeight="tall">
+                  {car.description}
+                </Text>
               </Box>
 
               <Divider borderColor={borderColor} />
 
               <SimpleGrid columns={2} spacing={4}>
-                <Box>
-                  <Icon as={FaCar} color="#009688" mr={2} />
-                  <Text display="inline" fontWeight="bold">
-                    Transmisión:
-                  </Text>
-                  <Text display="inline" ml={2}>
-                    {car.transmission}
-                  </Text>
-                </Box>
-                <Box>
-                  <Icon as={FaGasPump} color="#009688" mr={2} />
-                  <Text display="inline" fontWeight="bold">
-                    Combustible:
-                  </Text>
-                  <Text display="inline" ml={2}>
-                    {car.fuelType}
-                  </Text>
-                </Box>
-                <Box>
-                  <Icon as={FaCogs} color="#009688" mr={2} />
-                  <Text display="inline" fontWeight="bold">
-                    Precio:
-                  </Text>
-                  <Text display="inline" ml={2}>
-                    ${car.price}/día
-                  </Text>
-                </Box>
-                <Box>
+                <Flex align="center" gap={2}>
+                  <Icon as={FaCar} color={accentColor} boxSize={5} />
+                  <Box>
+                    <Text fontSize="sm" fontWeight="bold" color={textColor}>
+                      Transmisión:
+                    </Text>
+                    <Text fontSize="sm" color={textColor}>
+                      {car.transmission}
+                    </Text>
+                  </Box>
+                </Flex>
+                <Flex align="center" gap={2}>
+                  <Icon as={FaGasPump} color={accentColor} boxSize={5} />
+                  <Box>
+                    <Text fontSize="sm" fontWeight="bold" color={textColor}>
+                      Combustible:
+                    </Text>
+                    <Text fontSize="sm" color={textColor}>
+                      {car.fuelType}
+                    </Text>
+                  </Box>
+                </Flex>
+                <Flex align="center" gap={2}>
+                  <Icon as={FaCogs} color={accentColor} boxSize={5} />
+                  <Box>
+                    <Text fontSize="sm" fontWeight="bold" color={textColor}>
+                      Precio:
+                    </Text>
+                    <Text fontSize="sm" color={textColor}>
+                      ${car.price}/día
+                    </Text>
+                  </Box>
+                </Flex>
+                <Flex align="center" gap={2}>
                   <Icon
                     as={car.available ? FaCheckCircle : FaTimesCircle}
                     color={car.available ? "green.500" : "red.500"}
-                    mr={2}
+                    boxSize={5}
                   />
-                  <Text display="inline" fontWeight="bold">
-                    Disponibilidad:
-                  </Text>
-                  <Text display="inline" ml={2}>
-                    {car.available ? "Disponible" : "No disponible"}
-                  </Text>
-                </Box>
+                  <Box>
+                    <Text fontSize="sm" fontWeight="bold" color={textColor}>
+                      Disponibilidad:
+                    </Text>
+                    <Text fontSize="sm" color={textColor}>
+                      {car.available ? "Disponible" : "No disponible"}
+                    </Text>
+                  </Box>
+                </Flex>
               </SimpleGrid>
 
               <Divider borderColor={borderColor} />
 
-              <InfiniteMovingCards 
-                items={car.imageUrls.map(url => ({ image: url }))}
-                direction="right"
-                speed="slow"
-                pauseOnHover={true}
-              />
+              <Button
+                bg={accentColor}
+                color="white"
+                size="md"
+                width="full"
+                isDisabled={!car.available}
+                onClick={() => {
+                  onClose();
+                  onReserve && onReserve();
+                }}
+                _hover={{ bg: hoverColor }}
+                _disabled={{ bg: "gray.300", cursor: "not-allowed" }}
+              >
+                {car.available ? "Reservar Ahora" : "No Disponible"}
+              </Button>
             </VStack>
           </Grid>
         </ModalBody>

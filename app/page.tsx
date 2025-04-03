@@ -244,7 +244,15 @@ export default function Home() {
       <CarComent />
 
       {/* Modal de Detalles */}
-      {detalle && <MotadlDetail car={detalle} onClose={() => setDetalle(null)} />}
+      {detalle && (
+        <MotadlDetail 
+          car={detalle} 
+          onClose={() => setDetalle(null)} 
+          onReserve={() => {
+            setSelectedCar(detalle);
+          }}
+        />
+      )}
 
       {/* Formulario de Reserva */}
       {selectedCar && <ReservationForm car={selectedCar} onClose={handleCloseForm} />}
