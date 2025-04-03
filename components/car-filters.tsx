@@ -85,12 +85,12 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters
     <>
       {/* Botón de Filtros para Móviles */}
       <div className="md:hidden z-20 relative">
-        <Sheet >
+        <Sheet>
           <SheetTrigger asChild>
             <div className="grid place-items-center">
               <Button
                 colorScheme="none"
-                className="rounded-full p-3 shadow-lg  mx-auto bg-gradient-to-br from-[#c47369] to-[#f8c4bc] text-white font-semibold flex items-center gap-2"
+                className="rounded-full p-3 shadow-lg mx-auto bg-gradient-to-br from-[#c47369] to-[#f8c4bc] text-white font-semibold flex items-center gap-2"
               >
                 <Filter className="w-6 h-6" />
                 {t.filters.filters}
@@ -99,19 +99,20 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters
           </SheetTrigger>
           <SheetContent
             side="bottom"
-            className="h-[100vh] rounded-t-3xl bg-gradient-to-br
-             from-[#c47369] to-[#f8c4bc] shadow-xl border border-white/30 text-white overflow-visible backdrop-blur-md"
+            className="h-[80vh] rounded-t-3xl bg-gradient-to-br from-[#c47369] to-[#f8c4bc] shadow-xl border border-white/30 text-white overflow-y-auto backdrop-blur-md"
           >
-            <SheetHeader>
-              <SheetTitle className="text-center flex items-center justify-center gap-2">
-                <Car className="w-6 h-6" />
-                {t.filters.carFilters}
-              </SheetTitle>
+            <SheetHeader className="sticky top-0 bg-gradient-to-br from-[#c47369] to-[#f8c4bc] z-10 pb-4">
+              <div className="flex justify-between items-center">
+                <SheetTitle className="flex items-center justify-center gap-2">
+                  <Car className="w-6 h-6" />
+                  {t.filters.carFilters}
+                </SheetTitle>
+              </div>
             </SheetHeader>
             {/* Contenido de filtros para móvil */}
-            <div className="space-y-6 relative z-10 p-6">
+            <div className="space-y-4 relative z-10 p-4">
               {/* Brand */}
-              <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/30">
+              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
                 <label className="block text-sm font-semibold mb-1">{t.filters.brand}</label>
                 <select
                   onFocus={() => setBrandsLoaded(true)}
@@ -129,7 +130,7 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters
                 </select>
               </div>
               {/* Model */}
-              <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/30">
+              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
                 <label className="block text-sm font-semibold mb-1">{t.filters.model}</label>
                 <select
                   onFocus={() => setModelsLoaded(true)}
@@ -147,7 +148,7 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters
                 </select>
               </div>
               {/* Transmission */}
-              <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/30">
+              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
                 <label className="block text-sm font-semibold mb-1">{t.filters.transmission}</label>
                 <select
                   name="transmission"
@@ -164,7 +165,7 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters
                 </select>
               </div>
               {/* Fuel Type */}
-              <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/30">
+              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
                 <label className="block text-sm font-semibold mb-1">{t.filters.fuelType}</label>
                 <select
                   name="fuelType"
@@ -181,7 +182,7 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters
                 </select>
               </div>
               {/* Availability */}
-              <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/30 flex items-center">
+              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30 flex items-center">
                 <input
                   type="checkbox"
                   name="available"
@@ -192,24 +193,31 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters
                 <span className="text-sm">{t.filters.availableOnly}</span>
               </div>
               {/* Botones: Aplicar Filtros y Reiniciar Filtros */}
-              <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex flex-col gap-3 mt-6">
                 {/* Botón para Reiniciar Filtros */}
                 <Button
                   onClick={resetFilters}
                   colorScheme="red"
                   variant="solid"
                   size="md"
-                  className="w-full md:w-auto py-4 text-white font-semibold rounded-full shadow-lg transform hover:scale-102 transition-all duration-200"
+                  className="w-full py-3 text-white font-semibold rounded-full shadow-lg transform hover:scale-102 transition-all duration-200"
                 >
                   {t.filters.resetFilters}
                 </Button>
                 {/* Apply Filters Button */}
                 <Button
-                  onClick={onApplyFilters}
+                  onClick={() => {
+                    onApplyFilters();
+                    // Cerrar el panel después de aplicar filtros
+                    const closeButton = document.querySelector('[data-sheet-close]');
+                    if (closeButton) {
+                      (closeButton as HTMLElement).click();
+                    }
+                  }}
                   colorScheme="teal"
                   variant="solid"
                   size="md"
-                  className="w-full md:w-auto py-4 text-white font-semibold rounded-full shadow-lg transform hover:scale-102 transition-all duration-200"
+                  className="w-full py-3 text-white font-semibold rounded-full shadow-lg transform hover:scale-102 transition-all duration-200"
                 >
                   {t.filters.applyFilters}
                 </Button>

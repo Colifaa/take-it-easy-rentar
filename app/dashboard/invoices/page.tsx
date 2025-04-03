@@ -2,6 +2,8 @@
 import { useEffect, useState, useCallback } from "react";
 import supabase from "@/supabase/authTest";
 import "../../ui/global.css";
+import { motion } from "framer-motion";
+import { Search, Star, ThumbsUp, ThumbsDown, Trash2, Image as ImageIcon, Video, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 // Interfaz para los comentarios
 interface Comment {
@@ -11,88 +13,65 @@ interface Comment {
   rating: number;
   created_at: string;
   approved: boolean;
+  media?: ReviewMedia[];
 }
 
 // Interfaz para los medios
 interface ReviewMedia {
   id: number;
-  review_id: number;
-  media_type: 'image' | 'video';
-  media_url: string;
+  url: string;
+  type: 'image' | 'video';
 }
 
 export default function Page() {
   const [comments, setComments] = useState<(Comment & { media?: ReviewMedia[] })[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [selectedMedia, setSelectedMedia] = useState<{url: string, type: string} | null>(null);
+  const [selectedMedia, setSelectedMedia] = useState<ReviewMedia | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<{field: keyof Comment, direction: 'asc' | 'desc'}>({
+    field: 'created_at',
+    direction: 'desc'
+  });
 
-  // Cargar comentarios al montar el componente
-  useEffect(() => {
-    const fetchComments = async () => {
-      setLoading(true);
-      try {
-        // Fetch reviews
-        const { data: reviewsData, error: reviewsError } = await supabase
-          .from("reviews")
-          .select("*")
-          .order("created_at", { ascending: false });
+  const ITEMS_PER_PAGE = 6;
 
-        if (reviewsError) throw new Error(reviewsError.message);
+  const fetchComments = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data: commentsData, error: commentsError } = await supabase
+        .from("reviews")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-        // Fetch media for each review
-        const commentsWithMedia = await Promise.all(
-          (reviewsData as Comment[]).map(async (comment) => {
-            const { data: mediaData, error: mediaError } = await supabase
-              .from("review_media")
-              .select("*")
-              .eq("review_id", comment.id);
+      if (commentsError) throw commentsError;
 
-            if (mediaError) {
-              console.error(`Error fetching media for review ${comment.id}:`, mediaError);
-              return { ...comment, media: [] };
-            }
+      const { data: mediaData, error: mediaError } = await supabase
+        .from("review_media")
+        .select("*");
 
-            return { 
-              ...comment, 
-              media: mediaData as ReviewMedia[] 
-            };
-          })
-        );
+      if (mediaError) throw mediaError;
 
-        setComments(commentsWithMedia);
-      } catch (error) {
-        setErrorMessage((error as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const commentsWithMedia = commentsData.map(comment => ({
+        ...comment,
+        media: mediaData.filter(media => media.review_id === comment.id)
+      }));
 
-    fetchComments();
+      setComments(commentsWithMedia);
+      setErrorMessage("");
+    } catch (error) {
+      console.error("Error al cargar los comentarios:", error);
+      setErrorMessage("Error al cargar los comentarios. Por favor, intente nuevamente.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  // Eliminar comentario
-  const deleteComment = async (id: number) => {
-    try {
-      // First, delete associated media
-      const { error: mediaDeleteError } = await supabase
-        .from("review_media")
-        .delete()
-        .eq("review_id", id);
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
-      if (mediaDeleteError) throw new Error(mediaDeleteError.message);
-
-      // Then delete the review
-      const { error } = await supabase.from("reviews").delete().eq("id", id);
-      if (error) throw new Error(error.message);
-
-      setComments((prev) => prev.filter((comment) => comment.id !== id));
-    } catch (error) {
-      setErrorMessage((error as Error).message);
-    }
-  };
-
-  // Aprobar/desaprobar comentario
   const toggleApproval = async (id: number, currentStatus: boolean) => {
     try {
       const { error } = await supabase
@@ -100,120 +79,280 @@ export default function Page() {
         .update({ approved: !currentStatus })
         .eq("id", id);
 
-      if (error) throw new Error(error.message);
-      setComments((prev) =>
-        prev.map((comment) =>
-          comment.id === id ? { ...comment, approved: !currentStatus } : comment
+      if (error) throw error;
+
+      setComments(prevComments =>
+        prevComments.map(comment =>
+          comment.id === id
+            ? { ...comment, approved: !currentStatus }
+            : comment
         )
       );
     } catch (error) {
-      setErrorMessage((error as Error).message);
+      console.error("Error al actualizar el estado del comentario:", error);
+      setErrorMessage("Error al actualizar el estado del comentario.");
     }
   };
 
-  // Abrir modal de media
-  const openMediaModal = (url: string, type: string) => {
-    setSelectedMedia({ url, type });
+  const deleteComment = async (id: number) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este comentario?")) {
+      try {
+        const { error } = await supabase
+          .from("reviews")
+          .delete()
+          .eq("id", id);
+
+        if (error) throw error;
+
+        setComments(prevComments =>
+          prevComments.filter(comment => comment.id !== id)
+        );
+      } catch (error) {
+        console.error("Error al eliminar el comentario:", error);
+        setErrorMessage("Error al eliminar el comentario.");
+      }
+    }
   };
 
-  // Cerrar modal de media
   const closeMediaModal = () => {
     setSelectedMedia(null);
   };
 
-  return (
-    <div className="flex flex-col min-h-screen p-4 md:p-6">
-      <h1 className="text-2xl font-bold mb-4 text-[#704264]">Comentarios</h1>
+  const handleSort = (field: keyof Comment) => {
+    setSortBy(prev => ({
+      field,
+      direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
 
-      {errorMessage && <p className="text-red-600 text-center mb-4">{errorMessage}</p>}
+  const filteredComments = comments
+    .filter(comment => 
+      comment.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      comment.comment.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      const aValue = a[sortBy.field];
+      const bValue = b[sortBy.field];
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortBy.direction === 'asc' 
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+      return sortBy.direction === 'asc'
+        ? Number(aValue) - Number(bValue)
+        : Number(bValue) - Number(aValue);
+    });
+
+  const totalPages = Math.ceil(filteredComments.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedComments = filteredComments.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen p-4 md:p-6 bg-gray-50">
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h1 className="text-2xl font-bold text-[#49243E]">Gestión de Comentarios</h1>
+        <div className="relative w-full sm:w-64">
+          <input
+            type="text"
+            placeholder="Buscar comentarios..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#BB8493] focus:border-transparent"
+          />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        </div>
+      </div>
+
+      {errorMessage && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+          {errorMessage}
+        </div>
+      )}
 
       {loading ? (
-        <p className="text-center text-gray-600">Cargando comentarios...</p>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#BB8493]"></div>
+        </div>
       ) : (
-        <div className="flex-grow overflow-auto">
-          {comments.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-              {comments.map((comment) => (
-                <div key={comment.id} className="p-4 border rounded-lg shadow bg-white">
-                  <p className="text-[#49243E] font-semibold">{comment.author}:</p>
-                  <p className="text-gray-700">{comment.comment}</p>
-                  <p className="text-sm text-gray-500">Calificación: {comment.rating}/5</p>
+        <>
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {paginatedComments.map((comment) => (
+              <motion.div
+                key={comment.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100"
+              >
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-[#49243E]">{comment.author}</h3>
+                      <p className="text-sm text-gray-500">{formatDate(comment.created_at)}</p>
+                    </div>
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, index) => (
+                        <Star
+                          key={index}
+                          className={`h-4 w-4 ${
+                            index < comment.rating
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
 
-                  {/* Render media with improved display */}
+                  <p className="text-gray-600 mb-4">{comment.comment}</p>
+
                   {comment.media && comment.media.length > 0 && (
-                    <div className={`mt-2 grid gap-2 ${
-                      comment.media.length === 1 ? 'grid-cols-1' : 
-                      comment.media.length === 2 ? 'grid-cols-2' : 
-                      'grid-cols-3'
-                    }`}>
-                      {comment.media.map((media) => (
-                        media.media_type === 'image' ? (
-                          <img
-                            key={media.id}
-                            src={media.media_url}
-                            alt="Comentario adjunto"
-                            className="w-full h-32 object-cover rounded cursor-pointer"
-                            onClick={() => openMediaModal(media.media_url, 'image')}
-                          />
-                        ) : (
-                          <video
-                            key={media.id}
-                            src={media.media_url}
-                            className="w-full h-32 object-cover rounded cursor-pointer"
-                            onClick={() => openMediaModal(media.media_url, 'video')}
-                          />
-                        )
+                    <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                      {comment.media.map((media, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedMedia(media)}
+                          className="relative flex-shrink-0 group"
+                        >
+                          {media.type === 'image' ? (
+                            <div className="relative w-20 h-20 rounded-lg overflow-hidden">
+                              <img
+                                src={media.url}
+                                alt={`Media ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200" />
+                              <ImageIcon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                            </div>
+                          ) : (
+                            <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                              <Video className="w-8 h-8 text-gray-400" />
+                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200" />
+                            </div>
+                          )}
+                        </button>
                       ))}
                     </div>
                   )}
 
-                  <div className="flex justify-between mt-4">
+                  <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                     <button
                       onClick={() => toggleApproval(comment.id, comment.approved)}
-                      className={`py-1 px-3 rounded text-white transition ${
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                         comment.approved
-                          ? "bg-green-600 hover:bg-green-700"
-                          : "bg-yellow-600 hover:bg-yellow-700"
+                          ? "bg-green-100 text-green-700 hover:bg-green-200"
+                          : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
                       }`}
                     >
-                      {comment.approved ? "Desaprobar" : "Aprobar"}
+                      {comment.approved ? (
+                        <>
+                          <ThumbsUp className="h-4 w-4" />
+                          <span>Aprobado</span>
+                        </>
+                      ) : (
+                        <>
+                          <ThumbsDown className="h-4 w-4" />
+                          <span>Pendiente</span>
+                        </>
+                      )}
                     </button>
 
                     <button
                       onClick={() => deleteComment(comment.id)}
-                      className="py-1 px-3 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Eliminar comentario"
                     >
-                      Eliminar
+                      <Trash2 className="h-5 w-5" />
                     </button>
                   </div>
                 </div>
-              ))}
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Paginación */}
+          {totalPages > 1 && (
+            <div className="mt-8 flex justify-center items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+              >
+                <ChevronLeft className="h-5 w-5 text-gray-600" />
+              </button>
+              
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
+                      currentPage === page
+                        ? "bg-[#BB8493] text-white"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+              >
+                <ChevronRight className="h-5 w-5 text-gray-600" />
+              </button>
             </div>
-          ) : (
-            <p className="text-center text-gray-500">No hay comentarios disponibles.</p>
           )}
-        </div>
+        </>
       )}
 
-      {/* Modal para visualización de media en tamaño completo */}
+      {/* Modal para visualización de media */}
       {selectedMedia && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={closeMediaModal}
         >
-          {selectedMedia.type === 'image' ? (
-            <img 
-              src={selectedMedia.url} 
-              alt="Media en tamaño completo" 
-              className="max-w-full max-h-full"
-            />
-          ) : (
-            <video 
-              src={selectedMedia.url} 
-              controls 
-              className="max-w-full max-h-full"
-            />
-          )}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="relative max-w-4xl max-h-[90vh] overflow-hidden rounded-lg"
+            onClick={e => e.stopPropagation()}
+          >
+            {selectedMedia.type === 'image' ? (
+              <img 
+                src={selectedMedia.url} 
+                alt="Media en tamaño completo" 
+                className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              />
+            ) : (
+              <video 
+                src={selectedMedia.url} 
+                controls 
+                className="max-w-full max-h-[90vh] rounded-lg"
+              />
+            )}
+            <button
+              onClick={closeMediaModal}
+              className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </motion.div>
         </div>
       )}
     </div>
