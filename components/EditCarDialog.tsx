@@ -219,7 +219,7 @@ export function EditCarDialog({ carId, initialData }: EditCarDialogProps) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Automatic">Automática</SelectItem>
-                    <SelectItem value="manual">Manual</SelectItem>
+                    <SelectItem value="Manual">Manual</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
