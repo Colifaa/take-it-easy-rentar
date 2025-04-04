@@ -85,7 +85,7 @@ const ContactPage = () => {
                 </Box>
                 <Box>
                   <Text fontWeight="bold" color={cardTextColor}>{t.contact.email}:</Text>
-                  <Text color={cardTextColor} fontWeight="medium">info@takeiteasyrentar.com</Text>
+                  <Text color={cardTextColor} fontWeight="medium">takeiteasyrentacar@gmail.com</Text>
                 </Box>
                 <Box>
                   <Text fontWeight="bold" color={cardTextColor}>{t.contact.hours}:</Text>

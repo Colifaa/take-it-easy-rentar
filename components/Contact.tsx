@@ -278,7 +278,7 @@ const Contact = () => {
                 {
                   icon: FaEnvelope,
                   title: "Correo electrónico",
-                  content: "contacto@takeiteasyrentar.com",
+                  content: "takeiteasyrentacar@gmail.com",
                   color: "#009688",
                 },
               ].map((info, index) => (
