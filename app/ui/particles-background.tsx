@@ -22,7 +22,7 @@ export function ParticlesBackground() {
         >
           {/* Actualiza la URL del video para apuntar a Supabase */}
           <source
-            src="https://osffhjnmklypecylepyw.supabase.co/storage/v1/object/public/videos/Background/background.mp4"
+            src="https://osffhjnmklypecylepyw.supabase.co/storage/v1/object/public/videos/Background/video4.mp4"
             type="video/mp4"
           />
           Tu navegador no soporta videos.
@@ -68,7 +68,7 @@ export function ParticlesBackground() {
                 value: { min: 0.3, max: 0.7 },
               },
               shape: {
-                type: ["circle", "star"],
+                type: ["", ""],
               },
               size: {
                 value: { min: 2, max: 6 },

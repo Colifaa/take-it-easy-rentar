@@ -116,7 +116,7 @@ export const languages = {
       alert:"Please log in to continue.",
       disponibilidad:"Availability",
      resetFilters: "Reset Filters", // Nueva clave
-
+      searchPlaceholder: "Search cars...",
     },
     comments: {
       title: "Leave Your Comment",
@@ -315,6 +315,7 @@ export const languages = {
       notAvailable: "No Disponible",  // Aquí se agrega la traducción de "No Disponible"
       alert:"Por favor, inicia sesión para continuar.",
       resetFilters: "Reiniciar Filtros", // Nueva clave
+      searchPlaceholder: "Buscar autos...",
     },
     comments: {
       title: "Deja tu Comentario",

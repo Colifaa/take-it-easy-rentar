@@ -57,6 +57,7 @@ export default function Home() {
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [showAlert, setShowAlert] = useState(false); // Estado para manejar el mensaje de alerta
   const [user, setUser] = useState<any>(null); // Estado para almacenar información del usuario
+  const [searchTerm, setSearchTerm] = useState("");
   console.log(user?.user.id);
 
   useEffect(() => {
@@ -132,6 +133,14 @@ export default function Home() {
     setFilteredCars(cars); // Restaura la lista completa de autos
   };
 
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    const searchResults = cars.filter((car) =>
+      `${car.brand} ${car.model}`.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredCars(searchResults);
+  };
+
   const handleOpenForm = (car: Car) => {
     setSelectedCar(car);
   };
@@ -157,7 +166,8 @@ export default function Home() {
             filters={filters}
             setFilters={setFilters}
             onApplyFilters={handleApplyFilters}
-            onResetFilters={handleResetFilters} // Pasar la función de reinicio
+            onResetFilters={handleResetFilters}
+            onSearch={handleSearch}
           />
 
           {/* Lista de Autos */}
