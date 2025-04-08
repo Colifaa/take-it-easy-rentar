@@ -11,7 +11,7 @@ export function ImagesSliderDemo() {
 
   // Función para obtener las URLs de las imágenes
   const fetchImages = async () => {
-    const imagePaths = ["Calidad1.png","Calidad4.png","Calidad5.jpg","Calidad6.png","Calidad9.png"];
+    const imagePaths = ["Calidad1.webp","Calidad3.webp","Calidad4.webp","Calidad5.webp","Calidad6.webp","Calidad9.webp"];
     const urls = await Promise.all(
       imagePaths.map(async (path) => {
         const { data } = supabase.storage.from("videos").getPublicUrl(path);
