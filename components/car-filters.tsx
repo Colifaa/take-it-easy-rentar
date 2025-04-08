@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import supabase from "../supabase/authTest";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
-import { Car, Filter } from "lucide-react";
+import { Car, Filter, Search } from "lucide-react";
 
 interface Filters {
   brand: string;
@@ -22,9 +22,10 @@ interface CarFiltersProps {
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   onApplyFilters: () => void;
   onResetFilters: () => void;
+  onSearch?: (searchTerm: string) => void;
 }
 
-export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters }: CarFiltersProps) => {
+export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters, onSearch }: CarFiltersProps) => {
   const [brands, setBrands] = useState<string[]>([]);
   const [models, setModels] = useState<string[]>([]);
   const [brandsLoaded, setBrandsLoaded] = useState(false);
@@ -85,146 +86,159 @@ export const CarFilters = ({ filters, setFilters, onApplyFilters, onResetFilters
     <>
       {/* Botón de Filtros para Móviles */}
       <div className="md:hidden z-20 relative">
-        <Sheet>
-          <SheetTrigger asChild>
-            <div className="grid place-items-center">
+        <div className="flex items-center gap-4 px-4">
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              placeholder={t.filters.searchPlaceholder}
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/30 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent backdrop-blur-sm"
+              onChange={(e) => {
+                if (onSearch) {
+                  onSearch(e.target.value);
+                }
+              }}
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-5 w-5" />
+          </div>
+          <Sheet>
+            <SheetTrigger asChild>
               <Button
                 colorScheme="none"
-                className="rounded-full p-3 shadow-lg mx-auto bg-gradient-to-br from-[#c47369] to-[#f8c4bc] text-white font-semibold flex items-center gap-2"
+                className="rounded-xl p-3 shadow-lg bg-gradient-to-br from-[#c47369] to-[#f8c4bc] text-white font-semibold flex items-center gap-2 hover:opacity-90 transition-all duration-200 backdrop-blur-sm border border-white/30"
               >
-                <Filter className="w-6 h-6" />
-                {t.filters.filters}
+                <Filter className="w-5 h-5" />
+                <span className="hidden sm:inline">{t.filters.filters}</span>
               </Button>
-            </div>
-          </SheetTrigger>
-          <SheetContent
-            side="bottom"
-            className="h-[80vh] rounded-t-3xl bg-gradient-to-br from-[#c47369] to-[#f8c4bc] shadow-xl border border-white/30 text-white overflow-y-auto backdrop-blur-md"
-          >
-            <SheetHeader className="sticky top-0 bg-gradient-to-br from-[#c47369] to-[#f8c4bc] z-10 pb-4">
-              <div className="flex justify-between items-center">
-                <SheetTitle className="flex items-center justify-center gap-2">
-                  <Car className="w-6 h-6" />
-                  {t.filters.carFilters}
-                </SheetTitle>
+            </SheetTrigger>
+            <SheetContent
+              side="bottom"
+              className="h-[80vh] rounded-t-3xl bg-gradient-to-br from-[#c47369] to-[#f8c4bc] shadow-xl border border-white/30 text-white overflow-y-auto backdrop-blur-md"
+            >
+              <SheetHeader className="sticky top-0 bg-gradient-to-br from-[#c47369] to-[#f8c4bc] z-10 pb-4">
+                <div className="flex justify-between items-center">
+                  <SheetTitle className="flex items-center justify-center gap-2">
+                    <Car className="w-6 h-6" />
+                    {t.filters.carFilters}
+                  </SheetTitle>
+                </div>
+              </SheetHeader>
+              {/* Contenido de filtros para móvil */}
+              <div className="space-y-4 relative z-10 p-4">
+                {/* Brand */}
+                <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
+                  <label className="block text-sm font-semibold mb-1">{t.filters.brand}</label>
+                  <select
+                    onFocus={() => setBrandsLoaded(true)}
+                    name="brand"
+                    value={filters.brand}
+                    onChange={handleSelectChange}
+                    className="w-full p-2 rounded border bg-white/20 text-black focus:bg-white focus:text-black"
+                  >
+                    <option value="">{t.filters.selectBrand}</option>
+                    {brands.map((brand) => (
+                      <option key={brand} value={brand}>
+                        {brand}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* Model */}
+                <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
+                  <label className="block text-sm font-semibold mb-1">{t.filters.model}</label>
+                  <select
+                    onFocus={() => setModelsLoaded(true)}
+                    name="model"
+                    value={filters.model}
+                    onChange={handleSelectChange}
+                    className="w-full p-2 rounded border bg-white/20 text-black focus:bg-white focus:text-black"
+                  >
+                    <option value="">{t.filters.selectModel}</option>
+                    {models.map((model) => (
+                      <option key={model} value={model}>
+                        {model}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* Transmission */}
+                <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
+                  <label className="block text-sm font-semibold mb-1">{t.filters.transmission}</label>
+                  <select
+                    name="transmission"
+                    value={filters.transmission}
+                    onChange={handleSelectChange}
+                    className="w-full p-2 rounded border bg-white/20 text-black focus:bg-white focus:text-black"
+                  >
+                    <option value="">{t.filters.todas}</option>
+                    {transmissions.map((transmission) => (
+                      <option key={transmission} value={transmission}>
+                        {transmission}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* Fuel Type */}
+                <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
+                  <label className="block text-sm font-semibold mb-1">{t.filters.fuelType}</label>
+                  <select
+                    name="fuelType"
+                    value={filters.fuelType}
+                    onChange={handleSelectChange}
+                    className="w-full p-2 rounded border bg-white/20 text-black focus:bg-white focus:text-black"
+                  >
+                    <option value="">{t.filters.selectFuelType}</option>
+                    {fuelTypes.map((fuel) => (
+                      <option key={fuel} value={fuel}>
+                        {fuel}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* Availability */}
+                <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30 flex items-center">
+                  <input
+                    type="checkbox"
+                    name="available"
+                    checked={filters.available}
+                    onChange={handleCheckboxChange}
+                    className="mr-3 w-4 h-4 rounded border-white/30 text-[#c47369] focus:ring-white/30"
+                  />
+                  <span className="text-sm">{t.filters.availableOnly}</span>
+                </div>
+                {/* Botones: Aplicar Filtros y Reiniciar Filtros */}
+                <div className="flex flex-col gap-3 mt-6">
+                  {/* Botón para Reiniciar Filtros */}
+                  <Button
+                    onClick={resetFilters}
+                    colorScheme="red"
+                    variant="solid"
+                    size="md"
+                    className="w-full py-3 text-white font-semibold rounded-full shadow-lg transform hover:scale-102 transition-all duration-200"
+                  >
+                    {t.filters.resetFilters}
+                  </Button>
+                  {/* Apply Filters Button */}
+                  <Button
+                    onClick={() => {
+                      onApplyFilters();
+                      // Cerrar el panel después de aplicar filtros
+                      const closeButton = document.querySelector('[data-sheet-close]');
+                      if (closeButton) {
+                        (closeButton as HTMLElement).click();
+                      }
+                    }}
+                    colorScheme="teal"
+                    variant="solid"
+                    size="md"
+                    className="w-full py-3 text-white font-semibold rounded-full shadow-lg transform hover:scale-102 transition-all duration-200"
+                  >
+                    {t.filters.applyFilters}
+                  </Button>
+                </div>
               </div>
-            </SheetHeader>
-            {/* Contenido de filtros para móvil */}
-            <div className="space-y-4 relative z-10 p-4">
-              {/* Brand */}
-              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
-                <label className="block text-sm font-semibold mb-1">{t.filters.brand}</label>
-                <select
-                  onFocus={() => setBrandsLoaded(true)}
-                  name="brand"
-                  value={filters.brand}
-                  onChange={handleSelectChange}
-                  className="w-full p-2 rounded border bg-white/20 text-black focus:bg-white focus:text-black"
-                >
-                  <option value="">{t.filters.selectBrand}</option>
-                  {brands.map((brand) => (
-                    <option key={brand} value={brand}>
-                      {brand}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {/* Model */}
-              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
-                <label className="block text-sm font-semibold mb-1">{t.filters.model}</label>
-                <select
-                  onFocus={() => setModelsLoaded(true)}
-                  name="model"
-                  value={filters.model}
-                  onChange={handleSelectChange}
-                  className="w-full p-2 rounded border bg-white/20 text-black focus:bg-white focus:text-black"
-                >
-                  <option value="">{t.filters.selectModel}</option>
-                  {models.map((model) => (
-                    <option key={model} value={model}>
-                      {model}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {/* Transmission */}
-              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
-                <label className="block text-sm font-semibold mb-1">{t.filters.transmission}</label>
-                <select
-                  name="transmission"
-                  value={filters.transmission}
-                  onChange={handleSelectChange}
-                  className="w-full p-2 rounded border bg-white/20 text-black focus:bg-white focus:text-black"
-                >
-                  <option value="">{t.filters.todas}</option>
-                  {transmissions.map((transmission) => (
-                    <option key={transmission} value={transmission}>
-                      {transmission}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {/* Fuel Type */}
-              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30">
-                <label className="block text-sm font-semibold mb-1">{t.filters.fuelType}</label>
-                <select
-                  name="fuelType"
-                  value={filters.fuelType}
-                  onChange={handleSelectChange}
-                  className="w-full p-2 rounded border bg-white/20 text-black focus:bg-white focus:text-black"
-                >
-                  <option value="">{t.filters.selectFuelType}</option>
-                  {fuelTypes.map((fuel) => (
-                    <option key={fuel} value={fuel}>
-                      {fuel}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {/* Availability */}
-              <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/30 flex items-center">
-                <input
-                  type="checkbox"
-                  name="available"
-                  checked={filters.available}
-                  onChange={handleCheckboxChange}
-                  className="mr-3 w-4 h-4 rounded border-white/30 text-[#c47369] focus:ring-white/30"
-                />
-                <span className="text-sm">{t.filters.availableOnly}</span>
-              </div>
-              {/* Botones: Aplicar Filtros y Reiniciar Filtros */}
-              <div className="flex flex-col gap-3 mt-6">
-                {/* Botón para Reiniciar Filtros */}
-                <Button
-                  onClick={resetFilters}
-                  colorScheme="red"
-                  variant="solid"
-                  size="md"
-                  className="w-full py-3 text-white font-semibold rounded-full shadow-lg transform hover:scale-102 transition-all duration-200"
-                >
-                  {t.filters.resetFilters}
-                </Button>
-                {/* Apply Filters Button */}
-                <Button
-                  onClick={() => {
-                    onApplyFilters();
-                    // Cerrar el panel después de aplicar filtros
-                    const closeButton = document.querySelector('[data-sheet-close]');
-                    if (closeButton) {
-                      (closeButton as HTMLElement).click();
-                    }
-                  }}
-                  colorScheme="teal"
-                  variant="solid"
-                  size="md"
-                  className="w-full py-3 text-white font-semibold rounded-full shadow-lg transform hover:scale-102 transition-all duration-200"
-                >
-                  {t.filters.applyFilters}
-                </Button>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
       {/* Filtros de Escritorio */}
       <div className="p-8 bg-gradient-to-br from-[#c47369] to-[#f8c4bc] shadow-xl rounded-3xl border border-white/30 text-white min-h-[700px] relative overflow-visible backdrop-blur-md hidden md:block">

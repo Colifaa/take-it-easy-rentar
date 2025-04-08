@@ -33,11 +33,12 @@ export default function LoadingScreen() {
         opacity={0.7}
       >
         <Image
-          src="/auto.png"
+          src="/Calidad5.jpg"
           alt="Cargando autos"
           layout="fill"
           objectFit="cover"
           priority
+           className="opacity-50"
         />
       </Box>
 

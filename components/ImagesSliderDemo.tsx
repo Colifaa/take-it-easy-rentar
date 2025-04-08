@@ -11,7 +11,7 @@ export function ImagesSliderDemo() {
 
   // Función para obtener las URLs de las imágenes
   const fetchImages = async () => {
-    const imagePaths = ["imagen1.png", "imagen2.png", "imagen3.png"];
+    const imagePaths = ["Calidad1.png","Calidad4.png","Calidad5.jpg","Calidad6.png","Calidad9.png"];
     const urls = await Promise.all(
       imagePaths.map(async (path) => {
         const { data } = supabase.storage.from("videos").getPublicUrl(path);
@@ -34,13 +34,13 @@ export function ImagesSliderDemo() {
 
   return (
     <ImagesSlider
-      className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[40rem] bg-transparent flex flex-col items-center justify-end relative"
+      className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[55rem] bg-transparent/90 flex flex-col items-center justify-end relative"
       images={imageUrls} // Pasamos todas las URLs de las imágenes
     >
-      <VortexDemo />
+  <VortexDemo/>
       <button
         onClick={handleScrollToAutos}
-        className="mb-20 absolute bottom-10 left-1/2 transform -translate-x-1/2 z-50 inline-flex h-14 w-auto active:scale-95 transition-transform overflow-hidden rounded-full p-[2px] focus:outline-none shadow-lg"
+        className="mb-44 absolute bottom-10 left-1/2 transform -translate-x-1/2 z-50 inline-flex h-14 w-auto active:scale-95 transition-transform overflow-hidden rounded-full p-[2px] focus:outline-none shadow-lg"
       >
         {/* Fondo con degradado tropical */}
         <span className="absolute inset-0 bg-[conic-gradient(from_90deg_at_50%_50%,#FF7F50_0%,#FFA07A_50%,#20B2AA_100%)] animate-spin-slow rounded-full"></span>
