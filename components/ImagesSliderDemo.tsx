@@ -3,26 +3,22 @@ import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { ImagesSlider } from "../app/ui/ImagesSlider";
 import { VortexDemo } from "./VortexDemo";
-import supabase from "../supabase/authTest";
+import Image from "next/image"; // Optimización de imágenes
 
 export function ImagesSliderDemo() {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
-  console.log("imageUrls", imageUrls);
-
-  // Función para obtener las URLs de las imágenes
-  const fetchImages = async () => {
-    const imagePaths = ["Calidad1.webp","Calidad3.webp","Calidad4.webp","Calidad5.webp","Calidad6.webp","Calidad9.webp"];
-    const urls = await Promise.all(
-      imagePaths.map(async (path) => {
-        const { data } = supabase.storage.from("videos").getPublicUrl(path);
-        return data.publicUrl;
-      })
-    );
-    setImageUrls(urls);
-  };
 
   useEffect(() => {
-    fetchImages();
+    // Imágenes desde carpeta public
+    const imagePaths = [
+      "/carousel/Calidad1.webp",
+      "/carousel/Calidad3.webp",
+      "/carousel/Calidad4.webp",
+      "/carousel/Calidad5.webp",
+      "/carousel/Calidad6.webp",
+      "/carousel/Calidad9.webp",
+    ];
+    setImageUrls(imagePaths);
   }, []);
 
   const handleScrollToAutos = () => {
@@ -35,17 +31,16 @@ export function ImagesSliderDemo() {
   return (
     <ImagesSlider
       className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[55rem] bg-transparent/90 flex flex-col items-center justify-end relative"
-      images={imageUrls} // Pasamos todas las URLs de las imágenes
+      images={imageUrls}
     >
-  <VortexDemo/>
+      <VortexDemo />
+
       <button
         onClick={handleScrollToAutos}
         className="mb-44 absolute bottom-10 left-1/2 transform -translate-x-1/2 z-50 inline-flex h-14 w-auto active:scale-95 transition-transform overflow-hidden rounded-full p-[2px] focus:outline-none shadow-lg"
       >
-        {/* Fondo con degradado tropical */}
         <span className="absolute inset-0 bg-[conic-gradient(from_90deg_at_50%_50%,#FF7F50_0%,#FFA07A_50%,#20B2AA_100%)] animate-spin-slow rounded-full"></span>
 
-        {/* Contenedor del botón con efecto vidrio */}
         <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 md:px-8 text-lg md:text-xl font-semibold text-white backdrop-blur-xl whitespace-nowrap gap-1 md:gap-2 transition-all hover:scale-105 hover:shadow-2xl">
           Reservá ahora
           <svg
