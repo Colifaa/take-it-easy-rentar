@@ -33,7 +33,7 @@ export default function LoadingScreen() {
         opacity={0.7}
       >
         <Image
-          src="/Calidad5.webp"
+          src="/Calidad.jpeg"
           alt="Cargando autos"
           layout="fill"
           objectFit="cover"
