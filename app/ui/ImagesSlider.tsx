@@ -108,7 +108,7 @@ export const ImagesSlider = ({
         
         // Alta prioridad para las primeras imágenes
         if (index < 2) {
-          img.fetchPriority = "high";
+          //img.fetchPriority = "high";
         }
         
         img.src = src;
