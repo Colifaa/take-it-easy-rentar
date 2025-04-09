@@ -13,7 +13,7 @@ export default function LoadingOverlay({ loading }: LoadingOverlayProps) {
     <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-r from-[#c47369] to-[#d8847a] text-white">
       {/* Imagen de fondo con opacidad */}
       <Image
-       src="/Calidad5.webp" // Asegúrate de que esté en la carpeta public
+       src="/Calidad.jpeg" // Asegúrate de que esté en la carpeta public
         alt="Cargando..."
         layout="fill"
         objectFit="cover"
