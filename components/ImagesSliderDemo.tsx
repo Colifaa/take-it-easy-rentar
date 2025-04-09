@@ -11,12 +11,12 @@ export function ImagesSliderDemo() {
   useEffect(() => {
     // Imágenes desde carpeta public
     const imagePaths = [
-      "/carousel/Calidad1.webp",
-      "/carousel/Calidad3.webp",
-      "/carousel/Calidad4.webp",
+      "/carousel/Calidad9.webp",
+      "/carousel/Calidad10.jpg",
       "/carousel/Calidad5.webp",
       "/carousel/Calidad6.webp",
-      "/carousel/Calidad9.webp",
+      "/carousel/Calidad1.webp",
+      "/carousel/Calidad4.webp",
     ];
     setImageUrls(imagePaths);
   }, []);
@@ -30,7 +30,7 @@ export function ImagesSliderDemo() {
 
   return (
     <ImagesSlider
-      className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[55rem] bg-transparent/90 flex flex-col items-center justify-end relative"
+      className="h-screen sm:h-[20rem] md:h-[30rem] lg:h-[55rem] bg-[#D1A1A1]/30 flex flex-col items-center justify-end relative"
       images={imageUrls}
     >
       <VortexDemo />
