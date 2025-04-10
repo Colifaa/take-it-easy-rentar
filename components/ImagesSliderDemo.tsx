@@ -4,9 +4,13 @@ import React, { useEffect, useState } from "react";
 import { ImagesSlider } from "../app/ui/ImagesSlider";
 import { VortexDemo } from "./VortexDemo";
 import Image from "next/image"; // Optimización de imágenes
+import { useLanguage } from "../hooks/use-language";
+import { languages } from "../lib/languages";
 
 export function ImagesSliderDemo() {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const { language } = useLanguage();
+  const t = languages[language];
 
   useEffect(() => {
     // Imágenes desde carpeta public
@@ -42,7 +46,7 @@ export function ImagesSliderDemo() {
         <span className="absolute inset-0 bg-[conic-gradient(from_90deg_at_50%_50%,#FF7F50_0%,#FFA07A_50%,#20B2AA_100%)] animate-spin-slow rounded-full"></span>
 
         <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 md:px-8 text-lg md:text-xl font-semibold text-white backdrop-blur-xl whitespace-nowrap gap-1 md:gap-2 transition-all hover:scale-105 hover:shadow-2xl">
-          Reservá ahora
+          {t.filters.reservaButton}
           <svg
             stroke="currentColor"
             fill="currentColor"

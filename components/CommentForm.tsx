@@ -167,74 +167,125 @@ export const CommentForm = () => {
 
   return (
     <div className="max-w-6xl mx-auto bg-gradient-to-br from-[#c47369] to-[#f8c4bc] backdrop-blur-md shadow-2xl rounded-xl p-8 space-y-6 border border-white/30 relative overflow-hidden">
-      <h2 className="text-2xl font-bold text-center text-white bg-white/20 px-6 py-3 rounded-full shadow-lg backdrop-blur-sm border border-white/30">
-        {t.title}
-      </h2>
+      {/* Sección informativa */}
+      <div className="bg-white/20 rounded-xl p-6 mb-8 backdrop-blur-sm border border-white/30">
+        <h2 className="text-2xl font-bold text-center text-white mb-4">
+          {t.shareAdventure}
+        </h2>
+        <div className="flex flex-col md:flex-row gap-6 items-center text-white/90">
+          <div className="flex-1 space-y-4">
+            <p className="text-lg leading-relaxed">
+              {t.shareDescription}
+            </p>
+            <ul className="space-y-2">
+              <li className="flex items-center gap-2">
+                <span className="text-yellow-300">🌅</span> {t.landscapes}
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-yellow-300">🚗</span> {t.carExperience}
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-yellow-300">🌟</span> {t.specialMoments}
+              </li>
+            </ul>
+          </div>
+          <div className="hidden md:block w-1/3">
+            <div className="relative h-48 w-full rounded-lg overflow-hidden shadow-xl transform rotate-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#c47369]/40 to-[#f8c4bc]/40 mix-blend-overlay"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Camera className="w-16 h-16 text-white/80" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          required
-          rows={4}
-          className="w-full p-3 rounded-lg border bg-white/10 text-white placeholder-white/50"
-        />
-
-        {/* Estrellas */}
-        <div className="flex justify-center">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <FaStar
-              key={star}
-              className={`cursor-pointer ${
-                (hover || rating) >= star ? "text-yellow-400" : "text-white/40"
-              }`}
-              size={28}
-              onClick={() => setRating(star)}
-              onMouseEnter={() => setHover(star)}
-              onMouseLeave={() => setHover(0)}
-            />
-          ))}
+      <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+        <div className="space-y-2">
+          <label className="text-white text-sm font-medium">{t.yourComment}</label>
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            required
+            placeholder={t.commentPlaceholder}
+            rows={4}
+            className="w-full p-4 rounded-lg border bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent resize-none"
+          />
         </div>
 
-        {/* Subida de múltiples archivos */}
-        <div>
-          <Label htmlFor="files" className="text-white mb-2 flex items-center gap-2">
+        {/* Estrellas */}
+        <div className="space-y-2">
+          <label className="text-white text-sm font-medium">{t.rating}</label>
+          <div className="flex justify-center bg-white/10 py-3 rounded-lg">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <FaStar
+                key={star}
+                className={`cursor-pointer transition-colors ${
+                  (hover || rating) >= star ? "text-yellow-400" : "text-white/40"
+                }`}
+                size={32}
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHover(star)}
+                onMouseLeave={() => setHover(0)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Subida de archivos */}
+        <div className="space-y-3">
+          <label className="text-white text-sm font-medium flex items-center gap-2">
             <Camera className="w-4 h-4" />
-            {t.imageLabel} (Máximo 6 archivos, 20MB cada uno)
-          </Label>
-          <Input
-            type="file"
-            id="files"
-            accept="image/*,video/*"
-            multiple
-            onChange={handleFileChange}
-          />
+            {t.shareMedia}
+          </label>
+          <div className="bg-white/10 p-4 rounded-lg border border-white/30">
+            <div className="flex flex-col items-center gap-3">
+              <input
+                type="file"
+                id="files"
+                accept="image/*,video/*"
+                multiple
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              <label
+                htmlFor="files"
+                className="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg cursor-pointer text-white text-center transition-colors flex items-center justify-center gap-2"
+              >
+                <Camera className="w-5 h-5" />
+                {t.selectFiles}
+              </label>
+              <p className="text-white/70 text-sm text-center">
+                {t.maxFiles}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Vista previa de archivos */}
         {files.length > 0 && (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {files.map((file, index) => (
-              <div key={index} className="relative">
+              <div key={index} className="relative group">
                 {file.type.startsWith("image") ? (
                   <img
                     src={URL.createObjectURL(file)}
-                    className="w-full h-20 object-cover rounded-lg"
-                    alt="Preview"
+                    className="w-full h-24 object-cover rounded-lg"
+                    alt={t.preview}
                   />
                 ) : (
                   <video
                     src={URL.createObjectURL(file)}
-                    className="w-full h-20 rounded-lg"
+                    className="w-full h-24 rounded-lg"
                     controls
                   />
                 )}
                 <button
                   type="button"
                   onClick={() => removeFile(index)}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-600"
                 >
-                  <FaTimes />
+                  <FaTimes className="w-3 h-3" />
                 </button>
               </div>
             ))}
@@ -243,10 +294,14 @@ export const CommentForm = () => {
 
         <button 
           type="submit" 
-          disabled={loading || !user} 
-          className="w-full py-3 text-white bg-white/20 rounded-full"
+          disabled={loading || !user}
+          className={`w-full py-3 px-6 rounded-full text-white font-medium transition-all ${
+            loading || !user
+              ? "bg-white/20 cursor-not-allowed"
+              : "bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 transform hover:scale-[1.02]"
+          }`}
         >
-          {loading ? "Enviando..." : "Publicar"}
+          {loading ? t.submittingButton : user ? t.publishComment : t.loginRequired}
         </button>
       </form>
     </div>

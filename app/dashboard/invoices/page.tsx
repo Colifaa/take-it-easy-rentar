@@ -5,6 +5,15 @@ import "../../ui/global.css";
 import { motion } from "framer-motion";
 import { Search, Star, ThumbsUp, ThumbsDown, Trash2, Image as ImageIcon, Video, ChevronLeft, ChevronRight, X } from "lucide-react";
 
+// Interfaz para los medios
+interface ReviewMedia {
+  id: number;
+  review_id: number;
+  media_url: string;
+  media_type: string;
+  created_at: string;
+}
+
 // Interfaz para los comentarios
 interface Comment {
   id: number;
@@ -13,18 +22,11 @@ interface Comment {
   rating: number;
   created_at: string;
   approved: boolean;
-  media?: ReviewMedia[];
-}
-
-// Interfaz para los medios
-interface ReviewMedia {
-  id: number;
-  url: string;
-  type: 'image' | 'video';
+  review_media?: ReviewMedia[];
 }
 
 export default function Page() {
-  const [comments, setComments] = useState<(Comment & { media?: ReviewMedia[] })[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedMedia, setSelectedMedia] = useState<ReviewMedia | null>(null);
@@ -40,25 +42,23 @@ export default function Page() {
   const fetchComments = useCallback(async () => {
     setLoading(true);
     try {
+      // Obtener comentarios con sus medios asociados
       const { data: commentsData, error: commentsError } = await supabase
         .from("reviews")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .select(`
+          *,
+          review_media (
+            id,
+            media_url,
+            media_type,
+            created_at
+          )
+        `)
+        .order('created_at', { ascending: false });
 
       if (commentsError) throw commentsError;
 
-      const { data: mediaData, error: mediaError } = await supabase
-        .from("review_media")
-        .select("*");
-
-      if (mediaError) throw mediaError;
-
-      const commentsWithMedia = commentsData.map(comment => ({
-        ...comment,
-        media: mediaData.filter(media => media.review_id === comment.id)
-      }));
-
-      setComments(commentsWithMedia);
+      setComments(commentsData);
       setErrorMessage("");
     } catch (error) {
       console.error("Error al cargar los comentarios:", error);
@@ -217,31 +217,33 @@ export default function Page() {
 
                   <p className="text-gray-600 mb-4">{comment.comment}</p>
 
-                  {comment.media && comment.media.length > 0 && (
-                    <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-                      {comment.media.map((media, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedMedia(media)}
-                          className="relative flex-shrink-0 group"
-                        >
-                          {media.type === 'image' ? (
-                            <div className="relative w-20 h-20 rounded-lg overflow-hidden">
-                              <img
-                                src={media.url}
-                                alt={`Media ${index + 1}`}
-                                className="w-full h-full object-cover"
-                              />
-                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200" />
-                              <ImageIcon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                            </div>
-                          ) : (
-                            <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-                              <Video className="w-8 h-8 text-gray-400" />
-                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200" />
-                            </div>
-                          )}
-                        </button>
+                  {/* Visualización de medios */}
+                  {comment.review_media && comment.review_media.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      {comment.review_media.map((media: any) => (
+                        <div key={media.id} className="relative group">
+                          {media.media_type.includes('image') ? (
+                            <img
+                              src={media.media_url}
+                              alt="Media del comentario"
+                              className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                              onClick={() => setSelectedMedia(media)}
+                            />
+                          ) : media.media_type.includes('video') ? (
+                            <video
+                              src={media.media_url}
+                              className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                              controls
+                            />
+                          ) : null}
+                          <div className="absolute top-2 right-2">
+                            {media.media_type.includes('image') ? (
+                              <ImageIcon className="h-4 w-4 text-white bg-black/50 rounded p-0.5" />
+                            ) : (
+                              <Video className="h-4 w-4 text-white bg-black/50 rounded p-0.5" />
+                            )}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   )}
@@ -320,39 +322,31 @@ export default function Page() {
         </>
       )}
 
-      {/* Modal para visualización de media */}
+      {/* Modal para visualizar medios */}
       {selectedMedia && (
-        <div 
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          onClick={closeMediaModal}
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="relative max-w-4xl max-h-[90vh] overflow-hidden rounded-lg"
-            onClick={e => e.stopPropagation()}
-          >
-            {selectedMedia.type === 'image' ? (
-              <img 
-                src={selectedMedia.url} 
-                alt="Media en tamaño completo" 
-                className="max-w-full max-h-[90vh] object-contain rounded-lg"
-              />
-            ) : (
-              <video 
-                src={selectedMedia.url} 
-                controls 
-                className="max-w-full max-h-[90vh] rounded-lg"
-              />
-            )}
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="relative max-w-4xl w-full mx-4">
             <button
-              onClick={closeMediaModal}
-              className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+              onClick={() => setSelectedMedia(null)}
+              className="absolute -top-10 right-0 text-white hover:text-gray-300"
             >
               <X className="h-6 w-6" />
             </button>
-          </motion.div>
+            {selectedMedia.media_type.includes('image') ? (
+              <img
+                src={selectedMedia.media_url}
+                alt="Media ampliada"
+                className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+              />
+            ) : (
+              <video
+                src={selectedMedia.media_url}
+                className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+                controls
+                autoPlay
+              />
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -1,7 +1,9 @@
 export const languages = {
   en: {
-
- 
+    pageTitle: {
+      mainTitle: "Take It Easy",
+      findCar: "Find Your Ideal Car"
+    },
     reservationMessages: {
       NewCarReservation: "<b>NEW VEHICLE RESERVATION</b>",
       Customer: "<b>Customer Information</b>",
@@ -106,17 +108,29 @@ export const languages = {
       fuelType: "Fuel Type",
       selectFuelType: "Select Fuel Type",
       available: "Available",
-      reservaButton:"Rent a Car",
+      reservaButton: "Book Now",
       availableOnly: "Only Available Cars",
       applyFilters: "Apply Filters",
       todas: "All",
       hasta: "Up to",
       noResults: "No results found",
-      notAvailable: "Not Available",  // Aquí se agrega la traducción de "Not Available"
+      notAvailable: "Not Available",
       alert:"Please log in to continue.",
       disponibilidad:"Availability",
-     resetFilters: "Reset Filters", // Nueva clave
+     resetFilters: "Reset Filters",
       searchPlaceholder: "Search cars...",
+      hideFilters: "Hide Filters",
+      showFilters: "Show Filters",
+      maxPrice: "Maximum Price",
+      all: "All",
+      manual: "Manual",
+      automatic: "Automatic",
+      gasoline: "Gasoline",
+      diesel: "Diesel",
+      electric: "Electric",
+      hybrid: "Hybrid",
+      apply: "Apply",
+      reset: "Reset"
     },
     comments: {
       title: "Leave Your Comment",
@@ -128,6 +142,20 @@ export const languages = {
       loginToComment: "You must be logged in to comment",
       successMessage: "Your comment has been submitted successfully",
       errorMessage: "There was an error submitting your comment",
+      shareAdventure: "Share Your Adventure!",
+      shareDescription: "We'd love to see how you enjoyed your experience with our cars. Share photos and videos of:",
+      landscapes: "The beautiful landscapes you explored",
+      carExperience: "Your experience with the car",
+      specialMoments: "The special moments of your trip",
+      yourComment: "Your comment",
+      commentPlaceholder: "Tell us about your experience...",
+      rating: "Rating",
+      shareMedia: "Share your photos and videos",
+      selectFiles: "Select files",
+      maxFiles: "Maximum 6 files (images or videos) up to 20MB each",
+      publishComment: "Publish comment",
+      loginRequired: "Log in to comment",
+      preview: "Preview"
     },
 
     about: {
@@ -225,6 +253,33 @@ export const languages = {
 
 },
   es: {
+    pageTitle: {
+      mainTitle: "Take It Easy",
+      findCar: "Encuentra tu Auto Ideal"
+    },
+    reservationMessages: {
+      NewCarReservation: "<b>NUEVA RESERVA DE VEHÍCULO</b>",
+      Customer: "<b>Información del Cliente</b>",
+      Email: "Correo Electrónico:",
+      Phone: "Teléfono:",
+      ID: "Tipo de Documento:",
+      ReservedCar: "<b>Detalles del Vehículo</b>",
+      Price: "Precio por día:",
+      From: "Fecha de Recogida:",
+      To: "Fecha de Devolución:",
+      TotalDays: "Total de Días:",
+      TotalPrice: "Precio Total:",
+      Transmission: "Transmisión:",
+      FuelType: "Tipo de Combustible:",
+      PaymentMethod: "Método de Pago:",
+      DeliveryAddress: "Dirección de Recogida/Entrega:",
+      AdditionalNotes: "Notas Adicionales:",
+      CarImage: "Imagen del Vehículo:",
+      ThankYou: "¡Gracias por elegir Take It Easy Rentar!",
+      ContactInfo: "Para cualquier consulta, no dudes en contactarnos.",
+      Footer: "Take It Easy Rentar - Tu socio de confianza en alquiler de vehículos",
+      defaultDeliveryAddress: "El dueño te dirá la ubicación exacta donde puedes retirar el auto."
+    },
     navbar: {
       home: "Inicio",
       about: "Sobre Nosotros",
@@ -306,16 +361,28 @@ export const languages = {
       fuelType: "Tipo de Combustible",
       selectFuelType: "Seleccionar Combustible",
       available: "Disponible",
-      reservaButton:"Reservar ahora",
+      reservaButton: "Reservá Ahora",
       availableOnly: "Solo Autos Disponibles",
       applyFilters: "Aplicar Filtros",
       todas: "Todas",
       hasta: "Hasta",
       noResults: "No se encontraron resultados",
-      notAvailable: "No Disponible",  // Aquí se agrega la traducción de "No Disponible"
+      notAvailable: "No Disponible",
       alert:"Por favor, inicia sesión para continuar.",
-      resetFilters: "Reiniciar Filtros", // Nueva clave
+      resetFilters: "Reiniciar Filtros",
       searchPlaceholder: "Buscar autos...",
+      hideFilters: "Ocultar Filtros",
+      showFilters: "Mostrar Filtros",
+      maxPrice: "Precio Máximo",
+      all: "Todos",
+      manual: "Manual",
+      automatic: "Automático",
+      gasoline: "Gasolina",
+      diesel: "Diesel",
+      electric: "Eléctrico",
+      hybrid: "Híbrido",
+      apply: "Aplicar",
+      reset: "Reiniciar"
     },
     comments: {
       title: "Deja tu Comentario",
@@ -327,6 +394,20 @@ export const languages = {
       loginToComment: "Debes iniciar sesión para comentar",
       successMessage: "Tu comentario ha sido enviado con éxito",
       errorMessage: "Hubo un error al enviar tu comentario",
+      shareAdventure: "¡Comparte tu Aventura!",
+      shareDescription: "Nos encantaría ver cómo disfrutaste de tu experiencia con nuestros autos. Comparte fotos y videos de:",
+      landscapes: "Los hermosos paisajes que recorriste",
+      carExperience: "Tu experiencia con el auto",
+      specialMoments: "Los momentos especiales de tu viaje",
+      yourComment: "Tu comentario",
+      commentPlaceholder: "Cuéntanos sobre tu experiencia...",
+      rating: "Calificación",
+      shareMedia: "Comparte tus fotos y videos",
+      selectFiles: "Seleccionar archivos",
+      maxFiles: "Máximo 6 archivos (imágenes o videos) de hasta 20MB cada uno",
+      publishComment: "Publicar comentario",
+      loginRequired: "Inicia sesión para comentar",
+      preview: "Vista previa"
     },
     about: {
       title: "Sobre Nosotros",
@@ -419,33 +500,5 @@ export const languages = {
         }
       }
     },
-
-     
-    reservationMessages: {
-      NewCarReservation: "<b>NUEVA RESERVA DE VEHÍCULO</b>",
-      Customer: "<b>Información del Cliente</b>",
-      Email: "Correo Electrónico:",
-      Phone: "Teléfono:",
-      ID: "Tipo de Documento:",
-      ReservedCar: "<b>Detalles del Vehículo</b>",
-      Price: "Precio por día:",
-      From: "Fecha de Recogida:",
-      To: "Fecha de Devolución:",
-      TotalDays: "Total de Días:",
-      TotalPrice: "Precio Total:",
-      Transmission: "Transmisión:",
-      FuelType: "Tipo de Combustible:",
-      PaymentMethod: "Método de Pago:",
-      DeliveryAddress: "Dirección de Recogida/Entrega:",
-      AdditionalNotes: "Notas Adicionales:",
-      CarImage: "Imagen del Vehículo:",
-      ThankYou: "¡Gracias por elegir Take It Easy Rentar!",
-      ContactInfo: "Para cualquier consulta, no dudes en contactarnos.",
-      Footer: "Take It Easy Rentar - Tu socio de confianza en alquiler de vehículos",
-      defaultDeliveryAddress: "El dueño te dirá la ubicación exacta donde puedes retirar el auto."
-    },
-    
-    
-  
   },
 };
