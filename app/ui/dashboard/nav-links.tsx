@@ -1,6 +1,7 @@
 import {
   HomeIcon,
   DocumentDuplicateIcon,
+  MusicalNoteIcon,
 } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -10,6 +11,7 @@ import { motion } from "framer-motion";
 const links = [
   { name: "Vehículos", href: "/dashboard", icon: HomeIcon },
   { name: "Comentarios", href: "/dashboard/invoices", icon: DocumentDuplicateIcon },
+  { name: "Música", href: "/dashboard/music", icon: MusicalNoteIcon },
 ];
 
 export default function NavLinks() {

@@ -14,7 +14,7 @@ import { AnimatedTestimonialsDemo } from "@/components/AnimatedTestimonialsDemo"
 import { CarComent } from "@/components/CarComent";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
-
+import { motion } from "framer-motion";
 import { ImagesSliderDemo } from "../components/ImagesSliderDemo";
 import MotadlDetail from "../components/modalDetail";
 import { InfiniteMovingCardsDemo } from "@/components/InfiniteMovingCardsDemo";
@@ -59,6 +59,33 @@ export default function Home() {
   const [user, setUser] = useState<any>(null); // Estado para almacenar información del usuario
   const [searchTerm, setSearchTerm] = useState("");
   console.log(user?.user.id);
+
+  // Variantes de animación para las cards
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { 
+      opacity: 0,
+      y: 20
+    },
+    visible: { 
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15
+      }
+    }
+  };
 
   useEffect(() => {
     const checkSession = async () => {
@@ -120,7 +147,6 @@ export default function Home() {
     setFilteredCars(filtered);
   };
 
-  // Función para reiniciar los filtros y restaurar los autos
   const handleResetFilters = () => {
     setFilters({
       brand: "",
@@ -155,103 +181,212 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b">
-      {/* Hero Section */}
-      <ImagesSliderDemo />
+      {/* Hero Section con animación */}
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <ImagesSliderDemo />
+      </motion.div>
 
       {/* Sección de Filtros y Listado de Autos */}
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Filtros */}
-          <CarFilters
-            filters={filters}
-            setFilters={setFilters}
-            onApplyFilters={handleApplyFilters}
-            onResetFilters={handleResetFilters}
-            onSearch={handleSearch}
-          />
+          {/* Filtros con animación */}
+          <motion.div
+            initial={{ x: -100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            className="mb-4"
+          >
+            <div className="relative w-full">
+              {/* Fondo con gradiente */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#c47369]/5 to-[#f8c4bc]/5 rounded-xl" />
+              
+              <div className="relative z-10 text-center mb-6">
+                <motion.h1 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="text-4xl md:text-5xl font-light text-gray-800"
+                >
+                  {t.pageTitle.mainTitle}
+                </motion.h1>
+                
+                <div className="w-32 h-0.5 mx-auto my-4 bg-gradient-to-r from-[#c47369] to-[#f8c4bc]" />
+                
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="text-lg md:text-xl text-gray-600 font-light"
+                >
+                  {t.pageTitle.findCar}
+                </motion.p>
+              </div>
+              
+              <CarFilters 
+                filters={filters}
+                setFilters={setFilters}
+                onApplyFilters={handleApplyFilters}
+                onResetFilters={handleResetFilters}
+                onSearch={handleSearch}
+              />
+            </div>
+          </motion.div>
 
           {/* Lista de Autos */}
           <section id="autos" className="md:col-span-3">
-            <h2 className="text-md md:text-4xl font-extrabold text-center bg-[linear-gradient(45deg,#c47369,#3C888A,#E8A74D)] text-white p-4 rounded-lg shadow-lg backdrop-blur-xl tracking-wide animate-pulse">
-              🌴 Encuentra tu Auto Ideal 🌴
-            </h2>
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mb-6"
+            >
+              <div className="relative w-full mb-4">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#c47369] to-[#f8c4bc] opacity-5 rounded-lg"></div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative p-6 text-center"
+                >
+                  <h2 className="text-xl md:text-2xl font-light text-gray-600">
+                
+                  </h2>
+                </motion.div>
+              </div>
+            </motion.div>
 
             {filteredCars.length === 0 ? (
-              <p className="text-center text-lg text-[#3C888A]">{t.filters.noResults}</p>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center text-lg text-[#3C888A]"
+              >
+                {t.filters.noResults}
+              </motion.p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
                 {filteredCars.map((car) => (
-                  <Card
+                  <motion.div
                     key={car.id}
-                    className="overflow-hidden shadow-lg rounded-lg bg-[#C47369] border border-gray-200"
+                    variants={cardVariants}
+                    whileHover={{ 
+                      scale: 1.03,
+                      transition: { duration: 0.2 }
+                    }}
                   >
-                    <div className="relative">
-                      <img
-                        src={car.imageUrls?.[0] || "/placeholder.jpg"}
-                        alt={`${car.brand} ${car.model}`}
-                        className="w-full h-52 object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
-                        onClick={() => setDetalle(car)}
-                      />
-                      <div
-                        className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-semibold text-white shadow-md ${car.available ? "bg-[#3C888A]" : "bg-[#C1625D]"
+                    <Card className="overflow-hidden shadow-lg rounded-lg bg-[#C47369] border border-gray-200">
+                      <div className="relative">
+                        <motion.img
+                          src={car.imageUrls?.[0] || "/placeholder.jpg"}
+                          alt={`${car.brand} ${car.model}`}
+                          className="w-full h-52 object-cover cursor-pointer"
+                          onClick={() => setDetalle(car)}
+                          whileHover={{ scale: 1.1 }}
+                          transition={{ duration: 0.3 }}
+                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-semibold text-white shadow-md ${
+                            car.available ? "bg-[#3C888A]" : "bg-[#C1625D]"
                           }`}
-                      >
-                        {car.available ? t.filters.available : t.filters.notAvailable}
-                      </div>
-                    </div>
-
-                    {/* Alerta si el usuario no está autenticado */}
-                    {showAlert && <AlertComponent message={t.filters.alert} />}
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold text-[#103c3d]">
-                        {car.brand} {car.model}
-                      </h3>
-                      <p className="text-sm text-[#e3b167]">{t.reservation.price}</p>
-                      <div className="text-xl font-bold text-[#505e32]">${car.price}</div>
-
-                      {/* Características del Auto */}
-                      <div className="grid grid-cols-3 gap-2 text-sm text-[#e3b167] mt-3">
-                        <div className="flex items-center">
-                          <Users className="w-4 h-4 mr-1" /> {t.reservation.assets}
-                        </div>
-                        <div className="flex items-center">
-                          <Cog className="w-4 h-4 mr-1" /> {car.transmission}
-                        </div>
-                        <div className="flex items-center">
-                          <Fuel className="w-4 h-4 mr-1" /> {car.fuelType}
-                        </div>
+                        >
+                          {car.available ? t.filters.available : t.filters.notAvailable}
+                        </motion.div>
                       </div>
 
-                      {/* Botón de Reserva */}
-                      <Button
-                        className="w-full mt-4"
-                        disabled={!car.available}
-                        onClick={() => {
-                          if (!user?.user.id) {
-                            setShowAlert(true);
-                          } else {
-                            handleOpenForm(car);
-                          }
-                        }}
+                      {/* Alerta si el usuario no está autenticado */}
+                      {showAlert && <AlertComponent message={t.filters.alert} />}
+                      
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="p-4"
                       >
-                        {car.available ? t.filters.reservaButton : t.filters.notAvailable}
-                      </Button>
-                    </div>
-                  </Card>
+                        <h3 className="text-lg font-semibold text-[#103c3d]">
+                          {car.brand} {car.model}
+                        </h3>
+                        <p className="text-sm text-[#e3b167]">{t.reservation.price}</p>
+                        <div className="text-xl font-bold text-[#505e32]">${car.price}</div>
+
+                        {/* Características del Auto */}
+                        <motion.div 
+                          className="grid grid-cols-3 gap-2 text-sm text-[#e3b167] mt-3"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.3 }}
+                        >
+                          <div className="flex items-center">
+                            <Users className="w-4 h-4 mr-1" /> {t.reservation.assets}
+                          </div>
+                          <div className="flex items-center">
+                            <Cog className="w-4 h-4 mr-1" /> {car.transmission}
+                          </div>
+                          <div className="flex items-center">
+                            <Fuel className="w-4 h-4 mr-1" /> {car.fuelType}
+                          </div>
+                        </motion.div>
+
+                        {/* Botón de Reserva */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.4 }}
+                        >
+                          <Button
+                            className="w-full mt-4"
+                            disabled={!car.available}
+                            onClick={() => {
+                              if (!user?.user.id) {
+                                setShowAlert(true);
+                              } else {
+                                handleOpenForm(car);
+                              }
+                            }}
+                          >
+                            {car.available ? t.filters.reservaButton : t.filters.notAvailable}
+                          </Button>
+                        </motion.div>
+                      </motion.div>
+                    </Card>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </section>
         </div>
       </div>
 
-      {/* Sección de Testimonios */}
-      <section className="mt-16">
+      {/* Sección de Testimonios con animación */}
+      <motion.section
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        className="mt-16"
+      >
         <AnimatedTestimonialsDemo />
-      </section>
+      </motion.section>
 
-      {/* Comentarios de Autos */}
-      <CarComent />
+      {/* Comentarios de Autos con animación */}
+      <motion.section
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <CarComent />
+      </motion.section>
 
       {/* Modal de Detalles */}
       {detalle && (
@@ -266,7 +401,16 @@ export default function Home() {
 
       {/* Formulario de Reserva */}
       {selectedCar && <ReservationForm car={selectedCar} onClose={handleCloseForm} />}
-      <Footer />
+      
+      {/* Footer con animación */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+      >
+        <Footer />
+      </motion.div>
     </main>
   );
 }
