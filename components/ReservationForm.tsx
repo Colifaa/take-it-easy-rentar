@@ -61,40 +61,37 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ car, onClose }
       totalPrice: car.price * totalDays
     };
 
-    try {
-      const { error } = await supabase.from("reservations").insert(reservationData);
-      if (error) throw error;
-      console.log("Reserva guardada con éxito!");
-      onClose();
+    // Formatear el mensaje para WhatsApp usando las traducciones del idioma actual
+    const message = encodeURIComponent(
+      `🚗 *${t.reservationMessages.NewCarReservation}*\n\n` +
+      `*${t.reservationMessages.Customer}*\n` +
+      `👤 ${t.reservation.buyerName}: ${reservationData.buyerName}\n` +
+      `📧 ${t.reservation.email}: ${reservationData.email}\n` +
+      `📱 ${t.reservation.phone}: ${reservationData.phone}\n` +
+      `🪪 ${t.reservation.idType}: ${reservationData.idType}\n\n` +
+      `*${t.reservationMessages.ReservedCar}*\n` +
+      `🚘 ${t.reservation.title.replace("{carBrand}", car.brand).replace("{carModel}", car.model)}\n` +
+      `💰 ${t.reservation.price}: $${car.price}\n` +
+      `📅 ${t.reservation.startDate}: ${reservationData.startDate}\n` +
+      `📅 ${t.reservation.endDate}: ${reservationData.endDate}\n` +
+      `📊 ${t.reservationMessages.TotalDays}: ${totalDays}\n` +
+      `💵 ${t.reservationMessages.TotalPrice}: $${reservationData.totalPrice}\n` +
+      `⚙️ ${t.reservation.transmission}: ${reservationData.transmission}\n` +
+      `⛽ ${t.reservation.fuel}: ${reservationData.fuelType}\n\n` +
+      `*${t.reservationMessages.PaymentMethod}*\n` +
+      `💳 ${t.reservation.paymentMethod}: ${reservationData.paymentMethod}\n` +
+      `📍 ${t.reservation.deliveryAddress}: ${reservationData.deliveryAddress || t.reservationMessages.defaultDeliveryAddress}\n` +
+      `📝 ${t.reservation.additionalNotes}: ${reservationData.additionalNotes || "-"}\n\n` +
+      `${t.reservationMessages.ThankYou}\n` +
+      `${t.reservationMessages.ContactInfo}`
+    );
 
-      const message = encodeURIComponent(
-        `${t.reservationMessages.NewCarReservation}\n\n` +
-        `${t.reservationMessages.Customer}\n` +
-        `${t.reservationMessages.Email} ${reservationData.email}\n` +
-        `${t.reservationMessages.Phone} ${reservationData.phone}\n` +
-        `${t.reservationMessages.ID} ${reservationData.idType}\n\n` +
-        `${t.reservationMessages.ReservedCar}\n` +
-        `${t.reservationMessages.Price} $${car.price}/día\n` +
-        `${t.reservationMessages.From} ${reservationData.startDate}\n` +
-        `${t.reservationMessages.To} ${reservationData.endDate}\n` +
-        `${t.reservationMessages.TotalDays} ${totalDays}\n` +
-        `${t.reservationMessages.TotalPrice} $${reservationData.totalPrice}\n` +
-        `${t.reservationMessages.Transmission} ${reservationData.transmission}\n` +
-        `${t.reservationMessages.FuelType} ${reservationData.fuelType}\n\n` +
-        `${t.reservationMessages.PaymentMethod} ${reservationData.paymentMethod}\n` +
-        `${t.reservationMessages.DeliveryAddress} ${reservationData.deliveryAddress || t.reservationMessages.defaultDeliveryAddress}\n` +
-        `${t.reservationMessages.AdditionalNotes} ${reservationData.additionalNotes || "-"}\n\n` +
-        `${t.reservationMessages.CarImage} ${car.imageUrls.length > 0 ? car.imageUrls[0] : "No disponible"}\n\n` +
-        `${t.reservationMessages.ThankYou}\n` +
-        `${t.reservationMessages.ContactInfo}\n\n` +
-        `${t.reservationMessages.Footer}`
-      );
-
-      const whatsappApiUrl = `https://wa.me/+61421602018?text=${message}`;
-      window.open(whatsappApiUrl, "_blank");
-    } catch (error) {
-      console.error("Error al guardar la reserva:", error);
-    }
+    // Abrir WhatsApp con el mensaje formateado
+    const whatsappUrl = `https://wa.me/61421602018?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+    
+    // Cerrar el formulario después de enviar
+    onClose();
   };
 
   const { language } = useLanguage();

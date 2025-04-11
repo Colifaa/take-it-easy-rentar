@@ -31,6 +31,7 @@ interface Car {
   imageUrls: string[]; // Permite manejar múltiples archivos
   description: string;
   available: boolean;
+  nextAvailableDate?: string; // Nueva propiedad
 }
 
 export default function Home() {
@@ -89,37 +90,100 @@ export default function Home() {
 
   useEffect(() => {
     const checkSession = async () => {
-      // Esperar la resolución de la promesa para obtener la sesión de Supabase
       const { data, error } = await supabase.auth.getSession();
       if (error) {
         console.error("Error al obtener la sesión:", error);
       } else {
-        setUser(data?.session); // Si la sesión es válida, guardamos la información
+        setUser(data?.session);
       }
     };
 
-    // Verificar sesión y obtener los autos
     checkSession();
 
     const fetchCars = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("cars")
-        .select(
-          "id, brand, model, price, transmission, fuelType, imageUrls, description, available"
-        );
+      try {
+        // Obtener los autos
+        const { data: carsData, error: carsError } = await supabase
+          .from("cars")
+          .select("*");
 
-      if (error) {
-        console.error("Error al obtener los autos:", error);
-      } else {
-        setCars(data || []);
-        setFilteredCars(data || []);
+        if (carsError) {
+          console.error("Error al obtener los autos:", carsError);
+          setLoading(false);
+          return;
+        }
+
+        // Obtener las disponibilidades actuales y futuras
+        const { data: availabilityData, error: availabilityError } = await supabase
+          .from("car_availability")
+          .select("*");
+
+        if (availabilityError) {
+          console.error("Error al obtener disponibilidades:", availabilityError);
+          setLoading(false);
+          return;
+        }
+
+        // Procesar los autos con su disponibilidad
+        const processedCars = carsData.map(car => {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          // Verificar las fechas de disponibilidad
+          const carAvailabilities = availabilityData
+            ?.filter(a => a.car_id === car.id)
+            ?.sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
+
+          const isCurrentlyReserved = carAvailabilities?.some(availability => {
+            const startDate = new Date(availability.start_date);
+            startDate.setHours(0, 0, 0, 0);
+            const endDate = new Date(availability.end_date);
+            endDate.setHours(23, 59, 59, 999);
+            
+            return today >= startDate && today <= endDate;
+          });
+
+          // Encontrar la próxima fecha disponible
+          let nextAvailableDate = null;
+
+          // Si el auto no está disponible por checkbox o tiene reservas
+          if (!car.available || isCurrentlyReserved) {
+            if (carAvailabilities && carAvailabilities.length > 0) {
+              const currentOrFutureReservations = carAvailabilities.filter(availability => {
+                const endDate = new Date(availability.end_date);
+                endDate.setHours(23, 59, 59, 999);
+                return endDate >= today;
+              });
+
+              if (currentOrFutureReservations.length > 0) {
+                const lastReservation = currentOrFutureReservations[currentOrFutureReservations.length - 1];
+                nextAvailableDate = new Date(lastReservation.end_date);
+                nextAvailableDate.setDate(nextAvailableDate.getDate() + 1);
+              }
+            }
+          }
+
+          return {
+            ...car,
+            available: car.available && !isCurrentlyReserved,
+            nextAvailableDate: !car.available || nextAvailableDate ? 
+              (nextAvailableDate ? nextAvailableDate.toISOString().split('T')[0] : null) : 
+              null
+          };
+        });
+
+        setCars(processedCars);
+        setFilteredCars(processedCars);
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchCars();
-  }, []); // Esta parte se ejecuta solo al montar el componente
+  }, []);
 
   const handleApplyFilters = () => {
     const filtered = cars.filter((car) => {
@@ -296,11 +360,36 @@ export default function Home() {
                         <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-semibold text-white shadow-md ${
-                            car.available ? "bg-[#3C888A]" : "bg-[#C1625D]"
-                          }`}
+                          className="absolute top-4 right-4"
                         >
-                          {car.available ? t.filters.available : t.filters.notAvailable}
+                          {car.available ? (
+                            <span className="bg-[#3C888A] px-3 py-1 rounded-full text-sm font-semibold text-white shadow-md">
+                              {t.filters.available}
+                            </span>
+                          ) : (
+                            <div className="flex flex-col items-end gap-2">
+                              <span className="bg-[#C1625D] px-3 py-1 rounded-full text-sm font-semibold text-white shadow-md">
+                                {t.filters.notAvailable}
+                              </span>
+                              {car.nextAvailableDate && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: -5 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: 0.2 }}
+                                  className="bg-[#505e32]/90 backdrop-blur-sm px-3 py-2 rounded-lg text-xs text-white shadow-md"
+                                >
+                                  <div className="font-medium mb-1">{t.filters.availableFrom}</div>
+                                  <div className="font-bold">
+                                    {new Date(car.nextAvailableDate).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: 'numeric'
+                                    })}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </div>
+                          )}
                         </motion.div>
                       </div>
 
@@ -344,7 +433,7 @@ export default function Home() {
                           transition={{ delay: 0.4 }}
                         >
                           <Button
-                            className="w-full mt-4"
+                            className={`w-full mt-4 ${!car.available ? 'bg-gray-400 cursor-not-allowed' : ''}`}
                             disabled={!car.available}
                             onClick={() => {
                               if (!user?.user.id) {

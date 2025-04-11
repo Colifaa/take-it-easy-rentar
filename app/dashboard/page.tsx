@@ -6,6 +6,8 @@ import supabase from "../../supabase/authTest";
 import "../ui/global.css";
 import CarsAdminPage from "../../components/CarsAdminPage";
 import  {CarList } from "../../components/CarList";
+import CarAvailabilityManager from "@/components/CarAvailabilityManager";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -55,14 +57,19 @@ export default function DashboardPage() {
   }, [router]);
 
   return (
-    <div>
-
-      
-      <CarsAdminPage/>
-
-      <CarList/>
-     
-  
+    <div className="container mx-auto py-8">
+      <Tabs defaultValue="cars" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="cars">Gestionar Autos</TabsTrigger>
+          <TabsTrigger value="availability">Gestionar Disponibilidad</TabsTrigger>
+        </TabsList>
+        <TabsContent value="cars">
+          <CarsAdminPage />
+        </TabsContent>
+        <TabsContent value="availability">
+          <CarAvailabilityManager />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
