@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Vortex } from "../app/ui/Vortex";
+//import { Vortex } from "../app/ui/Vortex";
 import { useLanguage } from "../hooks/use-language";
 import { languages } from "../lib/languages";
 import { motion } from "framer-motion";
@@ -42,16 +42,10 @@ export function VortexDemo() {
   }, [fullText, fullSubText]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden z-30">
+    <div    className="flex items-center flex-col justify-center px-4 md:px-10 py-4 w-full h-full relative z-10">
     
  
-      <Vortex
-        backgroundColor="transparent"
-        rangeY={600}
-        particleCount={400}
-        baseHue={30} // Más hacia naranja/coral
-        className="flex items-center flex-col justify-center px-4 md:px-10 py-4 w-full h-full relative z-10"
-      >
+  
         <div className="relative z-20">
         <motion.h2
   className="text-white text-4xl sm:text-5xl md:text-7xl font-bold text-center drop-shadow-lg"
@@ -89,7 +83,7 @@ export function VortexDemo() {
   )}
 </motion.p>
         </div>
-      </Vortex>
+   
     </div>
   );
 }
