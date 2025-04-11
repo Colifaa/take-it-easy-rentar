@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
-import { Button } from "@chakra-ui/react";
+import { Button, Image } from "@chakra-ui/react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import supabase from "../supabase/authTest";
 import { useLanguage } from "../hooks/use-language";
@@ -98,25 +98,7 @@ export function CarFilters({
 
   return (
     <>
-      {/* Barra de búsqueda siempre visible */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full mb-4"
-      >
-        <div className="flex items-center gap-4 px-4 md:px-8">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              placeholder={t.filters.searchPlaceholder}
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/30 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent backdrop-blur-sm"
-              onChange={handleSearch}
-            />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-5 w-5" />
-          </div>
-        </div>
-      </motion.div>
+
 
       {/* Botón para mostrar/ocultar filtros en móvil */}
       <div className="md:hidden mb-4">
@@ -143,14 +125,44 @@ export function CarFilters({
             transition={{ duration: 0.3 }}
             className="p-8 bg-gradient-to-br from-[#c47369] to-[#f8c4bc] shadow-xl rounded-3xl border border-white/30 text-white min-h-[700px] relative overflow-visible backdrop-blur-md"
           >
-            <motion.h3
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="font-bold text-2xl mb-8 text-white flex items-center gap-2 bg-white/20 p-4 rounded-full backdrop-blur-sm border border-white/30 shadow-lg text-center justify-center"
-            >
-              <Car className="w-6 h-6" />
-              {t.filters.carFilters}
-            </motion.h3>
+
+                
+                  
+      <div className="relative z-10 text-center mb-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <Image 
+          src="/logo.png" 
+          alt="Logo de la empresa" 
+          width={200} 
+          height={180} 
+          className="mx-auto"
+        />
+      </motion.div>
+    </div>
+            
+      {/* Barra de búsqueda siempre visible */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full mb-4"
+      >
+    
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              placeholder={t.filters.searchPlaceholder}
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/30 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent backdrop-blur-sm"
+              onChange={handleSearch}
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-5 w-5" />
+         
+        </div>
+      </motion.div>
 
             <div className="space-y-6 relative z-10">
               {/* Brand */}

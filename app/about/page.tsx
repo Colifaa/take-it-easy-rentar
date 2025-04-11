@@ -12,7 +12,7 @@ const AboutPage = () => {
   const { language } = useLanguage();
   const t = languages[language];
   const accentColor = "#CB9A99";
-  const textColor = useColorModeValue("gray.800", "white");
+  const textColor = useColorModeValue("gray.800", "gray.800");
   const cardTextColor = useColorModeValue("gray.900", "gray.900");
 
   return (
@@ -26,12 +26,21 @@ const AboutPage = () => {
         <VStack spacing={20}>
           {/* Hero Section */}
           <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            textAlign="center"
-            maxW="800px"
-            mx="auto"
+           initial={{ opacity: 0, x: -20 }}
+           whileInView={{ opacity: 1, x: 0 }}
+           transition={{ duration: 0.8 }}
+           viewport={{ once: true }}
+           p={8}
+           borderRadius="2xl"
+           bg="linear-gradient(135deg, #F8E5E5 0%, #FFF5F5 100%)"
+           boxShadow="xl"
+           border={`1px solid ${accentColor}20`}
+           backdropFilter="blur(10px)"
+           _hover={{
+             transform: "translateY(-5px)",
+             boxShadow: "2xl",
+             transition: "all 0.3s ease-in-out",
+           }}
           >
             <Text
               fontSize={{ base: "4xl", md: "5xl", lg: "6xl" }}
@@ -39,6 +48,7 @@ const AboutPage = () => {
               mb={6}
               color={accentColor}
               textShadow="0 2px 4px rgba(0,0,0,0.1)"
+              textAlign="center"
             >
               {t.about.title}
             </Text>
@@ -143,110 +153,7 @@ const AboutPage = () => {
             </SimpleGrid>
           </MotionBox>
 
-          {/* Team Section */}
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            p={8}
-            borderRadius="2xl"
-            bg="linear-gradient(135deg, #F8E5E5 0%, #FFF5F5 100%)"
-            boxShadow="xl"
-            border={`1px solid ${accentColor}20`}
-            backdropFilter="blur(10px)"
-            _hover={{
-              transform: "translateY(-5px)",
-              boxShadow: "2xl",
-              transition: "all 0.3s ease-in-out",
-            }}
-            width="full"
-          >
-            <Text fontSize="2xl" fontWeight="bold" mb={6} color={accentColor}>
-              {t.about.team.title}
-            </Text>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
-              {t.about.team.members.map((member, index) => (
-                <Box
-                  key={index}
-                  p={6}
-                  borderRadius="xl"
-                  bg="white"
-                  boxShadow="md"
-                  textAlign="center"
-                >
-                  <Image
-                    src={member.image}
-                    alt={member.name}
-                    borderRadius="full"
-                    boxSize="150px"
-                    mx="auto"
-                    mb={4}
-                    objectFit="cover"
-                  />
-                  <Text fontSize="xl" fontWeight="bold" color={accentColor}>
-                    {member.name}
-                  </Text>
-                  <Text color={cardTextColor} fontWeight="medium">{member.role}</Text>
-                </Box>
-              ))}
-            </SimpleGrid>
-          </MotionBox>
 
-          {/* Meeting Rooms Section */}
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            p={8}
-            borderRadius="2xl"
-            bg="linear-gradient(135deg, #F8E5E5 0%, #FFF5F5 100%)"
-            boxShadow="xl"
-            border={`1px solid ${accentColor}20`}
-            backdropFilter="blur(10px)"
-            _hover={{
-              transform: "translateY(-5px)",
-              boxShadow: "2xl",
-              transition: "all 0.3s ease-in-out",
-            }}
-            width="full"
-          >
-            <Text fontSize="2xl" fontWeight="bold" mb={6} color={accentColor}>
-              {t.about.rooms.title}
-            </Text>
-            <Text fontSize="lg" mb={8} color={cardTextColor} fontWeight="medium">
-              {t.about.rooms.description}
-            </Text>
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
-              {t.about.rooms.rooms.map((room, index) => (
-                <Box
-                  key={index}
-                  p={6}
-                  borderRadius="xl"
-                  bg="white"
-                  boxShadow="md"
-                >
-                  <Image
-                    src={room.image}
-                    alt={room.name}
-                    borderRadius="xl"
-                    width="100%"
-                    height="200px"
-                    objectFit="cover"
-                    mb={4}
-                  />
-                  <Text fontSize="xl" fontWeight="bold" mb={2} color={accentColor}>
-                    {room.name}
-                  </Text>
-                  <Text color={cardTextColor} mb={2} fontWeight="medium">
-                    {t.about.rooms.rooms[0].capacity}: {room.capacity}
-                  </Text>
-                  <Text color={cardTextColor} fontWeight="medium">{room.features}</Text>
-                </Box>
-              ))}
-            </SimpleGrid>
-          </MotionBox>
         </VStack>
       </Container>
     </Box>
