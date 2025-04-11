@@ -263,9 +263,9 @@ export default function Home() {
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
             className="mb-4"
           >
-            <div className="relative w-full">
+            <div className="">
               {/* Fondo con gradiente */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#c47369]/5 to-[#f8c4bc]/5 rounded-xl" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#c47369]/10 to-[#f8c4bc]/10 rounded-xl" />
               
               <div className="relative z-10 text-center mb-6">
                 <motion.h1 
@@ -316,7 +316,7 @@ export default function Home() {
                   className="relative p-6 text-center"
                 >
                   <h2 className="text-xl md:text-2xl font-light text-gray-600">
-                
+              
                   </h2>
                 </motion.div>
               </div>
