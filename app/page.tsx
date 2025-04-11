@@ -17,7 +17,6 @@ import { languages } from "../lib/languages";
 import { motion } from "framer-motion";
 import { ImagesSliderDemo } from "../components/ImagesSliderDemo";
 import MotadlDetail from "../components/modalDetail";
-import { InfiniteMovingCardsDemo } from "@/components/InfiniteMovingCardsDemo";
 import { Footer } from "@/components/footer";
 import LoadingScreen from "@/components/LoadingScreen";
 
