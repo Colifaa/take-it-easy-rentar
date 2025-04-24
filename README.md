@@ -66,13 +66,11 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=tuclaveanonima
 🧑‍💻 Desarrollador
 Mathez Jorge Alí
 
-🌐 Portafolio
+🌐 Portafolio: https://portfolioo-eta-three.vercel.app/
+💼 LinkedIn: https://www.linkedin.com/in/jorge-mathez-598597260/
+🐱 GitHub: https://github.com/Colifaa
+📧 Email: Jorgemathez14@gmail.com
 
-💼 LinkedIn
-
-🐱 GitHub
-
-📧 Jorgemathez14@gmail.com
 
 
 
